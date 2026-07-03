@@ -1,0 +1,80 @@
+/* ══════════════════════════════════════════════════════════════
+   Unified Color Palette — The Last Generation
+   Import this in any page that wants shared theming.
+   Dark theme is default. Add class="tlg-light" to <html> for light.
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Backgrounds ── */
+  --tlg-bg:             #0A0612;
+  --tlg-surface:        #110B1E;
+  --tlg-surface-alt:    #180F28;
+  --tlg-surface-raised: #1E1430;
+
+  /* ── Brand Gold ── */
+  --tlg-gold:           #D4AF37;
+  --tlg-gold-light:     #E4C65A;
+  --tlg-gold-text:      #D4AF37;
+  --tlg-gold-muted:     rgba(212,175,55,0.5);
+  --tlg-gold-dim:       rgba(212,175,55,0.35);
+  --tlg-gold-faint:     rgba(212,175,55,0.12);
+  --tlg-gold-ghost:     rgba(212,175,55,0.06);
+
+  /* ── Purple Accent ── */
+  --tlg-purple:         #6B3FA0;
+  --tlg-purple-glow:    rgba(107,63,160,0.25);
+
+  /* ── Text ── */
+  --tlg-text:           #F5F0E6;
+  --tlg-text-secondary: rgba(245,240,230,0.75);
+  --tlg-text-muted:     rgba(245,240,230,0.5);
+  --tlg-text-dim:       rgba(245,240,230,0.3);
+
+  /* ── Borders ── */
+  --tlg-border:         rgba(212,175,55,0.08);
+  --tlg-border-visible: rgba(212,175,55,0.2);
+
+  /* ── Semantic ── */
+  --tlg-red:            #A03030;
+  --tlg-red-dim:        rgba(160,48,48,0.15);
+  --tlg-green:          #3A9A5C;
+  --tlg-green-dim:      rgba(58,154,92,0.2);
+  --tlg-blue:           #3A6A9A;
+  --tlg-blue-dim:       rgba(58,106,154,0.2);
+  --tlg-cyan:           rgba(80,180,230,0.85);
+}
+
+/* ── Light Theme ── */
+.tlg-light {
+  --tlg-bg:             #F2EDE4;
+  --tlg-surface:        #FAFAF6;
+  --tlg-surface-alt:    #F5F2EB;
+  --tlg-surface-raised: #FFFFFF;
+
+  --tlg-gold:           #C49B2C;
+  --tlg-gold-light:     #D4AF37;
+  --tlg-gold-text:      #8B6914;
+  --tlg-gold-muted:     rgba(139,105,20,0.6);
+  --tlg-gold-dim:       rgba(139,105,20,0.35);
+  --tlg-gold-faint:     rgba(139,105,20,0.12);
+  --tlg-gold-ghost:     rgba(139,105,20,0.06);
+
+  --tlg-purple:         #5A2D90;
+  --tlg-purple-glow:    rgba(90,45,144,0.12);
+
+  --tlg-text:           #1A1520;
+  --tlg-text-secondary: #3D3648;
+  --tlg-text-muted:     #6E6578;
+  --tlg-text-dim:       #9A92A4;
+
+  --tlg-border:         rgba(26,21,32,0.08);
+  --tlg-border-visible: rgba(26,21,32,0.15);
+
+  --tlg-red:            #A03030;
+  --tlg-red-dim:        rgba(160,48,48,0.1);
+  --tlg-green:          #2D7A45;
+  --tlg-green-dim:      rgba(45,122,69,0.12);
+  --tlg-blue:           #2A5A8A;
+  --tlg-blue-dim:       rgba(42,90,138,0.12);
+  --tlg-cyan:           rgba(40,140,200,0.85);
+}

@@ -1,0 +1,9 @@
+# Cloudflare Pages redirects
+/apophis      /apophis.html      200
+
+# API proxies (Cloudflare Pages — 200 = proxy, not redirect)
+/api/kvert/*  http://kvert.febras.net/van/:splat  200
+/api/fireball  https://ssd-api.jpl.nasa.gov/fireball.api  200
+/api/gdacs/*   https://www.gdacs.org/gdacsapi/api/Events/geteventlist/:splat  200
+
+

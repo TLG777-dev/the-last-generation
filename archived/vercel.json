@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/apophis", "destination": "/apophis.html" },
+    { "source": "/api/fireball", "destination": "https://ssd-api.jpl.nasa.gov/fireball.api" }
+  ]
+}

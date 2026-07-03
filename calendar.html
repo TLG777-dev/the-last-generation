@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Interactive prophetic calendar tracking shemitah cycles, jubilee, blood moons, and feast days from 1948 to 2050." />
+  <title>Prophetic Calendar — The Last Generation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,300;1,500&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/nav.css" />
+  <link rel="stylesheet" href="/src/calendar.css" />
+  <script type="speculationrules">
+    {"prerender":[{"where":{"href_matches":"/*"}}]}
+  </script>
+</head>
+<body>
+  <div id="site-headerMount" data-page-title="Prophecy Calendar"></div>
+  <script src="/src/nav-component.js" defer></script>
+  <div id="app"></div>
+  <div id="viewport-anchor"></div>
+
+  <div id="loading-screen">
+    <div class="loading-content" style="text-align:center;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999">
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:1.2rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(245,240,230,0.6);margin-bottom:1.5rem;opacity:0;animation:fadeIn 1s ease 0.5s forwards">Loading Calendar</div>
+      <div style="width:160px;height:1px;background:rgba(212,175,55,0.2);margin:0 auto;overflow:hidden">
+        <div style="height:100%;width:0%;background:#D4AF37;animation:loadBar 1.2s ease-in-out forwards"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/calendar.js"></script>
+  <script>
+    window.addEventListener('load', () => {
+      const ls = document.getElementById('loading-screen');
+      if (ls) {
+        setTimeout(() => { ls.style.opacity = '0'; ls.style.transition = 'opacity 0.6s ease'; setTimeout(() => ls.remove(), 600); }, 600);
+      }
+    });
+  </script>
+  <style>
+    #loading-screen { position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background:#08060A;pointer-events:none; }
+    @keyframes fadeIn { to { opacity:1; } }
+    @keyframes loadBar { 0%{width:0%} 50%{width:70%} 100%{width:100%} }
+    #loading-screen.hidden { opacity:0; }
+  </style>
+</body>
+</html>

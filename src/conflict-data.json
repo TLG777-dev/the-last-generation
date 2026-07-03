@@ -1,0 +1,386 @@
+{
+  "_meta": {
+    "lastUpdated": "2026-06-05T17:17:39.354Z",
+    "source": "Wikipedia (List of ongoing armed conflicts)",
+    "minFatalities": 1000,
+    "entries": 23,
+    "curatedCount": 13,
+    "autoCount": 10
+  },
+  "conflicts": [
+    {
+      "id": "ethiopia-tigray",
+      "name": "Tigray War",
+      "start": "2020-11-03",
+      "region": "Africa",
+      "lat": 13.5,
+      "lng": 39.5,
+      "parties": [
+        "ENDF",
+        "TPLF"
+      ],
+      "fatalities": "600,000+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Tigray_War"
+    },
+    {
+      "id": "yemen-civil-war",
+      "name": "Yemen Civil War",
+      "start": "2014-09-16",
+      "region": "Middle East",
+      "lat": 15.5,
+      "lng": 44.5,
+      "parties": [
+        "PLC",
+        "Houthis"
+      ],
+      "fatalities": "380,000+",
+      "displaced": "4,500,000+",
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Yemeni_civil_war_(2014–present)"
+    },
+    {
+      "id": "israel-gaza",
+      "name": "Israel–Hamas War",
+      "start": "2023-10-07",
+      "region": "Middle East",
+      "lat": 31.5,
+      "lng": 34.5,
+      "parties": [
+        "Israel",
+        "Hamas"
+      ],
+      "fatalities": "40,000+",
+      "displaced": "1,900,000+",
+      "status": "ongoing",
+      "type": "interstate",
+      "source": "https://en.wikipedia.org/wiki/Israel–Hamas_War"
+    },
+    {
+      "id": "sudan-civil-war",
+      "name": "Sudan Civil War",
+      "start": "2023-04-15",
+      "region": "Africa",
+      "lat": 15.5,
+      "lng": 30,
+      "parties": [
+        "SAF",
+        "RSF"
+      ],
+      "fatalities": "30,000+",
+      "displaced": "8,000,000+",
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Sudanese_civil_war_(2023–present)"
+    },
+    {
+      "id": "sahel-conflict",
+      "name": "Sahel Insurgency",
+      "start": "2011-01-01",
+      "region": "Africa",
+      "lat": 15,
+      "lng": 0,
+      "parties": [
+        "G5 Sahel states",
+        "Jihadist groups"
+      ],
+      "fatalities": "25,000+",
+      "displaced": "2,000,000+",
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Sahel_conflict"
+    },
+    {
+      "id": "dr-congo-conflict",
+      "name": "DRC Conflict (M23)",
+      "start": "2022-03-27",
+      "region": "Africa",
+      "lat": -1.5,
+      "lng": 29,
+      "parties": [
+        "DRC",
+        "M23"
+      ],
+      "fatalities": "10,000+",
+      "displaced": "6,700,000+",
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/M23_rebellion"
+    },
+    {
+      "id": "armenia-azerbaijan",
+      "name": "Nagorno-Karabakh Conflict",
+      "start": "2020-09-27",
+      "region": "Asia",
+      "lat": 40,
+      "lng": 47,
+      "parties": [
+        "Armenia",
+        "Azerbaijan"
+      ],
+      "fatalities": "7,000+",
+      "displaced": "100,000+",
+      "status": "ongoing",
+      "type": "interstate",
+      "source": "https://en.wikipedia.org/wiki/Nagorno-Karabakh_conflict"
+    },
+    {
+      "id": "haiti-gang-war",
+      "name": "Haiti Gang Conflict",
+      "start": "2021-07-07",
+      "region": "Americas",
+      "lat": 19,
+      "lng": -72.5,
+      "parties": [
+        "Haitian government",
+        "Gangs"
+      ],
+      "fatalities": "5,000+",
+      "displaced": "362,000+",
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Haitian_crisis"
+    },
+    {
+      "id": "israel-hezbollah",
+      "name": "Israel–Hezbollah Conflict",
+      "start": "2023-10-08",
+      "region": "Middle East",
+      "lat": 33,
+      "lng": 35.5,
+      "parties": [
+        "Israel",
+        "Hezbollah"
+      ],
+      "fatalities": "2,000+",
+      "displaced": "100,000+",
+      "status": "ongoing",
+      "type": "interstate",
+      "source": "https://en.wikipedia.org/wiki/Israel–Hezbollah_conflict_(2023–present)"
+    },
+    {
+      "id": "israel-iran",
+      "name": "Israel–Iran Conflict",
+      "start": "2024-04-01",
+      "region": "Middle East",
+      "lat": 33,
+      "lng": 47,
+      "parties": [
+        "Israel",
+        "Iran"
+      ],
+      "fatalities": "500+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "interstate",
+      "source": "https://en.wikipedia.org/wiki/2024_Iran–Israel_conflict"
+    },
+    {
+      "id": "us-houthi-red-sea",
+      "name": "Red Sea Crisis",
+      "start": "2023-10-19",
+      "region": "Middle East",
+      "lat": 15,
+      "lng": 43,
+      "parties": [
+        "US/UK",
+        "Houthis"
+      ],
+      "fatalities": "100+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "interstate",
+      "source": "https://en.wikipedia.org/wiki/Red_Sea_crisis"
+    },
+    {
+      "id": "sudanese-civil-wars",
+      "name": "Sudanese civil wars",
+      "start": "1955-01-01",
+      "region": "Africa",
+      "lat": 15.5,
+      "lng": 30,
+      "parties": [],
+      "fatalities": "6.4K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Sudanese_Civil_War",
+      "_auto": true
+    },
+    {
+      "id": "myanmar-civil-war",
+      "name": "Myanmar Civil War",
+      "start": "2021-02-01",
+      "region": "Asia",
+      "lat": 22,
+      "lng": 96,
+      "parties": [
+        "SAC",
+        "PDF",
+        "EAOs"
+      ],
+      "fatalities": "4.7K+",
+      "displaced": "1,500,000+",
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Myanmar_civil_war_(2021–present)",
+      "_wikiTitle": "Myanmar conflict"
+    },
+    {
+      "id": "somali-civil-war",
+      "name": "Somali Civil War",
+      "start": "1981-01-01",
+      "region": "Africa",
+      "lat": 5.15,
+      "lng": 46.2,
+      "parties": [],
+      "fatalities": "3.4K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Somali_Civil_War",
+      "_auto": true
+    },
+    {
+      "id": "ethiopian-civil-conflict",
+      "name": "Ethiopian civil conflict",
+      "start": "2018-01-01",
+      "region": "Africa",
+      "lat": 9.15,
+      "lng": 40.49,
+      "parties": [],
+      "fatalities": "2.8K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Ethiopian_civil_conflict_(2018%E2%80%93present)",
+      "_auto": true
+    },
+    {
+      "id": "ukraine-russia",
+      "name": "Russo-Ukrainian War",
+      "start": "2022-02-24",
+      "region": "Europe",
+      "lat": 48.5,
+      "lng": 31.5,
+      "parties": [
+        "Ukraine",
+        "Russia"
+      ],
+      "fatalities": "26K+",
+      "displaced": "6,500,000+",
+      "status": "ongoing",
+      "type": "interstate",
+      "source": "https://en.wikipedia.org/wiki/Russo-Ukrainian_War",
+      "_wikiTitle": "Russo-Ukrainian war"
+    },
+    {
+      "id": "afghan-conflict",
+      "name": "Afghan conflict",
+      "start": "1978-01-01",
+      "region": "Asia",
+      "lat": 33.94,
+      "lng": 67.71,
+      "parties": [],
+      "fatalities": "1.9K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Afghan_conflict",
+      "_auto": true
+    },
+    {
+      "id": "civil-conflicts-in-nigeria",
+      "name": "Civil conflicts in Nigeria",
+      "start": "1998-01-01",
+      "region": "Africa",
+      "lat": 9.08,
+      "lng": 8.68,
+      "parties": [],
+      "fatalities": "1.7K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Communal_conflicts_in_Nigeria",
+      "_auto": true
+    },
+    {
+      "id": "ecuadorian-conflict",
+      "name": "Ecuadorian conflict",
+      "start": "1993-01-01",
+      "region": "Americas",
+      "lat": -1.83,
+      "lng": -78.18,
+      "parties": [],
+      "fatalities": "1.5K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Ecuadorian_security_crisis",
+      "_auto": true
+    },
+    {
+      "id": "haitian-crisis",
+      "name": "Haitian crisis",
+      "start": "2018-01-01",
+      "region": "Americas",
+      "lat": 18.97,
+      "lng": -72.29,
+      "parties": [],
+      "fatalities": "1.2K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Haitian_crisis_(2018%E2%80%93present)",
+      "_auto": true
+    },
+    {
+      "id": "syrian-conflict",
+      "name": "Syrian conflict",
+      "start": "2011-01-01",
+      "region": "Asia",
+      "lat": 34.8,
+      "lng": 39,
+      "parties": [],
+      "fatalities": "1.1K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Syrian_conflict_(2024%E2%80%93present)",
+      "_auto": true
+    },
+    {
+      "id": "islamist-insurgencies-in-the-maghreb",
+      "name": "Islamist insurgencies in the Maghreb",
+      "start": "2002-01-01",
+      "region": "Africa",
+      "lat": 28,
+      "lng": 3,
+      "parties": [],
+      "fatalities": "10K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Insurgency_in_the_Maghreb_(2002%E2%80%93present)",
+      "_auto": true
+    },
+    {
+      "id": "insurgencies-in-iran",
+      "name": "Insurgencies in Iran",
+      "start": "1918-01-01",
+      "region": "Asia",
+      "lat": 32.43,
+      "lng": 53.69,
+      "parties": [],
+      "fatalities": "7K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Terrorism_in_Iran",
+      "_auto": true
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revelation 12 — High-Precision Astronomical Calculator</title>
+  <meta name="description" content="JPL-verified astronomical calculation of the Revelation 12 sign configuration across 6000 years.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/nav.css">
+  <link rel="stylesheet" href="/src/rev12-calculator.css">
+</head>
+<body>
+  <div id="site-headerMount" data-page-title="Rev 12 Calculator"></div>
+  <script src="/src/nav-component.js" defer></script>
+
+  <main class="calc-main">
+
+    <!-- Intro -->
+    <section class="calc-intro">
+      <h1>Revelation 12:1–2 <span class="kjv">KJV</span></h1>
+      <blockquote>
+        "And there appeared a great wonder in heaven; a woman clothed with the sun,
+        and the moon under her feet, and upon her head a crown of twelve stars:
+        And she being with child cried, travailing in birth, and pained to be delivered."
+      </blockquote>
+      <p class="calc-subtitle">High-precision astronomical verification of the celestial configuration</p>
+    </section>
+
+    <!-- Configuration Criteria -->
+    <section class="calc-criteria">
+      <h2>Configuration Criteria</h2>
+      <div class="criteria-grid">
+        <div class="criteria-card">
+          <div class="criteria-icon">☀</div>
+          <div class="criteria-label">Clothed with the Sun</div>
+          <div class="criteria-desc">Sun near Virgo (RA 170°–190°, Dec -8° to +8°)</div>
+        </div>
+        <div class="criteria-card">
+          <div class="criteria-icon">☽</div>
+          <div class="criteria-label">Moon at Her Feet</div>
+          <div class="criteria-desc">Moon near Virgo's feet (RA 208°–218°, Dec -13° to -3°)</div>
+        </div>
+        <div class="criteria-card">
+          <div class="criteria-icon">♃</div>
+          <div class="criteria-label">The Child (Jupiter)</div>
+          <div class="criteria-desc">Jupiter in Virgo (RA 200°–210°, Dec -14° to -4°)</div>
+        </div>
+        <div class="criteria-card">
+          <div class="criteria-icon">✦</div>
+          <div class="criteria-label">Crown of 12 Stars</div>
+          <div class="criteria-desc">3 planets in Leo (RA 151°–174°, Dec +2° to +17°)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Controls -->
+    <section class="calc-controls">
+      <h2>Sweep Range</h2>
+      <div class="control-row">
+        <div class="control-group">
+          <label for="startYear">Start Year (BCE = negative)</label>
+          <input type="number" id="startYear" value="-4000" min="-6000" max="2020">
+        </div>
+        <div class="control-group">
+          <label for="endYear">End Year</label>
+          <input type="number" id="endYear" value="2017" min="-5000" max="2025">
+        </div>
+        <div class="control-group">
+          <label for="stepDays">Step (days)</label>
+          <select id="stepDays">
+            <option value="1" selected>1 day (slowest, most accurate)</option>
+            <option value="2">2 days</option>
+            <option value="5">5 days (fast scan)</option>
+          </select>
+        </div>
+        <button class="calc-btn" id="btnSweep">Run Sweep</button>
+        <button class="calc-btn calc-btn-secondary" id="btnVerify" title="Verify Sep 23, 2017 against JPL Horizons">Verify Against JPL</button>
+      </div>
+      <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill"></div>
+        <span class="progress-text" id="progressText">Ready</span>
+      </div>
+    </section>
+
+    <!-- JPL Verification -->
+    <section class="jpl-section" id="jplSection" style="display:none">
+      <h2>JPL Horizons Verification — Sep 23, 2017</h2>
+      <div class="jpl-grid" id="jplGrid"></div>
+    </section>
+
+    <!-- Results -->
+    <section class="calc-results" id="resultsSection" style="display:none">
+      <h2>Results <span class="result-count" id="resultCount"></span></h2>
+      <div class="results-table-wrap">
+        <table class="results-table" id="resultsTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Sun RA</th>
+              <th>Sun Alt</th>
+              <th>Sun Near Virgo</th>
+              <th>Moon RA</th>
+              <th>Moon Dec</th>
+              <th>Moon Alt</th>
+              <th>Moon at Feet</th>
+              <th>Jupiter RA</th>
+              <th>Jupiter Alt</th>
+              <th>Jupiter in Virgo</th>
+              <th>Crown Planets</th>
+              <th>MATCH</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Detailed View -->
+    <section class="calc-detail" id="detailSection" style="display:none">
+      <h2>Configuration Detail</h2>
+      <div class="detail-grid" id="detailGrid"></div>
+    </section>
+
+  </main>
+
+  <script type="module" src="/src/rev12-calculator.js"></script>
+</body>
+</html>

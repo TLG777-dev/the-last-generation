@@ -1,0 +1,216 @@
+@import './typography.css';
+
+@view-transition { navigation: auto; }
+
+:root {
+  --fs-display: clamp(1.4rem, 0.923vw + 1.192rem, 2rem);
+  --fs-heading: clamp(1rem, 0.462vw + 0.896rem, 1.3rem);
+  --fs-title:   clamp(0.88rem, 0.192vw + 0.832rem, 1rem);
+  --fs-base:    clamp(0.88rem, 0.185vw + 0.838rem, 1rem);
+  --fs-sm:      clamp(0.75rem, 0.192vw + 0.707rem, 0.88rem);
+  --fs-xs:      clamp(0.65rem, 0.154vw + 0.615rem, 0.75rem);
+  --fs-2xs:     clamp(0.5rem, 0.154vw + 0.465rem, 0.55rem);
+  --fs-3xs:     clamp(0.45rem, 0.154vw + 0.415rem, 0.5rem);
+  --fs-4xs:     clamp(0.38rem, 0.115vw + 0.349rem, 0.45rem);
+}
+
+:root {
+  --gl-bg: #08060A;
+  --gl-surface: #0E0A18;
+  --gl-surface-alt: #16112A;
+  --gl-gold: #D4AF37;
+  --gl-gold-light: #E4C65A;
+  --gl-gold-dim: rgba(212,175,55,0.55);
+  --gl-gold-glow: rgba(212,175,55,0.08);
+  --gl-text: #F5F0E6;
+  --gl-text-secondary: rgba(245,240,230,0.75);
+  --gl-text-muted: rgba(245,240,230,0.45);
+  --gl-border: rgba(212,175,55,0.1);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  background: var(--gl-bg);
+  color: var(--gl-text);
+  overflow-x: hidden;
+}
+
+a { color: var(--gl-gold); text-decoration: none; }
+
+.data-source {
+  font-family: var(--font-ui); font-weight: 300;
+  font-size: 0.6rem; color: rgba(245,240,230,0.3);
+  letter-spacing: 0.04em; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ── Hero ── */
+#gl-hero {
+  position: relative; min-height: 70vh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.gl-hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 30%, rgba(212,175,55,0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 30% 60%, rgba(46,134,193,0.04) 0%, transparent 60%);
+}
+.gl-hero-overlay {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px);
+  pointer-events: none;
+}
+.gl-hero-content {
+  position: relative; z-index: 2;
+  text-align: center; max-width: 720px; padding: 2rem;
+}
+.gl-hero-badge {
+  display: inline-block;
+  font-family: var(--font-ui); font-size: var(--fs-2xs);
+  font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gl-gold);
+  border: 1px solid var(--gl-gold-dim);
+  padding: 0.25rem 0.8rem; border-radius: 2px;
+  margin-bottom: 2rem;
+  opacity: 0; animation: glFadeUp 0.8s ease 0.3s forwards;
+}
+.gl-hero-title {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  line-height: 1.1;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--gl-text);
+  margin-bottom: 0.5rem;
+  opacity: 0; animation: glFadeUp 0.8s ease 0.5s forwards;
+}
+.gl-hero-sub {
+  font-family: var(--font-display); font-style: italic;
+  font-size: var(--fs-base); color: var(--gl-text-muted);
+  margin-bottom: 2rem;
+  opacity: 0; animation: glFadeUp 0.8s ease 0.7s forwards;
+}
+.gl-hero-text {
+  font-family: var(--font-body); font-style: italic;
+  font-size: clamp(0.85rem, 1.5vw, 1rem);
+  line-height: 1.7; color: var(--gl-text-secondary);
+  margin-bottom: 1rem;
+  opacity: 0; animation: glFadeUp 0.8s ease 0.9s forwards;
+}
+.gl-hero-text2 {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm); line-height: 1.65;
+  color: var(--gl-text-muted);
+  max-width: 600px; margin: 0 auto;
+  opacity: 0; animation: glFadeUp 0.8s ease 1.1s forwards;
+}
+
+@keyframes glFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Alphabet Nav ── */
+.gl-alpha-nav {
+  display: flex; justify-content: center; gap: 0.3rem;
+  flex-wrap: wrap; padding: 2rem 1rem 0;
+  max-width: 700px; margin: 0 auto;
+}
+.gl-alpha-link {
+  font-family: var(--font-ui); font-size: var(--fs-xs);
+  font-weight: 500; color: var(--gl-text-muted);
+  text-decoration: none; letter-spacing: 0.04em;
+  width: 1.6rem; height: 1.6rem;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 2px;
+  transition: color 0.2s, background 0.2s;
+}
+.gl-alpha-link:hover { color: var(--gl-gold); background: rgba(212,175,55,0.06); }
+
+/* ── Glossary Section ── */
+.gl-section {
+  padding: 2rem 1.5rem 4rem;
+  max-width: 800px; margin: 0 auto;
+}
+
+/* ── Letter Block ── */
+.gl-letter-block {
+  margin-bottom: 2rem;
+}
+.gl-letter-header {
+  font-family: var(--font-display); font-size: var(--fs-heading);
+  font-weight: 500; color: var(--gl-gold);
+  letter-spacing: 0.1em;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(212,175,55,0.08);
+  margin-bottom: 1rem;
+}
+
+/* ── Term Card ── */
+.gl-term {
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(212,175,55,0.04);
+}
+.gl-term-name {
+  font-family: var(--font-display); font-size: var(--fs-title);
+  font-weight: 500; color: var(--gl-text);
+  margin-bottom: 0.3rem;
+}
+.gl-term-def {
+  font-family: var(--font-body); font-size: var(--fs-sm);
+  line-height: 1.6; color: var(--gl-text-secondary);
+  margin-bottom: 0.4rem;
+}
+.gl-term-ref {
+  font-family: var(--font-ui); font-size: var(--fs-2xs);
+  color: var(--gl-gold-dim); letter-spacing: 0.04em;
+}
+.gl-term-link {
+  font-family: var(--font-ui); font-size: var(--fs-xs);
+  color: var(--gl-gold-dim);
+  letter-spacing: 0.04em;
+  transition: color 0.2s;
+}
+.gl-term-link:hover { color: var(--gl-gold); }
+
+/* ── Footer ── */
+#gl-footer {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  border-top: 1px solid var(--gl-border);
+}
+.gl-footer-inner { max-width: 600px; margin: 0 auto; }
+.gl-footer-text {
+  font-family: var(--font-body); font-style: italic;
+  font-size: var(--fs-sm); color: var(--gl-text-muted);
+  margin-bottom: 0.75rem;
+}
+.gl-footer-maranatha {
+  font-family: var(--font-ui); font-size: var(--fs-xs);
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--gl-gold-dim);
+  margin-bottom: 1rem;
+}
+.gl-footer-nav {
+  font-family: var(--font-ui); font-size: var(--fs-2xs);
+  color: var(--gl-text-muted);
+}
+.gl-footer-nav a {
+  color: var(--gl-text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.gl-footer-nav a:hover { color: var(--gl-gold); }
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .data-source { font-size: 0.55rem; }
+  .gl-section { padding: 2rem 1rem 3rem; }
+}
+@media (max-width: 480px) {
+  .data-source { font-size: 0.5rem; }
+}

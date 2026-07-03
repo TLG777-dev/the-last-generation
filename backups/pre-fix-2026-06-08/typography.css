@@ -1,0 +1,52 @@
+/* ══════════════════════════════════════════════
+   Shared Typography System — The Last Generation
+   Import this first in every page CSS file.
+   ══════════════════════════════════════════════ */
+
+:root {
+  /* ── Font Families ── */
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body: 'Crimson Pro', serif;
+  --font-ui: 'Inter', sans-serif;
+
+  /* ── Typography Scale (desktop ≥901px) ── */
+  --fs-display: 2rem;    /* Hero / page titles — 32px */
+  --fs-heading: 1.3rem;  /* Section headings — 20.8px */
+  --fs-title:   1rem;    /* Sub-headings, card titles — 16px */
+  --fs-base:    1rem;    /* Body text — 16px */
+  --fs-sm:      0.88rem; /* UI labels, secondary text — 14px */
+  --fs-xs:      0.75rem; /* Metadata, captions — 12px */
+  --fs-2xs:     0.55rem; /* Tiny labels, badges — 8.8px */
+  --fs-3xs:     0.5rem;  /* Dense secondary labels — 8px */
+  --fs-4xs:     0.45rem; /* Decorative-only — never interactive — 7.2px */
+}
+
+/* ── Tablet (≤900px) ── */
+@media (max-width: 900px) {
+  :root {
+    --fs-display: 1.7rem;  /* 27.2px */
+    --fs-heading: 1.15rem; /* 18.4px */
+    --fs-title:   0.95rem; /* 15.2px */
+    --fs-base:    0.92rem; /* 14.7px */
+    --fs-sm:      0.8rem;  /* 12.8px */
+    --fs-xs:      0.7rem;  /* 11.2px */
+    --fs-2xs:     0.55rem; /* 8.8px */
+    --fs-3xs:     0.5rem;  /* 8px */
+    --fs-4xs:     0.42rem; /* 6.7px */
+  }
+}
+
+/* ── Mobile (≤480px) ── */
+@media (max-width: 480px) {
+  :root {
+    --fs-display: 1.4rem;  /* 22.4px */
+    --fs-heading: 1rem;    /* 16px */
+    --fs-title:   0.88rem; /* 14px */
+    --fs-base:    0.88rem; /* 14px */
+    --fs-sm:      0.75rem; /* 12px */
+    --fs-xs:      0.65rem; /* 10.4px */
+    --fs-2xs:     0.5rem;  /* 8px */
+    --fs-3xs:     0.45rem; /* 7.2px */
+    --fs-4xs:     0.38rem; /* 6px */
+  }
+}

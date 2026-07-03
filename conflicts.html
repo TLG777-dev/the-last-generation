@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Global conflict tracker — real-time data on wars, armed conflicts, and geopolitical crises worldwide." />
+  <title>Conflicts Watch — Global Warfare Monitor | The Last Generation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,300&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <link rel="stylesheet" href="/src/nav.css" />
+  <link rel="stylesheet" href="/src/conflicts.css" />
+  <script type="speculationrules">
+    {"prerender":[{"where":{"href_matches":"/*"}}]}
+  </script>
+</head>
+<body>
+  <div id="site-headerMount" data-page-title="Conflicts Watch" data-badge="WAR"></div>
+  <script src="/src/nav-component.js" defer></script>
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Bible verse rotator -->
+  <div id="bible-verse">
+    <div class="bv-content" id="bv-content"></div>
+    <div class="bv-ref" id="bv-ref"></div>
+  </div>
+
+  <!-- Map container -->
+  <div id="map"></div>
+
+  <!-- Map loading bar -->
+  <div id="map-loading" class="map-loading"><div class="map-loading-bar"></div></div>
+
+  <!-- Filter panel -->
+  <div id="filter-panel" class="open">
+    <div class="fp-header" id="fp-toggle">
+      <span class="fp-title">Conflicts</span>
+      <span class="fp-arrow">&#9654;</span>
+    </div>
+    <div class="fp-body" id="fp-body">
+      <div class="fp-section">
+        <span class="fp-label">Conflict Type</span>
+        <div class="fp-btns" id="fp-type">
+          <button class="fp-btn active" data-type="interstate">International</button>
+          <button class="fp-btn active" data-type="intrastate">Civil</button>
+        </div>
+      </div>
+      <div class="fp-section">
+        <span class="fp-label">Region</span>
+        <div class="fp-btns" id="fp-region">
+          <button class="fp-btn active" data-region="all">All</button>
+          <button class="fp-btn" data-region="europe">Europe</button>
+          <button class="fp-btn" data-region="middle-east">Middle East</button>
+          <button class="fp-btn" data-region="africa">Africa</button>
+          <button class="fp-btn" data-region="asia">Asia</button>
+          <button class="fp-btn" data-region="americas">Americas</button>
+        </div>
+      </div>
+      <div class="fp-section">
+        <span class="fp-label">Status</span>
+        <div class="fp-btns" id="fp-status">
+          <button class="fp-btn active" data-status="all">All</button>
+          <button class="fp-btn active" data-status="ongoing">Ongoing</button>
+          <button class="fp-btn" data-status="ceasefire">Ceasefire</button>
+        </div>
+      </div>
+      <div class="fp-section fp-graph-area open" id="fp-graph-area">
+        <div class="conflict-trend" id="cf-trend"></div>
+        <canvas id="cf-graph" class="conflict-graph"></canvas>
+        <div class="conflict-composition" id="cf-composition"></div>
+      </div>
+      <div class="fp-section">
+        <div class="fp-alert-label">Recent Events</div>
+        <div id="alert-panel">
+          <div class="ap-body" id="ap-body"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline controls -->
+  <div id="timeline-bar">
+    <button class="tl-btn" id="tl-step-back" title="Step Back">&#9664;&#9664;</button>
+    <button class="tl-btn" id="tl-play" title="Auto-Play">&#9654;</button>
+    <button class="tl-btn" id="tl-step-fwd" title="Step Forward">&#9654;&#9654;</button>
+    <div class="tl-track">
+      <input type="range" id="tl-slider" class="tl-slider" min="0" max="100" value="100" step="1" />
+      <div class="tl-labels">
+        <span class="tl-label" id="tl-label-start">—</span>
+        <span class="tl-label tl-label-current" id="tl-label-current">Now</span>
+        <span class="tl-label" id="tl-label-end">—</span>
+      </div>
+    </div>
+    <button class="tl-btn" id="tl-reset" title="Reset to start">&#124;&#9664;</button>
+    <button class="tl-btn active" id="tl-live" title="Jump to present">&#9679;</button>
+  </div>
+
+  <!-- Timeline Legend -->
+  <div id="tl-legend">
+    <button class="tl-tog active" data-type="interstate"><span class="tl-tog-dot" style="background:#DC2626"></span><span class="tl-tog-lbl">International</span><span class="fp-tog-count" id="tc-interstate">—</span></button>
+    <button class="tl-tog active" data-type="intrastate"><span class="tl-tog-dot" style="background:#F97316"></span><span class="tl-tog-lbl">Civil</span><span class="fp-tog-count" id="tc-intrastate">—</span></button>
+  </div>
+
+  <!-- Event popup -->
+  <div id="event-popup" class="event-popup"></div>
+
+  <!-- Map labels container -->
+  <div id="leader-labels"></div>
+
+  <!-- Loading overlay -->
+  <div id="loading-overlay" class="loading-overlay">
+    <div class="loading-content">
+      <div class="loading-title">Conflicts Watch</div>
+      <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+      <div class="loading-subtitle">Loading Global Conflict Data...</div>
+    </div>
+  </div>
+
+  <!-- Data notice -->
+  <div class="data-notice">Data compiled from open-source intelligence. Accuracy depends on available reporting.</div>
+
+  <script type="module" src="/src/conflicts.js"></script>
+</body>
+</html>

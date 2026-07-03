@@ -1,0 +1,681 @@
+@import './typography.css';
+
+@view-transition {
+  navigation: auto;
+}
+
+:root {
+  --fs-display: clamp(1.4rem, 0.923vw + 1.192rem, 2rem);
+  --fs-heading: clamp(1rem, 0.462vw + 0.896rem, 1.3rem);
+  --fs-title:   clamp(0.88rem, 0.192vw + 0.832rem, 1rem);
+  --fs-base:    clamp(0.88rem, 0.185vw + 0.838rem, 1rem);
+  --fs-sm:      clamp(0.75rem, 0.192vw + 0.707rem, 0.88rem);
+  --fs-xs:      clamp(0.65rem, 0.154vw + 0.615rem, 0.75rem);
+  --fs-2xs:     clamp(0.5rem, 0.154vw + 0.465rem, 0.55rem);
+  --fs-3xs:     clamp(0.45rem, 0.154vw + 0.415rem, 0.5rem);
+  --fs-4xs:     clamp(0.38rem, 0.115vw + 0.349rem, 0.45rem);
+}
+
+:root {
+  --b-bg: #08060A;
+  --b-surface: #0E0A18;
+  --b-surface-alt: #16112A;
+  --b-gold: #D4AF37;
+  --b-gold-light: #E4C65A;
+  --b-gold-dim: rgba(212,175,55,0.55);
+  --b-gold-glow: rgba(212,175,55,0.08);
+  --b-text: #F5F0E6;
+  --b-text-secondary: rgba(245,240,230,0.75);
+  --b-text-muted: rgba(245,240,230,0.45);
+  --b-border: rgba(212,175,55,0.1);
+  --b-rose: #C48B8B;
+  --b-rose-dim: rgba(196,139,139,0.15);
+  --b-purple: #6B3FA0;
+  --b-purple-dim: rgba(107,63,160,0.12);
+  --b-church: #4A6FA5;
+  --b-church-dim: rgba(74,111,165,0.12);
+  --b-gold-pure: #D4AF37;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  background: var(--b-bg);
+  color: var(--b-text);
+  overflow-x: hidden;
+}
+
+.data-source {
+  font-family: var(--font-ui); font-weight: 300;
+  font-size: 0.6rem; color: rgba(245,240,230,0.3);
+  letter-spacing: 0.04em; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ── Hero ── */
+#b-hero {
+  position: relative; min-height: 70vh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.b-hero-bg {
+  position: absolute; inset: 0;
+  background:
+    url('/images/betrothal/hero-betrothal.jpeg') center 40% / cover no-repeat;
+}
+.b-hero-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 30%, rgba(196,139,139,0.15) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 30% 60%, rgba(212,175,55,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 70% 40%, rgba(107,63,160,0.12) 0%, transparent 50%),
+    linear-gradient(to bottom, rgba(8,6,10,0.4) 0%, rgba(8,6,10,0.7) 60%, rgba(8,6,10,0.95) 100%);
+  pointer-events: none;
+}
+.b-hero-overlay {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 35%, rgba(8,6,10,0.4) 0%, rgba(8,6,10,0.15) 50%, transparent 100%),
+    linear-gradient(to bottom, rgba(8,6,10,0.25) 0%, rgba(8,6,10,0.4) 40%, rgba(8,6,10,0.6) 100%),
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px);
+  pointer-events: none;
+}
+.b-hero-content {
+  position: relative; z-index: 2;
+  text-align: center; max-width: 720px; padding: 2rem;
+}
+.b-hero-badge {
+  display: inline-block;
+  font-family: var(--font-ui); font-size: var(--fs-2xs);
+  font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--b-gold);
+  border: 1px solid var(--b-gold-dim);
+  padding: 0.25rem 0.8rem; border-radius: 2px;
+  margin-bottom: 2rem;
+  opacity: 0; animation: bFadeUp 0.8s ease 0.3s forwards;
+}
+.b-hero-title {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  line-height: 1.1;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--b-text);
+  margin-bottom: 0.5rem;
+  opacity: 0; animation: bFadeUp 0.8s ease 0.5s forwards;
+}
+.b-hero-heb {
+  font-family: serif; font-size: clamp(1rem, 2.5vw, 1.6rem);
+  color: var(--b-gold); letter-spacing: 0.1em;
+  margin-bottom: 0.2rem;
+  opacity: 0; animation: bFadeUp 0.8s ease 0.6s forwards;
+}
+.b-hero-sub {
+  font-family: var(--font-display); font-style: italic;
+  font-size: var(--fs-base); color: var(--b-text-muted);
+  margin-bottom: 2rem;
+  opacity: 0; animation: bFadeUp 0.8s ease 0.7s forwards;
+}
+.b-hero-text {
+  font-family: var(--font-body); font-style: italic;
+  font-size: clamp(0.85rem, 1.5vw, 1rem);
+  line-height: 1.7; color: var(--b-text-secondary);
+  margin-bottom: 1rem;
+  opacity: 0; animation: bFadeUp 0.8s ease 0.9s forwards;
+}
+.b-hero-ref {
+  display: block; margin-top: 0.4rem;
+  font-family: var(--font-ui); font-style: normal;
+  font-size: var(--fs-xs); letter-spacing: 0.08em;
+  color: var(--b-gold-dim);
+}
+.b-hero-text2 {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm); line-height: 1.65;
+  color: var(--b-text-muted);
+  max-width: 600px; margin: 0 auto;
+  opacity: 0; animation: bFadeUp 0.8s ease 1.1s forwards;
+}
+.b-hero-scroll {
+  position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+  font-family: var(--font-ui); font-size: var(--fs-2xs);
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--b-text-muted);
+  opacity: 0; animation: bFadeUp 0.8s ease 1.4s forwards;
+}
+.b-arrow-down {
+  width: 1px; height: 24px;
+  background: linear-gradient(to bottom, var(--b-gold-dim), transparent);
+}
+
+@keyframes bFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Section Base ── */
+.b-section {
+  padding: 4rem 1.5rem;
+  max-width: 960px; margin: 0 auto;
+}
+.b-section-inner { max-width: 800px; margin: 0 auto; }
+.b-section-title {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  letter-spacing: 0.15em; text-transform: uppercase;
+  text-align: center; color: var(--b-text);
+  margin-bottom: 0.75rem;
+}
+.b-section-sub {
+  font-family: var(--font-body);
+  font-size: var(--fs-base); line-height: 1.65;
+  text-align: center; color: var(--b-text-muted);
+  max-width: 600px; margin: 0 auto 2.5rem;
+}
+
+/* ── Chapter Headers ── */
+.b-chapter {
+  display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+  max-width: 750px; margin: 2rem auto 0; padding: 0 1.5rem;
+}
+.b-chapter::before, .b-chapter::after {
+  content: ''; flex: 1; height: 1px; background: rgba(212,175,55,0.08);
+}
+.b-chapter-number {
+  font-family: var(--font-ui); font-size: var(--fs-2xs);
+  font-weight: 500; letter-spacing: 0.15em; color: var(--b-gold-dim);
+  margin-right: -0.25rem;
+}
+.b-chapter-label {
+  font-family: var(--font-ui); font-size: var(--fs-xs);
+  font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--b-text-muted);
+}
+
+/* ── Chapter Feature Images ── */
+.b-chapter-image {
+  width: 100%; max-width: 960px; margin: 1.5rem auto 0;
+  height: 340px;
+  background-size: cover; background-position: center 30%;
+  background-repeat: no-repeat;
+  position: relative;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.b-chapter-image::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(8,6,10,0.9) 0%, rgba(8,6,10,0.3) 50%, rgba(8,6,10,0.1) 100%);
+  pointer-events: none;
+}
+.b-chapter-image.pull-up { margin-top: -1.5rem; }
+
+/* ── Section Connector ── */
+.b-section-connector {
+  max-width: 600px; margin: 2rem auto 0;
+  text-align: center;
+  font-family: var(--font-body); font-style: italic;
+  font-size: var(--fs-base); line-height: 1.65;
+  color: rgba(212,175,55,0.7);
+  padding: 1rem 1.5rem;
+  border-top: 1px solid rgba(212,175,55,0.06);
+  border-bottom: 1px solid rgba(212,175,55,0.06);
+}
+
+/* ── Stage Cards (wedding stages grid) ── */
+.b-stage-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 1rem; margin-bottom: 2rem;
+}
+.b-stage-card {
+  background: var(--b-surface);
+  border: 1px solid var(--b-border);
+  border-radius: 3px;
+  padding: 1.5rem;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.b-stage-card.visible { opacity: 1; transform: translateY(0); }
+.b-sc-number {
+  font-family: var(--font-ui); font-size: var(--fs-2xs);
+  font-weight: 600; letter-spacing: 0.2em;
+  color: var(--b-gold-dim); margin-bottom: 0.5rem;
+}
+.b-sc-title {
+  font-family: var(--font-display); font-size: var(--fs-title);
+  font-weight: 500; margin-bottom: 0.25rem;
+  color: var(--b-text);
+}
+.b-sc-heb {
+  font-family: serif; font-size: var(--fs-xs);
+  color: var(--b-gold-dim); letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+.b-sc-text {
+  font-family: var(--font-body); font-size: var(--fs-sm);
+  line-height: 1.55; color: var(--b-text-secondary);
+  margin-bottom: 0.6rem;
+}
+.b-sc-ref {
+  font-family: var(--font-ui); font-size: var(--fs-2xs);
+  color: var(--b-gold-dim); letter-spacing: 0.05em;
+  display: block;
+}
+.b-sc-map {
+  font-family: var(--font-body); font-size: var(--fs-xs);
+  font-style: italic; line-height: 1.5;
+  color: var(--b-rose);
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--b-border);
+}
+.b-stage-teacher {
+  max-width: 650px; margin: 0 auto;
+  text-align: center;
+  font-family: var(--font-body); font-size: var(--fs-sm);
+  font-style: italic; line-height: 1.6;
+  color: var(--b-text-muted);
+  padding: 1.5rem;
+  border-left: 2px solid var(--b-gold-dim);
+}
+
+/* ── Key Parallel Cards (at-a-glance comparisons) ── */
+.b-parallel-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 1.25rem; margin: 2rem 0;
+}
+.b-parallel-card {
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  gap: 0;
+  background: var(--b-surface);
+  border: 1px solid var(--b-border);
+  border-radius: 3px;
+  overflow: hidden;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.b-parallel-card.visible { opacity: 1; transform: translateY(0); }
+.b-parallel-side {
+  padding: 1.25rem;
+  display: flex; flex-direction: column; gap: 0.4rem;
+}
+.b-parallel-side.jewish {
+  background: rgba(212,175,55,0.03);
+}
+.b-parallel-side.christ {
+  background: rgba(196,139,139,0.03);
+}
+.b-parallel-label {
+  font-family: var(--font-ui); font-size: var(--fs-2xs);
+  font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;
+}
+.b-parallel-side.jewish .b-parallel-label { color: var(--b-gold-dim); }
+.b-parallel-side.christ .b-parallel-label { color: var(--b-rose); }
+.b-parallel-heading {
+  font-family: var(--font-display); font-weight: 500;
+  font-size: var(--fs-title); color: var(--b-text);
+  line-height: 1.3;
+}
+.b-parallel-text {
+  font-family: var(--font-body); font-size: var(--fs-sm);
+  line-height: 1.55; color: var(--b-text-secondary);
+}
+.b-parallel-ref {
+  font-family: var(--font-ui); font-size: var(--fs-xs);
+  color: var(--b-gold-dim); letter-spacing: 0.05em;
+  margin-top: auto;
+}
+.b-parallel-divider {
+  display: flex; align-items: center; justify-content: center;
+  width: 2.5rem; flex-shrink: 0;
+  background: rgba(212,175,55,0.04);
+  position: relative;
+}
+.b-parallel-divider::after {
+  content: '\2192';
+  font-size: 1.1rem;
+  color: var(--b-gold-dim);
+  opacity: 0.5;
+}
+.b-parallel-intro {
+  font-family: var(--font-body); font-size: var(--fs-base);
+  line-height: 1.65; color: var(--b-text-muted);
+  text-align: center;
+  max-width: 650px; margin: 0 auto 1.5rem;
+}
+.b-parallel-callout {
+  max-width: 750px; margin: 1.5rem auto 0;
+  padding: 1.25rem;
+  background: rgba(212,175,55,0.04);
+  border: 1px solid rgba(212,175,55,0.15);
+  border-radius: 3px;
+  text-align: center;
+}
+.b-parallel-callout p {
+  font-family: var(--font-body); font-size: var(--fs-sm);
+  font-style: italic; line-height: 1.6;
+  color: var(--b-text-secondary);
+}
+
+/* ── Vertical Narrative Parallels (tradition → fulfillment) ── */
+.b-parallel-card-vertical {
+  display: block; opacity: 0; transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  background: var(--b-surface);
+  border: 1px solid var(--b-border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.b-parallel-card-vertical.visible { opacity: 1; transform: translateY(0); }
+.b-parallel-tradition {
+  padding: 1.25rem 1.25rem 0.75rem;
+  font-family: var(--font-body); font-size: var(--fs-sm);
+  line-height: 1.6; color: var(--b-text-secondary);
+  position: relative;
+}
+.b-parallel-tradition::before {
+  content: 'Ancient Wedding';
+  display: block;
+  font-family: var(--font-ui); font-size: var(--fs-2xs);
+  font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--b-gold-dim);
+  margin-bottom: 0.4rem;
+}
+.b-parallel-arrow {
+  text-align: center; padding: 0.1rem 0;
+  font-size: 1rem; color: var(--b-gold-dim); opacity: 0.35;
+  line-height: 1;
+}
+.b-parallel-fulfillment {
+  padding: 0.75rem 1.25rem 1.25rem;
+  font-family: var(--font-body); font-size: var(--fs-sm);
+  line-height: 1.6; color: var(--b-text);
+  background: rgba(196,139,139,0.04);
+  position: relative;
+}
+.b-parallel-fulfillment::before {
+  content: 'You in Christ';
+  display: block;
+  font-family: var(--font-ui); font-size: var(--fs-2xs);
+  font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--b-rose);
+  margin-bottom: 0.4rem;
+}
+.b-parallel-fulfillment .b-parallel-ref {
+  display: block; margin-top: 0.5rem;
+}
+
+/* ── Detail Section (deeper teaching on a stage) ── */
+.b-detail {
+  padding: 1.5rem;
+  max-width: 960px; margin: 0 auto;
+}
+.b-detail-inner {
+  background: var(--b-surface);
+  border: 1px solid var(--b-border);
+  border-radius: 3px;
+  padding: 1.75rem;
+  max-width: 750px; margin: 0 auto;
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.b-detail-inner.visible { opacity: 1; transform: translateY(0); }
+.b-detail-label {
+  font-family: var(--font-ui); font-size: var(--fs-xs);
+  font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--b-gold-dim); margin-bottom: 0.75rem;
+}
+.b-detail-title {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  color: var(--b-text); margin-bottom: 0.75rem;
+  letter-spacing: 0.08em;
+}
+.b-detail-text {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm); line-height: 1.65;
+  color: var(--b-text-secondary);
+}
+.b-detail-text p + p { margin-top: 0.6rem; }
+.b-detail-ref {
+  font-family: var(--font-ui); font-size: var(--fs-2xs);
+  color: var(--b-gold-dim); letter-spacing: 0.05em;
+  display: block; margin-top: 0.6rem;
+}
+.b-detail-map {
+  font-family: var(--font-body); font-size: var(--fs-xs);
+  font-style: italic; line-height: 1.5;
+  color: var(--b-rose);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--b-border);
+}
+
+/* ── Comparison Table ── */
+.b-compare {
+  padding: 1.5rem 0;
+  max-width: 780px; margin: 0 auto;
+}
+.b-compare-inner {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--b-border);
+  border: 1px solid var(--b-border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.b-compare-header {
+  background: var(--b-surface-alt);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-display); font-size: var(--fs-sm);
+  font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--b-text);
+  text-align: center;
+}
+.b-compare-item {
+  background: var(--b-surface);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-body); font-size: var(--fs-xs);
+  line-height: 1.5;
+  color: var(--b-text-secondary);
+}
+.b-compare-item.gold { color: var(--b-gold-dim); font-style: italic; }
+
+/* ── Timeline Visualization ── */
+.b-timeline {
+  max-width: 750px; margin: 2rem auto;
+  padding: 1.5rem;
+  background: var(--b-surface);
+  border: 1px solid var(--b-border);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+}
+.b-tl-strip {
+  display: flex; align-items: center;
+  gap: 0;
+  position: relative;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.b-tl-stage {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0.25rem; padding: 0.5rem 0.65rem;
+  min-width: 65px;
+  position: relative;
+}
+.b-tl-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--b-gold-dim);
+  position: relative;
+  z-index: 2;
+}
+.b-tl-dot.highlight {
+  background: var(--b-gold);
+  box-shadow: 0 0 8px rgba(212,175,55,0.4);
+  width: 10px; height: 10px;
+}
+.b-tl-dot.rose {
+  background: var(--b-rose);
+  box-shadow: 0 0 6px rgba(196,139,139,0.3);
+}
+.b-tl-label {
+  font-family: var(--font-ui); font-size: var(--fs-3xs);
+  color: var(--b-text-muted);
+  letter-spacing: 0.04em;
+  text-align: center;
+  max-width: 60px;
+}
+.b-tl-label.highlight { color: var(--b-gold-dim); }
+.b-tl-line {
+  flex: 1; height: 1px;
+  min-width: 12px;
+  background: rgba(212,175,55,0.1);
+}
+.b-tl-line.highlight { background: rgba(212,175,55,0.3); }
+
+/* ── Watch Section ── */
+#b-watch { padding-bottom: 2rem; }
+.b-watch-divider {
+  width: 2px; height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--b-gold-dim), transparent);
+  margin: 0 auto 2rem;
+}
+.b-watch-verse {
+  font-family: var(--font-display); font-style: italic;
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  text-align: center; color: var(--b-gold);
+  margin-bottom: 0.5rem;
+}
+.b-watch-ref {
+  font-family: var(--font-ui); font-size: var(--fs-xs);
+  text-align: center; color: var(--b-gold-dim);
+  margin-bottom: 2rem; letter-spacing: 0.1em;
+}
+.b-watch-text {
+  font-family: var(--font-body); font-size: var(--fs-base);
+  text-align: center; line-height: 1.65;
+  color: var(--b-text-secondary);
+  max-width: 550px; margin: 0 auto 2rem;
+}
+.b-watch-links {
+  display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
+}
+.b-watch-link {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: var(--font-ui); font-size: var(--fs-sm);
+  color: var(--b-gold-dim);
+  text-decoration: none; letter-spacing: 0.08em;
+  transition: color 0.2s;
+  padding: 0.4rem 1rem;
+  border: 1px solid rgba(212,175,55,0.08);
+  border-radius: 3px;
+}
+.b-watch-link:hover { color: var(--b-gold); border-color: rgba(212,175,55,0.2); }
+.b-wl-icon { font-size: 0.9rem; opacity: 0.6; }
+.b-wl-label { font-family: var(--font-ui); font-size: var(--fs-sm); }
+
+/* ── Teacher Grid ── */
+.b-teacher-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+.b-teacher-card {
+  background: var(--b-surface);
+  border: 1px solid var(--b-border);
+  border-radius: 3px;
+  padding: 1.25rem;
+  text-align: center;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.b-teacher-card.visible { opacity: 1; transform: translateY(0); }
+.b-tc-icon { font-size: 1.2rem; margin-bottom: 0.5rem; }
+.b-teacher-card h4 {
+  font-family: var(--font-display); font-size: var(--fs-title);
+  font-weight: 500; color: var(--b-text);
+  margin-bottom: 0.4rem;
+}
+.b-teacher-card p {
+  font-family: var(--font-body); font-size: var(--fs-sm);
+  line-height: 1.5; color: var(--b-text-secondary);
+  margin-bottom: 0.6rem;
+}
+.b-tc-link {
+  font-family: var(--font-ui); font-size: var(--fs-2xs);
+  color: var(--b-gold-dim);
+  text-decoration: none; letter-spacing: 0.04em;
+  transition: color 0.2s;
+}
+.b-tc-link:hover { color: var(--b-gold); }
+
+/* ── Scripture Quote Block ── */
+.b-quote {
+  max-width: 650px; margin: 2rem auto;
+  text-align: center;
+  font-family: var(--font-body); font-style: italic;
+  font-size: var(--fs-base); line-height: 1.65;
+  color: var(--b-text-secondary);
+  padding: 1.5rem;
+  border-left: 2px solid var(--b-gold-dim);
+  border-right: 2px solid var(--b-gold-dim);
+}
+.b-quote-ref {
+  display: block; margin-top: 0.5rem;
+  font-family: var(--font-ui); font-style: normal;
+  font-size: var(--fs-xs); letter-spacing: 0.08em;
+  color: var(--b-gold-dim);
+}
+
+/* ── Footer ── */
+#b-footer {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  border-top: 1px solid var(--b-border);
+}
+.b-footer-inner { max-width: 600px; margin: 0 auto; }
+.b-footer-text {
+  font-family: var(--font-body); font-style: italic;
+  font-size: var(--fs-sm); color: var(--b-text-muted);
+  margin-bottom: 0.75rem;
+}
+.b-footer-maranatha {
+  font-family: var(--font-ui); font-size: var(--fs-xs);
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--b-gold-dim);
+  margin-bottom: 1rem;
+}
+.b-footer-nav {
+  font-family: var(--font-ui); font-size: var(--fs-2xs);
+  color: var(--b-text-muted);
+}
+.b-footer-nav a {
+  color: var(--b-text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.b-footer-nav a:hover { color: var(--b-gold); }
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .data-source { font-size: 0.55rem; }
+  .b-stage-grid { grid-template-columns: 1fr; }
+  .b-teacher-grid { grid-template-columns: 1fr; }
+  .b-section { padding: 2.5rem 1rem; }
+  .b-compare-inner { grid-template-columns: 1fr; }
+  .b-watch-links { gap: 0.5rem; }
+  .b-tl-stage { min-width: 55px; padding: 0.4rem 0.35rem; }
+  .b-tl-line { min-width: 8px; }
+}
+
+@media (max-width: 480px) {
+  .data-source { font-size: 0.5rem; }
+  .b-tl-stage { min-width: 45px; padding: 0.3rem 0.2rem; }
+  .b-tl-label { font-size: var(--fs-4xs); }
+  .b-detail-inner { padding: 1.25rem; }
+}

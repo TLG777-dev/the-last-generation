@@ -1,0 +1,484 @@
+@import './typography.css';
+
+@view-transition { navigation: auto; }
+
+:root {
+  --fs-display: clamp(1.4rem, 0.923vw + 1.192rem, 2rem);
+  --fs-heading: clamp(1rem, 0.462vw + 0.896rem, 1.3rem);
+  --fs-title:   clamp(0.88rem, 0.192vw + 0.832rem, 1rem);
+  --fs-base:    clamp(0.88rem, 0.185vw + 0.838rem, 1rem);
+  --fs-sm:      clamp(0.75rem, 0.192vw + 0.707rem, 0.88rem);
+  --fs-xs:      clamp(0.65rem, 0.154vw + 0.615rem, 0.75rem);
+  --fs-2xs:     clamp(0.5rem, 0.154vw + 0.465rem, 0.55rem);
+  --fs-3xs:     clamp(0.45rem, 0.154vw + 0.415rem, 0.5rem);
+  --fs-4xs:     clamp(0.38rem, 0.115vw + 0.349rem, 0.45rem);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  background: #0A0612;
+  color: #F5F0E6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+#bg-canvas { position: fixed; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.2; }
+
+.header-badge { font-family: var(--font-ui); font-weight: 500; font-size: 0.45rem; letter-spacing: 0.08em; color: rgba(80,220,100,0.8); background: rgba(80,220,100,0.08); padding: 0.06rem 0.3rem; border-radius: 3px; text-transform: uppercase; border: 1px solid rgba(80,220,100,0.1); }
+
+#dash-content {
+  position: relative;
+  z-index: 1;
+  padding: 4.5rem 1rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  pointer-events: none;
+}
+#dash-content > * { pointer-events: auto; }
+
+.dh-top {
+  text-align: center;
+  padding: 0.75rem 0.5rem 0.5rem;
+}
+.dh-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #F5F0E6;
+  margin-bottom: 0.2rem;
+}
+.dh-sub {
+  font-family: var(--font-ui);
+  font-weight: 200;
+  font-size: 0.55rem;
+  color: rgba(245,240,230,0.5);
+}
+
+/* ── Zones ── */
+.zone {
+  margin-top: 1rem;
+}
+.zone-header {
+  font-family: var(--font-ui);
+  font-weight: 400;
+  font-size: 0.45rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(245,240,230,0.5);
+  padding: 0 0.25rem 0.35rem;
+  border-bottom: 1px solid rgba(212,175,55,0.06);
+  margin-bottom: 0.5rem;
+}
+
+/* ── Card grid ── */
+.zone-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.5rem;
+}
+.zone-grid .wide { grid-column: 1 / -1; }
+
+.data-card {
+  border: 1px solid rgba(212,175,55,0.06);
+  border-radius: 6px;
+  background: rgba(16,10,28,0.3);
+  padding: 0.7rem;
+  transition: border-color 0.2s;
+  overflow: hidden;
+}
+.data-card.wide { overflow: visible; }
+.data-card:hover { border-color: rgba(212,175,55,0.12); }
+
+.dc-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: #F5F0E6;
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dc-title-link {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: 0.45rem;
+  color: rgba(212,175,55,0.5);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  transition: color 0.2s;
+}
+.dc-title-link:hover { color: rgba(212,175,55,0.6); }
+
+/* ── Countdown Card ── */
+.cd-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.cd-item {
+  flex: 1;
+  min-width: 100px;
+  text-align: center;
+  padding: 0.4rem 0.3rem;
+  border: 1px solid rgba(212,175,55,0.06);
+  border-radius: 4px;
+  background: rgba(10,6,18,0.3);
+}
+.cd-number {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: 300;
+  color: #D4AF37;
+  line-height: 1;
+  display: block;
+}
+.cd-unit {
+  font-size: 0.4rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245,240,230,0.5);
+  display: block;
+  margin-top: 0.05rem;
+}
+.cd-event {
+  font-size: 0.5rem;
+  color: rgba(245,240,230,0.55);
+  display: block;
+  margin-top: 0.1rem;
+  letter-spacing: 0.04em;
+}
+.cd-date {
+  grid-area: date;
+  font-size: var(--fs-sm);
+  color: rgba(245,240,230,0.5);
+}
+.cd-note {
+  grid-column: 1 / -1;
+  font-size: var(--fs-xs);
+  color: #d4a853;
+  margin-top: -0.15rem;
+  padding-left: 0.1rem;
+}
+
+.cd-converge {
+  text-align: center;
+  font-size: 0.4rem;
+  letter-spacing: 0.12em;
+  color: rgba(212,175,55,0.5);
+  margin-top: 0.35rem;
+  padding-top: 0.3rem;
+  border-top: 1px solid rgba(212,175,55,0.06);
+}
+
+/* ── Disaster Graphs Card ── */
+.dg-row {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+.dg-item {
+  flex: 1;
+  min-width: 110px;
+}
+.dg-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.15rem;
+}
+.dg-label {
+  font-size: 0.45rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245,240,230,0.5);
+}
+.dg-trend {
+  font-size: 0.4rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.dg-trend.pos { color: rgba(239,68,68,0.7); }
+.dg-trend.neg { color: rgba(80,220,100,0.7); }
+.dg-canvas {
+  width: 100%;
+  height: 60px;
+  border-radius: 3px;
+  display: block;
+}
+
+/* ── Conflict Card ── */
+.cf-wrap {
+  display: flex;
+  gap: 0.3rem;
+}
+.cf-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+.cf-body { flex: 1; min-width: 0; }
+.cf-name {
+  font-weight: 400;
+  font-size: 0.6rem;
+  color: rgba(245,240,230,0.65);
+}
+.cf-parties {
+  font-size: 0.5rem;
+  color: rgba(245,240,230,0.55);
+  margin-top: 0.05rem;
+}
+.cf-meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.15rem;
+  font-size: 0.45rem;
+  color: rgba(245,240,230,0.5);
+}
+.cf-meta span { white-space: nowrap; }
+.cf-empty {
+  font-size: 0.55rem;
+  color: rgba(245,240,230,0.5);
+  text-align: center;
+  padding: 0.5rem;
+}
+
+/* ── Sign of Jonah Card ── */
+.sj-ref {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 0.55rem;
+  color: rgba(212,175,55,0.5);
+  margin-bottom: 0.3rem;
+}
+.sj-text {
+  font-size: 0.55rem;
+  color: rgba(245,240,230,0.5);
+  line-height: 1.5;
+  margin-bottom: 0.3rem;
+}
+.sj-fulfill {
+  font-size: 0.5rem;
+  color: rgba(245,240,230,0.5);
+  padding-top: 0.25rem;
+  border-top: 1px solid rgba(212,175,55,0.04);
+}
+
+/* ── Timeline Card ── */
+.tl-track {
+  position: relative;
+  height: 3px;
+  background: rgba(212,175,55,0.08);
+  border-radius: 2px;
+  margin: 1.6rem 0.3rem 1.8rem;
+}
+.tl-dot {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid;
+  background: #0A0612;
+  z-index: 2;
+}
+.tl-dot.past { border-color: rgba(212,175,55,0.2); }
+.tl-dot.present {
+  border-color: #D4AF37;
+  width: 13px;
+  height: 13px;
+  background: #D4AF37;
+  box-shadow: 0 0 10px rgba(212,175,55,0.35);
+  z-index: 3;
+}
+.tl-dot.future { border-color: rgba(212,175,55,0.12); }
+.tl-label {
+  position: absolute;
+  transform: translateX(-50%);
+  text-align: center;
+  white-space: nowrap;
+  z-index: 1;
+  pointer-events: none;
+}
+.tl-label.above {
+  bottom: 0.5rem;
+}
+.tl-label.below {
+  top: 0.5rem;
+}
+.tl-label .tl-name {
+  font-size: 0.38rem;
+  color: rgba(245,240,230,0.5);
+  letter-spacing: 0.06em;
+  display: block;
+  line-height: 1.3;
+}
+.tl-label .tl-year {
+  font-size: 0.33rem;
+  color: rgba(245,240,230,0.5);
+  display: block;
+}
+.tl-status {
+  text-align: center;
+  font-size: 0.38rem;
+  letter-spacing: 0.08em;
+  color: rgba(245,240,230,0.5);
+  margin-top: 0.1rem;
+}
+
+/* ── Calendar Countdown Card ── */
+.cal-event {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.2rem 0;
+  border-bottom: 1px solid rgba(212,175,55,0.03);
+}
+.cal-event:last-child { border-bottom: none; }
+.cal-left { min-width: 0; }
+.cal-name {
+  font-size: 0.55rem;
+  color: rgba(245,240,230,0.55);
+}
+.cal-note {
+  font-size: 0.4rem;
+  color: rgba(212,175,55,0.5);
+  margin-top: 0.05rem;
+}
+.cal-right { text-align: right; }
+.cal-countdown {
+  font-size: 0.6rem;
+  color: #D4AF37;
+  font-weight: 400;
+}
+.cal-date {
+  font-size: 0.4rem;
+  color: rgba(245,240,230,0.55);
+  display: block;
+}
+
+/* ── Rapture Checklist Card ── */
+.rc-section { margin-bottom: 0.35rem; }
+.rc-section:last-child { margin-bottom: 0; }
+.rc-section-header {
+  font-size: 0.5rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245,240,230,0.5);
+  margin-bottom: 0.15rem;
+  padding-bottom: 0.08rem;
+  border-bottom: 1px solid rgba(212,175,55,0.04);
+}
+.rc-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  padding: 0.1rem 0;
+  font-size: 0.5rem;
+  color: rgba(245,240,230,0.5);
+}
+.rc-item.done { color: rgba(80,220,100,0.5); }
+.rc-item.waiting { color: rgba(245,240,230,0.5); }
+.rc-item .rc-check {
+  flex-shrink: 0;
+  font-size: 0.45rem;
+}
+
+/* ── Aleph-Tav Card ── */
+.at-text {
+  font-size: 0.55rem;
+  color: rgba(245,240,230,0.5);
+  line-height: 1.5;
+  margin-bottom: 0.25rem;
+}
+.at-ref {
+  font-size: 0.45rem;
+  color: rgba(212,175,55,0.5);
+  font-style: italic;
+}
+
+/* ── Feast Card ── */
+.fs-countdown {
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  color: #D4AF37;
+  font-family: var(--font-display);
+  display: block;
+  text-align: center;
+  margin-bottom: 0.15rem;
+}
+.fs-event {
+  font-size: 0.55rem;
+  color: rgba(245,240,230,0.55);
+  text-align: center;
+  display: block;
+}
+.fs-note {
+  font-size: 0.45rem;
+  color: rgba(245,240,230,0.5);
+  text-align: center;
+  margin-top: 0.25rem;
+  padding-top: 0.2rem;
+  border-top: 1px solid rgba(212,175,55,0.04);
+}
+
+/* ── Footer ── */
+#dash-footer {
+  text-align: center;
+  padding: 1.5rem 0 1rem;
+  border-top: 1px solid rgba(212,175,55,0.06);
+  margin-top: 2rem;
+}
+.footer-text {
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  color: rgba(245,240,230,0.5);
+  margin-bottom: 0.4rem;
+}
+.footer-maranatha {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-style: italic;
+  color: rgba(212,175,55,0.5);
+  letter-spacing: 0.2em;
+}
+.footer-nav {
+  font-family: var(--font-ui);
+  font-size: var(--fs-2xs);
+  color: rgba(245,240,230,0.5);
+  margin-top: 0.75rem;
+}
+.footer-nav a { color: inherit; text-decoration: none; transition: color 0.2s; }
+.footer-nav a:hover { color: #D4AF37; }
+
+@media (max-width: 900px) {
+  #dash-content { padding: 4rem 0.75rem 1.5rem; }
+  .zone-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .dg-item { min-width: 100px; }
+  .tl-track { margin: 1.4rem 0.2rem 1.6rem; }
+}
+@media (max-width: 480px) {
+  .zone-grid { grid-template-columns: 1fr; gap: 0.4rem; }
+  .data-card { padding: 0.5rem; }
+  .data-card.wide { overflow: visible; }
+  .cd-item { min-width: 70px; }
+  .dg-item { flex: 1 1 100%; min-width: 0; }
+  .dg-canvas { height: 44px; }
+  .tl-track { margin: 1.2rem 0rem 1.4rem; }
+  .tl-dot { width: 5px; height: 5px; }
+  .tl-dot.present { width: 10px; height: 10px; }
+  .tl-label .tl-name { font-size: 0.28rem; letter-spacing: 0.04em; }
+  .tl-label .tl-year { font-size: 0.24rem; }
+  .tl-label.above { bottom: 0.35rem; }
+  .tl-label.below { top: 0.35rem; }
+  .cd-converge { font-size: 0.35rem; }
+  .footer-nav { font-size: 0.4rem; }
+}

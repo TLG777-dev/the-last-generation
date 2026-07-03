@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Live 3D asteroid tracker for 99942 Apophis — real-time orbital data from NASA/JPL." />
+  <title>99942 Apophis — 3D Asteroid Tracker | The Last Generation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,300;1,500&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/nav.css" />
+  <link rel="stylesheet" href="/src/apophis.css" />
+</head>
+<body>
+  <div id="site-headerMount" data-page-title="99942 Apophis" data-badge="REAL-TIME"></div>
+  <script src="/src/nav-component.js" defer></script>
+  <canvas id="canvas"></canvas>
+
+  <!-- Header -->
+  <!-- Bible verse rotator -->
+  <div id="bible-verse">
+    <div class="bv-content" id="bv-content"></div>
+    <div class="bv-ref" id="bv-ref"></div>
+  </div>
+
+  <!-- 3D overlay labels -->
+  <div id="scene-overlay">
+    <div id="selection-info" class="selection-info"></div>
+  </div>
+
+  <!-- Bottom controls bar (separate from data panel) -->
+  <div id="controls-bar">
+    <div class="cb-col">
+      <span class="cb-col-label">Time</span>
+      <div class="cb-date" id="sim-date"></div>
+      <div class="cb-group">
+        <button class="cb-btn" id="btn-rev" title="Reverse">&#9664;&#9664;</button>
+        <button class="cb-btn" id="btn-play" title="Play/Pause">&#9654;</button>
+        <button class="cb-btn" id="btn-fwd" title="Forward">&#9654;&#9654;</button>
+        <button class="cb-btn" id="btn-reset" title="Reset to today">&#8634;</button>
+      </div>
+    </div>
+    <div class="cb-col">
+      <span class="cb-col-label">Speed</span>
+      <div class="cb-group speed">
+        <button class="sp-btn" data-speed="0">0&times;</button>
+        <button class="sp-btn active" data-speed="1">1&times;</button>
+        <button class="sp-btn" data-speed="2">2&times;</button>
+        <button class="sp-btn" data-speed="3">3&times;</button>
+        <button class="sp-btn" data-speed="4">4&times;</button>
+        <button class="sp-btn" data-speed="5">5&times;</button>
+        <button class="sp-btn" data-speed="6">6&times;</button>
+        <button class="sp-btn" data-speed="7">7&times;</button>
+        <button class="sp-btn" data-speed="8">8&times;</button>
+        <button class="sp-btn" data-speed="9">9&times;</button>
+        <button class="sp-btn" data-speed="10">10&times;</button>
+        <button class="sp-btn" data-speed="11">11&times;</button>
+        <button class="sp-btn" data-speed="12">12&times;</button>
+        <button class="sp-btn" data-speed="13">13&times;</button>
+        <button class="sp-btn" data-speed="14">14&times;</button>
+        <button class="sp-btn" data-speed="15">15&times;</button>
+        <button class="sp-btn" data-speed="16">16&times;</button>
+        <button class="sp-btn" data-speed="17">17&times;</button>
+        <button class="sp-btn" data-speed="18">18&times;</button>
+        <button class="sp-btn" data-speed="19">19&times;</button>
+        <button class="sp-btn" data-speed="20">20&times;</button>
+      </div>
+    </div>
+    <div class="cb-col">
+      <span class="cb-col-label">Jump To</span>
+      <div class="cb-group presets">
+        <button class="pr-btn" data-jd="now">Today</button>
+        <button class="pr-btn" data-jd="2460677.5">2025</button>
+        <button class="pr-btn active" data-jd="2461042.5">2026</button>
+        <button class="pr-btn" data-jd="2461407.5">2027</button>
+        <button class="pr-btn" data-jd="2461772.5">2028</button>
+        <button class="pr-btn" data-jd="2462138.5">2029</button>
+        <button class="pr-btn" data-jd="2462503.5">2030</button>
+        <button class="pr-btn" data-jd="2462868.5">2031</button>
+        <button class="pr-btn" data-jd="2463234.5">2032</button>
+        <button class="pr-btn" data-jd="2463599.5">2033</button>
+        <button class="pr-btn" data-jd="2463964.5">2034</button>
+        <button class="pr-btn" data-jd="2464329.5">2035</button>
+        <button class="pr-btn" data-jd="2464695.5">2036</button>
+        <button class="pr-btn" data-jd="2465060.5">2037</button>
+        <button class="pr-btn" data-jd="2465425.5">2038</button>
+      </div>
+    </div>
+    <div class="cb-col">
+      <span class="cb-col-label">Pan</span>
+      <div class="cb-group pan">
+        <span class="pn-label">H</span>
+        <input type="range" id="slider-azimuth" class="pn-slider" min="-30" max="30" step="0.1" value="0" title="Pan left/right" />
+        <span class="pn-label">V</span>
+        <input type="range" id="slider-elevation" class="pn-slider" min="-30" max="30" step="0.1" value="0" title="Pan up/down" />
+      </div>
+      <div class="cb-pan-hint">
+        <span class="hint-desktop">Left Drag: Rotate<br />Right Drag: Pan</span>
+        <span class="hint-mobile">1 Finger: Rotate<br />2 Fingers: Pan</span>
+      </div>
+    </div>
+    <div class="cb-col">
+      <span class="cb-col-label">Zoom</span>
+      <div class="cb-group zoom">
+        <button class="cb-btn" id="btn-zoom-in" title="Zoom In">+</button>
+        <button class="cb-btn" id="btn-zoom-out" title="Zoom Out">&minus;</button>
+        <span class="cb-info-trigger" title="About this visualization">
+          <span class="cb-info-icon">i</span>
+          <span class="cb-info-tip">
+            <strong>How This Visualization Works</strong><br><br>
+            <strong>99942 Apophis</strong><br>
+            Orbital elements fetched live from <a href="https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=99942" target="_blank" rel="noopener">NASA/JPL SBDB API</a> on every page load. Position computed using an elliptical Kepler solver (Newton–Raphson iteration of Kepler's equation). Elements are refined by JPL as new observations come in.<br><br>
+            <strong>3I/ATLAS (C/2025 N1)</strong><br>
+            Orbital elements fetched live from <a href="https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=C/2025%20N1&full-prec=1" target="_blank" rel="noopener">NASA/JPL SBDB API</a>. Uses a hyperbolic Kepler solver (Kepler's equation for e&nbsp;&gt;&nbsp;1, solved via sinh/cosh iteration) because the comet's eccentricity of 6.14 means it is unbound from the Sun. JPL also models non-gravitational acceleration from CO₂ outgassing (A₁&nbsp;=&nbsp;5.3×10⁻⁸, A₂&nbsp;=&nbsp;1.1×10⁻⁸, A₃&nbsp;=&nbsp;-6.9×10⁻⁹ au/d²) — actively monitored for anomalies.<br><br>
+            <strong>Planets &amp; Moon</strong><br>
+            The inner planets (Mercury, Venus, Earth, Mars) use elliptical Keplerian orbits based on JPL mean orbital elements for realistic positioning. The outer planets (Jupiter through Neptune) are compressed inward so all bodies remain visible in the scene as schematic positional references.<br><br>
+            <strong>Scene Scale</strong><br>
+            An internal scale factor (AU_SCALE&nbsp;=&nbsp;7) compresses astronomical distances for display. The solar system is not shown to scale — this is a schematic 3D visualization designed to show orbital geometry and relative motion.<br><br>
+            <strong>Update Cadence</strong><br>
+            Data is fetched on every page load. If the JPL API is unreachable, a local cached solution (solution #54, 782 observations, last updated Feb&nbsp;19,&nbsp;2026) is used as fallback. Hardcoded defaults provide a final fallback layer.
+          </span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Left accordion data panel -->
+  <div id="data-panel">
+    <div class="dp-item" id="dp-item-apophis">
+      <div class="dp-head" data-target="dp-body-apophis">
+        <span class="dp-name dp-name-apophis">99942 Apophis</span>
+        <span class="dp-arrow">&#9654;</span>
+      </div>
+      <div class="dp-body" id="dp-body-apophis">
+        <div class="dp-inner">
+          <div class="dp-meta">
+            <span class="dp-badge" id="td-class">Aten</span>
+            <span class="dp-badge pc" id="td-pha">Potentially Hazardous</span>
+          </div>
+          <div class="dp-grid">
+            <div class="dp-col">
+              <div class="dp-col-title">Physical</div>
+              <div class="dp-row"><span class="dp-lbl">Mean Diameter</span><span class="dp-val" id="td-diameter">—</span></div>
+              <div class="dp-row"><span class="dp-lbl">Abs. Magnitude (H)</span><span class="dp-val" id="td-h">—</span></div>
+              <div class="dp-row"><span class="dp-lbl">Geometric Albedo</span><span class="dp-val" id="td-albedo">—</span></div>
+              <div class="dp-row"><span class="dp-lbl">Rotation Period</span><span class="dp-val" id="td-rotation">—</span></div>
+            </div>
+            <div class="dp-col">
+              <div class="dp-col-title">Orbital</div>
+              <div class="dp-row"><span class="dp-lbl">Semi-major Axis (a)</span><span class="dp-val" id="td-a">—</span></div>
+              <div class="dp-row"><span class="dp-lbl">Eccentricity (e)</span><span class="dp-val" id="td-e">—</span></div>
+              <div class="dp-row"><span class="dp-lbl">Inclination (i)</span><span class="dp-val" id="td-i">—</span></div>
+              <div class="dp-row"><span class="dp-lbl">Orbital Period</span><span class="dp-val" id="td-period">—</span></div>
+            </div>
+            <div class="dp-col">
+              <div class="dp-col-title">Orbit Details</div>
+              <div class="dp-row"><span class="dp-lbl">Perihelion (q)</span><span class="dp-val" id="td-q">—</span></div>
+              <div class="dp-row"><span class="dp-lbl">Aphelion (Q)</span><span class="dp-val" id="td-q2">—</span></div>
+              <div class="dp-row"><span class="dp-lbl">Asc. Node (&Omega;)</span><span class="dp-val" id="td-om">—</span></div>
+              <div class="dp-row"><span class="dp-lbl">Arg. Peri. (&omega;)</span><span class="dp-val" id="td-w">—</span></div>
+            </div>
+          </div>
+          <div class="dp-foot">
+            <span class="df-title">CLOSE APPROACH</span>
+            <span class="df-val" id="td-approach">—</span>
+            <span class="df-sep">|</span>
+            <span class="df-title">MISS DISTANCE</span>
+            <span class="df-val" id="td-distance">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dp-item" id="dp-item-comet">
+      <div class="dp-head" data-target="dp-body-comet">
+        <span class="dp-name dp-name-comet">3I/ATLAS</span>
+        <span class="dp-arrow">&#9654;</span>
+      </div>
+      <div class="dp-body" id="dp-body-comet">
+        <div class="dp-inner">
+          <div class="dp-meta">
+            <span class="dp-badge comet-badge">Interstellar</span>
+            <span class="dp-badge comet-badge">Hyperbolic</span>
+          </div>
+          <div class="dp-grid">
+            <div class="dp-col">
+              <div class="dp-col-title comet-title">Discovery</div>
+              <div class="dp-row"><span class="dp-lbl">Designation</span><span class="dp-val">C/2025 N1</span></div>
+              <div class="dp-row"><span class="dp-lbl">Type</span><span class="dp-val">Interstellar Comet</span></div>
+              <div class="dp-row"><span class="dp-lbl">Source</span><span class="dp-val">Outside Solar System</span></div>
+            </div>
+            <div class="dp-col">
+              <div class="dp-col-title comet-title">Orbital</div>
+              <div class="dp-row"><span class="dp-lbl">Eccentricity (e)</span><span class="dp-val" id="td-comet-e">—</span></div>
+              <div class="dp-row"><span class="dp-lbl">Inclination (i)</span><span class="dp-val" id="td-comet-i">—</span></div>
+              <div class="dp-row"><span class="dp-lbl">Perihelion (q)</span><span class="dp-val" id="td-comet-q">—</span></div>
+            </div>
+            <div class="dp-col">
+              <div class="dp-col-title comet-title">Status</div>
+              <div class="dp-row"><span class="dp-lbl">Current Dist</span><span class="dp-val" id="td-comet-dist">—</span></div>
+              <div class="dp-row"><span class="dp-lbl">Trajectory</span><span class="dp-val">Exiting System</span></div>
+              <div class="dp-row"><span class="dp-lbl">Orbit Type</span><span class="dp-val">Hyperbolic</span></div>
+            </div>
+          </div>
+          <div class="dp-foot comet-foot">
+            <span class="df-title">STATUS</span>
+            <span class="df-val">Interstellar object — hyperbolic escape trajectory</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selection info panels -->
+  <div id="sel-panel-left" class="sel-panel"></div>
+  <div id="sel-panel-right" class="sel-panel"></div>
+
+  <!-- Mobile unified drawer -->
+  <div id="sel-drawer" class="sel-drawer">
+    <div class="sel-drawer-inner" id="sel-drawer-inner"></div>
+  </div>
+
+  <!-- Loading overlay -->
+  <div id="apophis-loading" class="loading-overlay">
+    <div class="loading-content">
+      <div class="loading-title">99942 Apophis</div>
+      <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+      <div class="loading-subtitle">Fetching live orbital data from NASA/JPL...</div>
+    </div>
+  </div>
+
+  <!-- JPL data notice -->
+  <div class="data-notice">This 3D visualization uses live orbital data provided by NASA/JPL. Accuracy depends on the data they supply.</div>
+
+  <script type="module" src="/src/apophis.js"></script>
+</body>
+</html>

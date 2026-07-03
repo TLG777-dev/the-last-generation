@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Multi-teacher convergence timeline — examine when 11 independent prophetic teachers agree on the same seasons for the rapture and Christ's return." />
+  <title>Convergence Timeline | The Last Generation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,300;1,500&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/nav.css" />
+  <link rel="stylesheet" href="/src/convergence.css" />
+  <script type="speculationrules">
+    {"prerender":[{"where":{"href_matches":"/*"}}]}
+  </script>
+</head>
+<body>
+  <div id="site-headerMount" data-page-title="Convergence Timeline"></div>
+  <script src="/src/nav-component.js" defer></script>
+
+  <!-- ═══ HERO ═══ -->
+  <section id="cv-hero">
+    <div class="cv-hero-bg"></div>
+    <div class="cv-hero-overlay"></div>
+    <div class="cv-hero-content">
+      <div class="cv-hero-badge">2 Corinthians 13:1</div>
+      <h1 class="cv-hero-title">The Convergence</h1>
+      <p class="cv-hero-sub">When the witnesses agree</p>
+      <p class="cv-hero-text">
+        "In the mouth of two or three witnesses shall every word be established."
+        <span class="cv-hero-ref">&mdash; 2 Corinthians 13:1 (KJV)</span>
+      </p>
+      <p class="cv-hero-text2">
+        What happens when eleven independent teachers &mdash; working from different
+        methodologies: calendars, mathematics, astronomy, prophetic visions &mdash;
+        independently arrive at the same conclusion? This page lays their timelines
+        side by side so you can examine the convergence for yourself.
+      </p>
+      <div class="cv-hero-scroll">
+        <span>Explore the Timeline</span>
+        <div class="cv-arrow-down"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ INTRO ═══ -->
+  <section class="cv-intro">
+    <div class="cv-intro-inner">
+      <div class="cv-intro-grid">
+        <div class="cv-intro-card">
+          <div class="cv-intro-icon">&#x1F4D6;</div>
+          <h3>9 Teachers</h3>
+          <p>From different backgrounds, time periods, and methodologies.</p>
+        </div>
+        <div class="cv-intro-card">
+          <div class="cv-intro-icon">&#x1F4CA;</div>
+          <h3>One Scale</h3>
+          <p>All timelines plotted on the same 2010&ndash;2040 ruler for direct comparison.</p>
+        </div>
+        <div class="cv-intro-card">
+          <div class="cv-intro-icon">&#x2B50;</div>
+          <h3>Two Columns</h3>
+          <p>Gold columns highlight where the witnesses converge: Rapture and Return.</p>
+        </div>
+      </div>
+      <div class="cv-disclaimer">
+        <strong>&#x271E; Matthew 24:36 (KJV):</strong>
+        "But of that day and hour knoweth no man, no, not the angels of heaven, but my Father only."
+        This page shows <em>seasons</em>, not dates. No man knows the day or hour &mdash; but we are
+        commanded to know the season (1 Thessalonians 5:1&ndash;2 KJV).
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TIMELINE ═══ -->
+  <section class="cv-timeline-section">
+    <div class="cv-tl-wrapper">
+      <div class="cv-tl-sidebar">
+        <div class="cv-tl-sidebar-header">
+          <span>Teacher</span>
+          <span class="cv-tl-method">Method</span>
+        </div>
+        <div class="cv-tl-sidebar-rows" id="cvSidebarRows"></div>
+      </div>
+      <div class="cv-tl-scroll" id="cvTlScroll">
+        <div class="cv-tl-track" id="cvTlTrack">
+          <!-- Year header row -->
+          <div class="cv-tl-year-row" id="cvYearRow"></div>
+
+          <!-- Teacher lanes rendered by JS -->
+          <div class="cv-tl-lanes" id="cvTlLanes"></div>
+
+          <!-- Consensus lane — built by buildConsensusRow() in JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ METHODOLOGY ═══ -->
+  <section class="cv-methodology">
+    <div class="cv-methodology-inner">
+      <h2>How This Was Built</h2>
+      <div class="cv-method-grid">
+        <div class="cv-method-card">
+          <h3>Inclusion Criteria</h3>
+          <p>Teachers were selected if their prophetic framework produces <strong>specific, dateable markers</strong> &mdash; either from mathematical calculation, astronomical cycles, calendar patterns, or verified prophetic track records.</p>
+        </div>
+        <div class="cv-method-card">
+          <h3>Methodology Types</h3>
+          <p><strong>Calendar (Biltz, Cahn, Nettles):</strong> Shemitah, Jubilee, and Daniel 70-week cycles. <strong>Astronomy (Nettles, Biltz):</strong> Blood moon tetrads, eclipse patterns. <strong>Prophetic (Clement, Biggs):</strong> Recorded visions with verified fulfillments. <strong>Scriptural (Prince):</strong> Fig tree generation framework from Matthew 24.</p>
+        </div>
+        <div class="cv-method-card">
+          <h3>What This Is Not</h3>
+          <p>This is <strong>not</strong> date-setting. It is a documentation of where multiple independent witnesses converge on the same general seasons, presented for your examination. The day and hour remain unknown (Matthew 24:36).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TEACHER GRID ═══ -->
+  <section class="cv-teachers">
+    <div class="cv-teachers-inner">
+      <h2>The Witnesses</h2>
+      <div class="cv-teachers-grid" id="cvTeachersGrid"></div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <section class="cv-footer">
+    <div class="cv-footer-inner">
+      <p class="cv-footer-text">The data is here. The discernment is yours.</p>
+      <p class="cv-footer-verse">"He which testifieth these things saith, Surely I come quickly. Amen. Even so, come, Lord Jesus."</p>
+      <p class="cv-footer-ref">&mdash; Revelation 22:20 (KJV)</p>
+      <p class="cv-footer-nav" style="margin-top:1.5rem;font-family:var(--font-ui);font-size:var(--fs-2xs);color:var(--cv-text-muted);"><a href="/" style="color:inherit;text-decoration:none;">The Last Generation</a> &middot; <a href="/timeline.html" style="color:inherit;text-decoration:none;">Prophetic Timeline</a> &middot; <a href="/calendar.html" style="color:inherit;text-decoration:none;">Prophecy Calendar</a> &middot; <a href="/rapture.html" style="color:inherit;text-decoration:none;">The Rapture</a> &middot; <a href="/dashboard.html" style="color:inherit;text-decoration:none;">Data Hub</a></p>
+    </div>
+  </section>
+
+  <script src="/src/convergence.js"></script>
+</body>
+</html>

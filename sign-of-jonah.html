@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Sign of Jonah — Revelation 12 | The Last Generation</title>
+  <meta name="description" content="Interactive celestial simulation of the Revelation 12 sign on September 23, 2017 — the Sign of Jonah, viewed from Earth.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/nav.css">
+  <link rel="stylesheet" href="/src/sign-of-jonah.css">
+</head>
+<body>
+  <div id="site-headerMount" data-page-title="Sign of Jonah"></div>
+  <script src="/src/nav-component.js" defer></script>
+
+  <!-- Bible Verse -->
+  <div id="bible-verse">
+    <div class="bv-content">And there appeared a great wonder in heaven; a woman clothed with the sun, and the moon under her feet, and upon her head a crown of twelve stars: And she being with child cried, travailing in birth, and pained to be delivered.</div>
+    <div class="bv-ref">Revelation 12:1–2</div>
+  </div>
+
+  <!-- Header -->
+  <!-- Canvas -->
+  <div id="canvasWrap"></div>
+
+  <!-- Info Overlay -->
+  <div class="info-overlay" id="infoOverlay">
+    <span class="date-main" id="dateDisplay">Oct 1, 2016</span>
+    <span class="jd-display" id="jdDisplay">JD 2457664.5</span>
+    <span class="info-sep"></span>
+    <span>Jerusalem</span>
+    <span class="info-sep"></span>
+    <span id="dirDisplay">Looking 185° SSW</span>
+  </div>
+
+  <!-- Compass Strip -->
+  <div class="compass-strip" id="compassStrip">
+    <div class="compass-tick"></div>
+    <div class="compass-band" id="compassBand">
+      <span class="compass-dir" data-dir="N">N</span>
+      <span class="compass-dir" data-dir="NE">NE</span>
+      <span class="compass-dir" data-dir="E">E</span>
+      <span class="compass-dir" data-dir="SE">SE</span>
+      <span class="compass-dir" data-dir="S">S</span>
+      <span class="compass-dir" data-dir="SW">SW</span>
+      <span class="compass-dir" data-dir="W">W</span>
+      <span class="compass-dir" data-dir="NW">NW</span>
+      <span class="compass-dir" data-dir="N">N</span>
+      <span class="compass-dir" data-dir="NE">NE</span>
+      <span class="compass-dir" data-dir="E">E</span>
+      <span class="compass-dir" data-dir="SE">SE</span>
+      <span class="compass-dir" data-dir="S">S</span>
+    </div>
+  </div>
+
+  <!-- Bottom Control Bar -->
+  <div class="bottom-bar">
+    <!-- Time Controls -->
+    <div class="time-controls" id="timeControls">
+      <button class="time-btn time-btn-dir" id="btnReverse" aria-label="Play reverse">◀</button>
+      <button class="time-btn time-btn-play" id="btnPause" aria-label="Play">▶</button>
+      <span class="play-dir" id="playDir"></span>
+      <button class="time-btn time-btn-dir" id="btnForward" aria-label="Play forward">▶</button>
+      <span class="time-sep"></span>
+      <button class="time-btn time-btn-mult" id="btnMult0_5">½</button>
+      <button class="time-btn time-btn-mult" id="btnMult1">×1</button>
+      <button class="time-btn time-btn-mult" id="btnMult2">×2</button>
+      <button class="time-btn time-btn-mult" id="btnMult3">×3</button>
+      <button class="time-btn time-btn-mult" id="btnMult5">×5</button>
+      <button class="time-btn time-btn-mult" id="btnMult10">×10</button>
+      <button class="time-btn time-btn-mult" id="btnMult25">×25</button>
+      <button class="time-btn time-btn-mult" id="btnMult50">×50</button>
+    </div>
+
+    <!-- Pan Controls -->
+    <div class="pan-controls" id="panControls">
+      <button class="pan-btn" id="btnPanLeft" aria-label="Look left">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button class="pan-btn" id="btnPanUp" aria-label="Look up">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M8 11V5M8 5L5 8M8 5L11 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="pan-label" id="panLabel">250&deg;</div>
+      <button class="pan-btn" id="btnPanDown" aria-label="Look down">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M8 5V11M8 11L5 8M8 11L11 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="pan-btn" id="btnPanRight" aria-label="Look right">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="pan-sep"></div>
+      <button class="pan-btn pan-btn-recenter" id="btnRecenter" aria-label="Center on constellations" data-tip="Center View">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2"/>
+          <circle cx="7" cy="7" r="1.5" fill="currentColor"/>
+          <line x1="7" y1="0" x2="7" y2="4.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+          <line x1="7" y1="9.5" x2="7" y2="14" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+          <line x1="0" y1="7" x2="4.5" y2="7" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+          <line x1="9.5" y1="7" x2="14" y2="7" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button class="pan-btn pan-btn-recenter" id="btnSept23" aria-label="Center on Sep 23, 2017 alignment" data-tip="Sep 23, 2017">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2"/>
+          <text x="7" y="9.5" text-anchor="middle" font-size="7" fill="currentColor" font-family="Inter,sans-serif" font-weight="600">23</text>
+        </svg>
+      </button>
+      <div class="pan-sep"></div>
+      <button class="pan-btn pan-btn-toggle active" id="btnToggleHorizon" aria-label="Toggle horizon line" data-tip="Horizon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M1 9.5C3 7 5 6 7 6C9 6 11 7 13 9.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          <circle cx="7" cy="4" r="2" stroke="currentColor" stroke-width="1"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script type="module" src="/src/sign-of-jonah.js"></script>
+</body>
+</html>

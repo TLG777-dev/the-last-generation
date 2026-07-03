@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Interactive map of the Aleph-Tav: three solar eclipses (2017, 2023, 2024) whose paths form the first and last Hebrew letters over the United States." />
+  <title>Aleph-Tav — The Signature in the Sky | The Last Generation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,300;1,500&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="/src/nav.css" />
+  <style>
+    @import url('/src/typography.css');
+
+    @view-transition { navigation: auto; }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --color-bg: #08060A;
+      --color-surface: rgba(16,10,28,0.95);
+      --color-text: #F5F0E6;
+      --color-gold: #D4AF37;
+      --color-red: #C0392B;
+      --color-amber: #E05A3A;
+      --color-golden: #E8A830;
+      --color-muted: rgba(245,240,230,0.45);
+    }
+    :root {
+      --fs-display: clamp(1.4rem, 0.923vw + 1.192rem, 2rem);
+      --fs-heading: clamp(1rem, 0.462vw + 0.896rem, 1.3rem);
+      --fs-title:   clamp(0.88rem, 0.192vw + 0.832rem, 1rem);
+      --fs-base:    clamp(0.88rem, 0.185vw + 0.838rem, 1rem);
+      --fs-sm:      clamp(0.75rem, 0.192vw + 0.707rem, 0.88rem);
+      --fs-xs:      clamp(0.65rem, 0.154vw + 0.615rem, 0.75rem);
+      --fs-2xs:     clamp(0.5rem, 0.154vw + 0.465rem, 0.55rem);
+      --fs-3xs:     clamp(0.45rem, 0.154vw + 0.415rem, 0.5rem);
+      --fs-4xs:     clamp(0.38rem, 0.115vw + 0.349rem, 0.45rem);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-ui);
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+    a { color: var(--color-gold); text-decoration: none; }
+
+    /* ── Typography ── */
+    h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 500; letter-spacing: 0.04em; }
+    h1 { font-size: clamp(1.6rem, 4.5vw, 2.6rem); font-weight: 300; letter-spacing: 0.15em; text-transform: uppercase; }
+    h2 { font-size: clamp(1.1rem, 2.5vw, 1.6rem); letter-spacing: 0.15em; text-transform: uppercase; }
+    h3 { font-size: clamp(0.85rem, 1.6vw, 1.1rem); letter-spacing: 0.12em; text-transform: uppercase; }
+    p, .body-text { font-family: var(--font-body); font-weight: 300; font-size: clamp(0.8rem, 1.4vw, 0.95rem); line-height: 1.7; color: rgba(245,240,230,0.7); }
+    .label { font-family: var(--font-ui); font-size: var(--fs-2xs); letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-muted); }
+
+    /* ── Header ── */
+    #site-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.5rem 0.75rem; height: 2.6rem;
+      background: rgba(5,5,16,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(212,175,55,0.06);
+    }
+    .header-left { display: flex; align-items: center; gap: 0.65rem; }
+    .back-link { font-family: var(--font-ui); font-weight: 300; font-size: var(--fs-sm); color: rgba(245,240,230,0.4); text-decoration: none; letter-spacing: 0.04em; transition: color 0.2s; }
+    .back-link:hover { color: rgba(212,175,55,0.7); }
+    .header-title { font-family: var(--font-display); font-weight: 500; font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(224, 176, 48, 0.9); }
+    .header-right { display: flex; align-items: center; gap: 0.5rem; min-width: 0; overflow: hidden; }
+    .data-source { font-family: var(--font-ui); font-weight: 200; font-size: 0.6rem; color: rgba(245,240,230,0.3); letter-spacing: 0.04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* ── Hero ── */
+    #hero {
+      position: relative; z-index: 1;
+      min-height: 70vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 5rem 1.5rem 3rem;
+      background: url('/images/aleph-tav/hero-signature.jpeg') center 40% / cover no-repeat;
+    }
+    #hero::after {
+      content: '';
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 40%, rgba(8,6,10,0.5) 0%, rgba(8,6,10,0.25) 50%, transparent 100%),
+        linear-gradient(to bottom, rgba(8,6,10,0.15) 0%, rgba(8,6,10,0.4) 50%, rgba(8,6,10,0.75) 100%);
+      pointer-events: none;
+    }
+    #hero canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+    .hero-content { position: relative; z-index: 1; max-width: 700px; }
+    .hero-subtitle {
+      font-family: var(--font-ui); font-size: var(--fs-2xs); letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(212,175,55,0.5); margin-bottom: 1.5rem;
+    }
+    .hero-title {
+      font-family: var(--font-display); font-weight: 300;
+      font-size: clamp(2rem, 5vw, 3.5rem); letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--color-text); line-height: 1.2; margin-bottom: 1.2rem;
+    }
+    .hero-title em { font-style: normal; color: var(--color-gold); }
+    .hero-verse {
+      font-family: var(--font-body); font-style: italic; font-weight: 300;
+      font-size: clamp(0.8rem, 1.6vw, 1rem); color: rgba(245,240,230,0.6);
+      line-height: 1.6; margin-bottom: 2rem;
+    }
+    .hero-verse .ref { font-family: var(--font-ui); font-size: var(--fs-2xs); font-style: normal; letter-spacing: 0.1em; color: rgba(212,175,55,0.4); display: block; margin-top: 0.3rem; }
+    .scroll-hint {
+      position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 2;
+      font-size: var(--fs-2xs); letter-spacing: 0.15em; text-transform: uppercase; color: rgba(245,240,230,0.4);
+      animation: bounce 2s ease-in-out infinite;
+    }
+    @keyframes bounce { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(6px); } }
+
+    /* ── Intro Section ── */
+    #intro {
+      position: relative; z-index: 1;
+      padding: 3rem 1.5rem; max-width: 800px; margin: 0 auto;
+    }
+    #intro p { margin-bottom: 1rem; }
+    .aleph-tav-visual {
+      display: flex; align-items: center; justify-content: center; gap: 1.5rem;
+      margin: 2rem 0; padding: 2rem; background: rgba(212,175,55,0.03); border: 1px solid rgba(212,175,55,0.06); border-radius: 8px;
+    }
+    .aleph-tav-visual .letter { font-size: 4rem; font-family: serif; line-height: 1; opacity: 0.4; }
+    .aleph-tav-visual .letter.active { opacity: 0.9; color: var(--color-gold); }
+    .aleph-tav-visual .equals { color: rgba(245,240,230,0.15); font-size: 1.2rem; }
+
+    /* ── Map Section ── */
+    #map-section {
+      position: relative; z-index: 1;
+      max-width: 800px; margin: 0 auto; padding: 0 1.5rem 2rem;
+    }
+    #map-section h2 { text-align: center; margin-bottom: 1rem; }
+    #map-container {
+      width: 100%; height: 52vh; border-radius: 8px; overflow: hidden;
+      border: 1px solid rgba(212,175,55,0.06); position: relative;
+    }
+    #map { width: 100%; height: 100%; }
+    .leaflet-container { background: #dce3e8 !important; }
+
+    /* ── Map Legend ── */
+    #map-legend {
+      display: flex; justify-content: center; margin: 1rem auto 0;
+      width: 100%;
+      background: var(--color-surface); backdrop-filter: blur(8px);
+      border: 1px solid rgba(212,175,55,0.06); border-radius: 6px;
+      padding: 0.5rem 0.65rem;
+      pointer-events: none;
+    }
+    .legend-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.65rem; width: 100%; }
+    .legend-col { display: flex; flex-direction: column; gap: 0.08rem; }
+    .legend-section-title { font-family: var(--font-ui); font-size: var(--fs-2xs); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-gold); margin-bottom: 0.1rem; }
+    .legend-item { display: flex; align-items: center; gap: 0.25rem; font-size: var(--fs-2xs); letter-spacing: 0.02em; color: rgba(245,240,230,0.65); line-height: 1.6; white-space: nowrap; }
+    .legend-dot { width: 10px; height: 2px; border-radius: 1px; flex-shrink: 0; }
+    .legend-dot.year-2017 { background: #5B8DB8; }
+    .legend-dot.year-2023 { background: #C9A84C; }
+    .legend-dot.year-2024 { background: #A8433A; }
+    .legend-dot.nmsz { background: transparent; width: 10px; height: 6px; border: 1.5px dashed #C0392B; border-radius: 1px; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.55); }
+
+    .empty-cross-marker { width: 16px; height: 20px; position: relative; background: transparent; cursor: pointer; }
+    .empty-cross-marker::before { content: ''; position: absolute; background: var(--color-gold); top: 0; left: 50%; transform: translateX(-50%); width: 3px; height: 20px; box-shadow: 0 0 0 1px rgba(0,0,0,0.55); }
+    .empty-cross-marker::after { content: ''; position: absolute; background: var(--color-gold); top: 5px; left: 50%; transform: translateX(-50%); width: 14px; height: 3px; box-shadow: 0 0 0 1px rgba(0,0,0,0.55); }
+
+    .x-marker { width: 12px; height: 12px; position: relative; background: transparent; cursor: pointer; z-index: 1000; }
+    .x-marker::before, .x-marker::after { content: ''; position: absolute; background: #FFF; top: 50%; left: 50%; width: 2.5px; height: 12px; box-shadow: 0 0 0 1px rgba(0,0,0,0.6); }
+    .x-marker::before { transform: translate(-50%,-50%) rotate(45deg); }
+    .x-marker::after { transform: translate(-50%,-50%) rotate(-45deg); }
+
+    .nmsz-label { font-family: var(--font-ui); font-size: var(--fs-xs); letter-spacing: 0.08em; color: rgba(192,57,43,0.85); text-align: center; line-height: 1.3; font-weight: 500; text-shadow: 0 0 6px rgba(0,0,0,0.9), 0 0 3px rgba(0,0,0,0.8); }
+
+    .node-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 3px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.55); }
+    .node-cross { background: #F4D03F; width: 10px; height: 10px; position: relative; border-radius: 0; box-shadow: none; display: inline-block; }
+    .node-cross::before, .node-cross::after { content: ''; position: absolute; background: #F4D03F; top: 50%; left: 50%; }
+    .node-cross::before { width: 2px; height: 10px; transform: translate(-50%,-50%); }
+    .node-cross::after { width: 10px; height: 2px; transform: translate(-50%,-50%); }
+    .node-count { font-size: var(--fs-2xs); color: rgba(245,240,230,0.3); margin-left: 0.1rem; }
+    .empty-cross-legend { background: transparent !important; width: 8px !important; height: 12px !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; position: relative; flex-shrink: 0; }
+    .empty-cross-legend::before { content: ''; position: absolute; background: var(--color-gold); top: 0; left: 50%; transform: translateX(-50%); width: 2px; height: 12px; box-shadow: 0 0 0 0.8px rgba(0,0,0,0.55); }
+    .empty-cross-legend::after { content: ''; position: absolute; background: var(--color-gold); top: 3px; left: 50%; transform: translateX(-50%); width: 8px; height: 2px; box-shadow: 0 0 0 0.8px rgba(0,0,0,0.55); }
+    .x-legend { background: transparent !important; width: 12px !important; height: 12px !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; position: relative; flex-shrink: 0; }
+    .x-legend::before, .x-legend::after { content: ''; position: absolute; background: #FFF; top: 50%; left: 50%; width: 2.5px; height: 12px; box-shadow: 0 0 0 1px rgba(0,0,0,0.55); }
+    .x-legend::before { transform: translate(-50%,-50%) rotate(45deg); }
+    .x-legend::after { transform: translate(-50%,-50%) rotate(-45deg); }
+
+    /* ── Custom Leaflet Popup ── */
+    .location-popup { font-family: var(--font-ui); }
+    .location-popup h4 { font-family: var(--font-display); font-size: 0.75rem; font-weight: 600; color: rgba(30,25,20,0.9); margin-bottom: 0.15rem; }
+    .location-popup p { font-size: 0.55rem; color: rgba(30,25,20,0.6); line-height: 1.4; }
+    .leaflet-popup-content-wrapper { background: rgba(255,255,255,0.98) !important; backdrop-filter: blur(12px) !important; border: 1px solid rgba(0,0,0,0.08) !important; border-radius: 6px !important; box-shadow: 0 8px 32px rgba(0,0,0,0.12) !important; }
+    .leaflet-popup-tip { background: rgba(255,255,255,0.98) !important; border: 1px solid rgba(0,0,0,0.08) !important; }
+    .leaflet-popup-content { margin: 0.5rem 0.6rem !important; }
+    .leaflet-marker-icon { border: none; background: none; }
+
+    /* ── Constant Glow Markers ── */
+    .city-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      position: relative; cursor: pointer; pointer-events: auto;
+      border: 1px solid rgba(0,0,0,0.55);
+      box-shadow: 0 0 8px 3px var(--glow-color, rgba(255,255,255,0.5));
+    }
+    .city-dot.type-salem { background: #F5D76E; --glow-color: rgba(245,215,110,0.45); }
+    .city-dot.type-nineveh { background: #E74C3C; --glow-color: rgba(231,76,60,0.45); }
+    .city-dot.type-bethlehem { background: #8E44AD; --glow-color: rgba(142,68,173,0.45); }
+    .city-dot.type-cross { background: #F4D03F; --glow-color: rgba(244,208,63,0.55); width: 12px; height: 12px; border-color: transparent; box-shadow: 0 0 12px 4px rgba(244,208,63,0.5); }
+    .city-dot.type-entry { background: #5DADE2; --glow-color: rgba(93,173,226,0.4); }
+    .city-dot.type-exit { background: #85C1E9; --glow-color: rgba(133,193,233,0.35); }
+    .city-dot.type-fault { background: #C0392B; --glow-color: rgba(192,57,43,0.35); width: 10px; height: 10px; }
+    .city-dot.type-notable { background: #ABB2B9; --glow-color: rgba(171,178,185,0.4); }
+    .city-dot.type-intersection { background: #D4A017; --glow-color: rgba(212,160,23,0.45); width: 12px; height: 12px; }
+    .city-dot.type-egypt { background: #1ABC9C; --glow-color: rgba(26,188,156,0.45); }
+    .city-dot.type-four-corners { background: #E67E22; --glow-color: rgba(230,126,34,0.45); }
+    .city-dot.type-navajo { background: #2ECC71; --glow-color: rgba(46,204,113,0.45); }
+    .city-dot.type-los-alamos { background: #3498DB; --glow-color: rgba(52,152,219,0.45); }
+    .city-dot.type-roswell { background: #E91E63; --glow-color: rgba(233,30,99,0.45); }
+    .city-dot.type-uvalde { background: #D35400; --glow-color: rgba(211,84,0,0.45); }
+    .city-dot.type-corpus-christi { background: #2980B9; --glow-color: rgba(41,128,185,0.45); }
+    .city-dot.type-biblical { background: #58D68D; --glow-color: rgba(88,214,141,0.45); }
+
+    /* ── Unique shapes for 2023 path nodes ── */
+    .shape-node { width: 10px; height: 10px; position: relative; cursor: pointer; }
+    .shape-node::before { content: ''; position: absolute; inset: -1px; z-index: -1; background: rgba(0,0,0,0.55); }
+    .shape-four-corners { background: #E67E22; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+    .shape-four-corners::before { clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+    .shape-navajo { background: #2ECC71; clip-path: polygon(50% 100%, 0% 0%, 100% 0%); }
+    .shape-navajo::before { clip-path: polygon(50% 100%, 0% 0%, 100% 0%); }
+    .shape-los-alamos { background: #3498DB; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+    .shape-los-alamos::before { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+    .shape-roswell { background: #E91E63; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+    .shape-roswell::before { clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+    .shape-uvalde { background: #D35400; }
+    .shape-corpus-christi { background: #2980B9; clip-path: circle(50%); }
+    .shape-corpus-christi::before { clip-path: circle(50%); }
+    /* Legend versions at 7px */
+    .legend-shape { width: 7px; height: 7px; position: relative; flex-shrink: 0; }
+    .legend-shape::before { content: ''; position: absolute; inset: -0.7px; z-index: -1; background: rgba(0,0,0,0.55); }
+    .legend-shape.legend-four-corners { background: #E67E22; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+    .legend-shape.legend-four-corners::before { clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+    .legend-shape.legend-navajo { background: #2ECC71; clip-path: polygon(50% 100%, 0% 0%, 100% 0%); }
+    .legend-shape.legend-navajo::before { clip-path: polygon(50% 100%, 0% 0%, 100% 0%); }
+    .legend-shape.legend-los-alamos { background: #3498DB; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+    .legend-shape.legend-los-alamos::before { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+    .legend-shape.legend-roswell { background: #E91E63; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+    .legend-shape.legend-roswell::before { clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+    .legend-shape.legend-uvalde { background: #D35400; }
+    .legend-shape.legend-corpus-christi { background: #2980B9; clip-path: circle(50%); }
+    .legend-shape.legend-corpus-christi::before { clip-path: circle(50%); }
+
+    .cross-marker {
+      width: 14px; height: 14px; position: relative; cursor: pointer;
+      background: var(--color-gold); border-radius: 2px;
+      box-shadow: 0 0 4px 1px rgba(244,208,63,0.3);
+    }
+    .cross-marker::before, .cross-marker::after {
+      content: ''; position: absolute; background: var(--color-gold);
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+    }
+    .cross-marker::before { width: 2px; height: 14px; border-radius: 0; }
+    .cross-marker::after { width: 14px; height: 2px; border-radius: 0; }
+
+    /* ── Leader Lines ── */
+    .group-label {
+      font-family: var(--font-ui); font-size: 0.55rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.6;
+      color: #3D352E; padding: 0.1rem 0.45rem; white-space: nowrap;
+      pointer-events: none; border-radius: 3px;
+      border: 1px solid rgba(55,50,45,0.6);
+      display: inline-block;
+      text-shadow: 0 0 4px rgba(255,255,255,0.7), 0 0 8px rgba(255,255,255,0.4);
+    }
+
+    .group-sublist { display: block; margin-top: 0.15rem; }
+    .group-sublist-item { display: block; font-size: 0.45rem; line-height: 1.5; color: #1ABC9C; text-align: left; font-weight: 400; letter-spacing: 0; text-transform: none; white-space: nowrap; padding-left: 0.4rem; text-shadow: 0 0 3px rgba(255,255,255,0.6); }
+    .group-sublist-item::before { content: '•'; margin-right: 0.25rem; color: #1ABC9C; }
+
+    .leader-label {
+      font-family: var(--font-ui); font-size: 0.45rem; letter-spacing: 0.04em;
+      color: rgba(30,25,20,0.55); white-space: nowrap; text-shadow: 0 0 4px rgba(255,255,255,0.6);
+      pointer-events: none;
+      background: rgba(255,255,255,0.7); padding: 0.08rem 0.25rem; border-radius: 2px;
+    }
+    .leader-label.highlight { color: rgba(212,175,55,0.7); }
+
+    /* ── Scroll Narrative Sections ── */
+    .narrative {
+      position: relative; z-index: 1;
+      padding: 4rem 1.5rem; max-width: 800px; margin: 0 auto;
+    }
+    .narrative h2 { margin-bottom: 1rem; }
+    .narrative h2 .sub { display: block; font-family: var(--font-ui); font-size: var(--fs-xs); font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-muted); margin-top: 0.3rem; }
+    .narrative p { margin-bottom: 0.8rem; }
+    .narrative .stat-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.75rem;
+      margin: 1.5rem 0;
+    }
+    .stat-card {
+      background: rgba(212,175,55,0.03); border: 1px solid rgba(212,175,55,0.06); border-radius: 6px;
+      padding: 1rem; text-align: center;
+    }
+    .stat-card .num { font-family: var(--font-display); font-size: 1.6rem; font-weight: 500; color: var(--color-gold); line-height: 1; }
+    .stat-card .stat-label { font-family: var(--font-ui); font-size: var(--fs-2xs); letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-muted); margin-top: 0.3rem; }
+
+    .chiasm {
+      display: flex; flex-direction: column; align-items: center;
+      margin: 2rem 0; padding: 1.5rem; background: rgba(212,175,55,0.02); border: 1px solid rgba(212,175,55,0.06); border-radius: 8px;
+    }
+    .chiasm-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0; font-size: var(--fs-base); }
+    .chiasm-row .arrow { color: rgba(212,175,55,0.2); }
+    .chiasm .center { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; color: var(--color-gold); padding: 0.5rem 0; }
+
+    .timeline-events {
+      display: flex; flex-direction: column; gap: 0.5rem;
+      margin: 1.5rem 0;
+    }
+    .timeline-row {
+      display: flex; align-items: baseline; gap: 0.75rem;
+      padding: 0.5rem 0.75rem; border-left: 2px solid;
+      background: rgba(245,240,230,0.02);
+    }
+    .timeline-row.year-2017 { border-color: var(--color-amber); }
+    .timeline-row.year-2023 { border-color: var(--color-golden); }
+    .timeline-row.year-2024 { border-color: var(--color-red); }
+    .timeline-row .year { font-family: var(--font-ui); font-weight: 600; font-size: var(--fs-sm); color: inherit; white-space: nowrap; width: 2.5rem; flex-shrink: 0; }
+    .timeline-row .event { font-family: var(--font-body); font-size: var(--fs-base); color: rgba(245,240,230,0.7); line-height: 1.5; }
+    .timeline-row .event strong { font-weight: 600; color: rgba(245,240,230,0.9); }
+    .timeline-row .event .tag { font-family: var(--font-ui); font-size: var(--fs-2xs); letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-muted); }
+
+    .narrative-alt { background: rgba(212,175,55,0.02); }
+    .narrative-alt h2 { text-align: center; }
+
+    /* ── Section Feature Images ── */
+    .at-section-image {
+      width: 100%; height: 180px;
+      background-size: cover; background-position: center 30%;
+      position: relative; border-radius: 4px; overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    .at-section-image::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(8,6,10,0.85) 0%, rgba(8,6,10,0.15) 50%, transparent 100%);
+      pointer-events: none;
+    }
+
+    /* ── Probability Section ── */
+    .prob-intro { font-family: var(--font-body); font-size: var(--fs-base); line-height: 1.7; color: rgba(245,240,230,0.7); margin-bottom: 1.5rem; }
+    .prob-table { display: grid; grid-template-columns: 1fr; gap: 0.6rem; margin-bottom: 1.2rem; }
+    .prob-row {
+      display: grid; grid-template-columns: 160px 1fr 80px;
+      align-items: center; gap: 0.75rem;
+      background: rgba(212,175,55,0.02); border: 1px solid rgba(212,175,55,0.06); border-radius: 6px;
+      padding: 0.65rem 0.85rem;
+    }
+    .prob-row .name { font-family: var(--font-ui); font-size: var(--fs-xs); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-gold); }
+    .prob-row .desc { font-family: var(--font-body); font-size: var(--fs-2xs); color: rgba(245,240,230,0.5); line-height: 1.4; }
+    .prob-row .odds { font-family: var(--font-display); font-size: var(--fs-title); font-weight: 600; color: var(--color-text); text-align: right; white-space: nowrap; }
+    .prob-bar-wrap { width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; }
+    .prob-bar { height: 100%; border-radius: 3px; transition: width 1.5s ease; }
+    .prob-bar.extreme { background: linear-gradient(90deg, #C0392B, #E74C3C); width: 0.5%; }
+    .prob-bar.moderate { background: linear-gradient(90deg, #E67E22, #F1C40F); width: 10%; }
+    .prob-bar.likely { background: linear-gradient(90deg, #27AE60, #2ECC71); width: 60%; }
+    .prob-bar.rare { background: linear-gradient(90deg, #E74C3C, #E67E22); width: 3%; }
+    .prob-bar.vanishing { background: linear-gradient(90deg, #8E44AD, #C0392B); width: 0.05%; }
+    .prob-combined {
+      text-align: center; padding: 1.2rem; margin-top: 0.5rem;
+      background: rgba(212,175,55,0.04); border: 1px solid rgba(212,175,55,0.1); border-radius: 8px;
+    }
+    .prob-combined .num { font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 600; color: var(--color-gold); line-height: 1.2; }
+    .prob-combined .stat-label { font-family: var(--font-ui); font-size: var(--fs-xs); letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-muted); margin-top: 0.2rem; }
+
+    /* ── Footer ── */
+    #page-footer {
+      padding: 3rem 1.5rem; text-align: center; border-top: 1px solid rgba(212,175,55,0.04);
+    }
+    #page-footer p { font-family: var(--font-ui); font-size: var(--fs-xs); color: rgba(245,240,230,0.2); letter-spacing: 0.08em; }
+
+    /* ── Section Divider ── */
+    .section-divider {
+      display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+      padding: 0 1.5rem; margin: 0 auto; max-width: 800px;
+    }
+    .section-divider .line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(212,175,55,0.1), transparent); }
+    .section-divider .diamond { width: 6px; height: 6px; background: rgba(212,175,55,0.2); transform: rotate(45deg); flex-shrink: 0; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      #map-container { height: 60vh; }
+      #map-legend { padding: 0.35rem 0.5rem; }
+      .legend-row { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+    }
+    @media (max-width: 640px) {
+      #hero { min-height: 60vh; padding: 4rem 1rem 2.5rem; }
+      #map-container { height: 50vh; border-radius: 6px; margin: 0 -0.5rem; width: calc(100% + 1rem); }
+      #map-section { padding: 0 0 1.5rem; }
+      #map-legend { padding: 0.35rem 0.5rem; margin: 0.5rem -0.5rem 0; width: calc(100% + 1rem); border-radius: 0; }
+      .legend-row { grid-template-columns: repeat(2, 1fr); gap: 0.4rem; }
+      .narrative { padding: 2.5rem 1rem; }
+      .aleph-tav-visual { flex-direction: column; gap: 0.5rem; padding: 1.5rem; }
+      .chiasm { padding: 1rem; }
+      .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+      .stat-card { padding: 0.75rem; }
+      .stat-card .num { font-size: 1.2rem; }
+      .group-label { font-size: 0.42rem; padding: 0.04rem 0.3rem; }
+      .prob-row { grid-template-columns: 1fr 50px; gap: 0.5rem; padding: 0.55rem 0.65rem; }
+      .prob-row .odds { font-size: var(--fs-base); }
+      .prob-bar-wrap { display: none; }
+      .at-section-image { height: 130px; }
+      .prob-combined { padding: 1rem; }
+      .prob-combined .num { font-size: 1.3rem; }
+    }
+    @media (max-width: 440px) {
+      #hero { min-height: 50vh; padding: 3.5rem 0.75rem 2rem; }
+      #map-container { height: 40vh; }
+      .timeline-row { flex-direction: column; gap: 0.2rem; padding: 0.4rem 0.5rem; }
+      .timeline-row .year { width: auto; }
+    }
+
+    /* ── Leaflet Label Layer Fix ── */
+    .leaflet-label-layer { pointer-events: none; }
+  </style>
+  <script type="speculationrules">
+    {"prerender":[{"where":{"href_matches":"/*"}}]}
+  </script>
+</head>
+<body>
+  <div id="site-headerMount" data-page-title="Aleph-Tav"></div>
+  <script src="/src/nav-component.js" defer></script>
+
+  <!-- Header -->
+  <!-- Hero -->
+  <section id="hero">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-content">
+      <div class="hero-subtitle">Three Eclipses &middot; Seven Years &middot; One Nation</div>
+      <h1 class="hero-title">The Signature <em>in the</em> Sky</h1>
+      <div class="hero-verse">
+        "Let them be for <strong>signs</strong> (othoth) and seasons, and for days and years."
+        <span class="ref">Genesis 1:14 KJV</span>
+      </div>
+    </div>
+    <div class="scroll-hint">Scroll to explore</div>
+  </section>
+
+  <!-- Intro -->
+  <section id="intro">
+    <p>Between 2017 and 2024, three solar eclipses crossed the United States in a pattern that has no known parallel in recorded history. When their paths are mapped together, they form the first and last letters of the Hebrew alphabet — <strong>Aleph</strong> (&#1488;) and <strong>Tav</strong> (&#1514;) — written directly over the continental United States. In the paleo-Hebrew script, the Tav was drawn as an <strong>X</strong> — an ancient sign of the covenant, a cross. The moon's shadow has signed the first and the last, the Alpha and the Omega, over this nation.</p>
+
+    <div class="aleph-tav-visual">
+      <div class="letter" title="Modern square-script Aleph">&#1488;</div>
+      <span class="equals">=</span>
+      <div class="letter active" title="Modern square-script Aleph-Tav">&#1488;&#1514;</div>
+      <span class="equals">=</span>
+      <div class="letter" title="Modern square-script Tav">&#1514;</div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:-0.5rem;padding:0.5rem 2rem 0;font-size:var(--fs-2xs);color:var(--color-muted);letter-spacing:0.04em;">
+      <span>Paleo-Hebrew: <strong style="font-family:serif;color:var(--color-text);">𐤀</strong> (ox head, strength)</span>
+      <span style="color:var(--color-gold);font-size:0.5rem;">+</span>
+      <span>Paleo-Hebrew: <strong style="font-family:serif;color:var(--color-text);">𐤕</strong> (X / cross, covenant)</span>
+    </div>
+
+    <p>The Hebrew word for <strong>"sign"</strong> (&rlm;&#1488;&#1493;&#1514;&lrm;, <em>oth</em>) is the <strong>same word</strong> as <strong>"letter"</strong> of the alphabet. In Genesis 1:14 KJV, God placed lights in the firmament "for signs" — which literally means He set them there to write. The moon's shadow has drawn the first and last letters over this nation.</p>
+  </section>
+
+  <div class="section-divider"><span class="line"></span><span class="diamond"></span><span class="line"></span></div>
+
+  <!-- The Map -->
+  <section id="map-section">
+    <h2>The Paths</h2>
+    <div id="map-container">
+      <div id="map"></div>
+    </div>
+
+    <div id="map-legend">
+      <div class="legend-row">
+        <div class="legend-col">
+          <div class="legend-section-title">Eclipse Paths</div>
+          <div class="legend-item"><span class="legend-dot year-2017"></span> 2017 Total</div>
+          <div class="legend-item"><span class="legend-dot year-2023"></span> 2023 Annular</div>
+          <div class="legend-item"><span class="legend-dot year-2024"></span> 2024 Total</div>
+        </div>
+        <div class="legend-col">
+          <div class="legend-section-title">Repeated Places</div>
+          <div class="legend-item"><span class="node-dot" style="background:#F5D76E;"></span> Salem <span class="node-count">×7</span></div>
+          <div class="legend-item"><span class="node-dot" style="background:#E74C3C;"></span> Nineveh <span class="node-count">×5</span></div>
+          <div class="legend-item"><span class="node-dot" style="background:#8E44AD;"></span> Bethlehem <span class="node-count">×5</span></div>
+          <div class="legend-item"><span class="node-dot" style="background:#1ABC9C;"></span> Little Egypt <span class="node-count">×5</span></div>
+        </div>
+        <div class="legend-col">
+          <div class="legend-section-title">Apex</div>
+          <div class="legend-item"><span class="node-dot node-cross"></span> Bald Knob Cross</div>
+          <div class="legend-item"><span class="node-dot empty-cross-legend"></span> The Empty Cross</div>
+          <div class="legend-item"><span class="x-legend"></span> Cedar Lake Apex</div>
+          <div class="legend-item"><span class="legend-dot nmsz"></span> New Madrid Fault</div>
+        </div>
+        <div class="legend-col">
+          <div class="legend-section-title">2023 Path</div>
+          <div class="legend-item"><span class="legend-shape legend-four-corners"></span> Four Corners</div>
+          <div class="legend-item"><span class="legend-shape legend-navajo"></span> Navajo / Chaco</div>
+          <div class="legend-item"><span class="legend-shape legend-los-alamos"></span> Los Alamos</div>
+          <div class="legend-item"><span class="legend-shape legend-roswell"></span> Roswell</div>
+          <div class="legend-item"><span class="legend-shape legend-uvalde"></span> Uvalde</div>
+          <div class="legend-item"><span class="legend-shape legend-corpus-christi"></span> Corpus Christi</div>
+        </div>
+        <div class="legend-col">
+          <div class="legend-section-title">Biblical Places</div>
+          <div class="legend-item"><span class="node-dot" style="background:#58D68D;"></span> Lebanon <span class="node-count">×2</span></div>
+          <div class="legend-item"><span class="node-dot" style="background:#58D68D;"></span> Jonah, TX</div>
+          <div class="legend-item"><span class="node-dot" style="background:#58D68D;"></span> Mount Carmel, IL</div>
+          <div class="legend-item"><span class="node-dot" style="background:#58D68D;"></span> Eden, NY</div>
+          <div class="legend-item"><span class="node-dot" style="background:#58D68D;"></span> Canaan, ME</div>
+          <div class="legend-item"><span class="node-dot" style="background:#58D68D;"></span> Jacob / Shiloh / Zion, IL</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"><span class="line"></span><span class="diamond"></span><span class="line"></span></div>
+
+  <!-- Narrative: The Three Eclipses -->
+  <section class="narrative">
+    <h2>Three Witnesses <span class="sub">Deuteronomy 19:15 KJV</span></h2>
+    <p>Each eclipse belonged to a different Saros cycle — a celestial "family" of eclipses separated by 18 years. Three distinct families, each carrying their own historical testimony, converged on the same nation within seven years.</p>
+
+    <div class="timeline-events">
+      <div class="timeline-row year-2017" style="--tl-color: var(--color-amber); color: var(--color-amber);">
+        <span class="year">2017</span>
+        <div class="event">
+          <strong>Total Solar Eclipse</strong> &mdash; Elul 1, beginning the 40-day Season of Repentance leading to Yom Kippur<br />
+          <span class="tag">Saros 145</span> &mdash; Oregon to South Carolina. Crossed 7 towns named <strong>Salem</strong> (Jerusalem = Peace) and 3 communities named <strong>Bethlehem</strong> (House of Bread). Intersected the 2024 path at <strong>Cedar Lake / Salem Road</strong> in southern Illinois, at the heart of the <strong>Little Egypt</strong> region. Entered at Government Point, OR. Exited at Charleston, SC &mdash; the largest slave port in America.
+        </div>
+      </div>
+      <div class="timeline-row year-2023" style="--tl-color: var(--color-golden); color: var(--color-golden);">
+        <span class="year">2023</span>
+        <div class="event">
+          <strong>Annular "Ring of Fire" Eclipse</strong> &mdash; New Moon in Jerusalem<br />
+          <span class="tag">Saros 134</span> &mdash; Oregon to Texas. Connected North and South America for the first time since 1632. Passed over Los Alamos, Roswell, Chaco Canyon, and Uvalde. Exited at Corpus Christi (&ldquo;Body of Christ&rdquo;).
+        </div>
+      </div>
+      <div class="timeline-row year-2024" style="--tl-color: var(--color-red); color: var(--color-red);">
+        <span class="year">2024</span>
+        <div class="event">
+          <strong>Total Solar Eclipse</strong> &mdash; Nisan 1 (Biblical New Year)<br />
+          <span class="tag">Saros 139</span> &mdash; Mexico to Canada, entering at <strong>Eagle Pass, TX</strong>. Crossed 15 states, the New Madrid fault zone, Niagara Falls, and 5 towns named <strong>Nineveh</strong> (including 2 directly in the path), plus 2 more communities named <strong>Bethlehem</strong> near the path. Exited at St. John's, Newfoundland &mdash; named for John the Revelator.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Narrative: The Numbers -->
+  <section class="narrative narrative-alt">
+    <h2>Beyond Coincidence</h2>
+    <p>This is not a signature of ownership — it is a signature of <strong>warning</strong>. As Mark Biltz teaches, solar eclipses in Scripture signal God's dealings with Gentile nations (Jeremiah 10:2 KJV; Amos 8:9 KJV), and America has received what no other nation has: three eclipse paths forming the first and last letters within seven years. Biltz puts it this way: <em>"He gave us a seven-year warning from the 2017 eclipse, and this one is His final warning. With the 2017 eclipse passing through the cities named Salem, I think God was saying, 'This is my hand. This is me. It's not a coincidence.'"</em> The following numbers are empirically verifiable.</p>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="num">1,000+</div><div class="stat-label">Years since any nation<br />saw a comparable pattern</div></div>
+      <div class="stat-card"><div class="num">3</div><div class="stat-label">Distinct Saros families<br />(Deut 19:15 KJV)</div></div>
+      <div class="stat-card"><div class="num">33</div><div class="stat-label">Days from 2017 eclipse<br />to the Revelation 12 sign</div></div>
+      <div class="stat-card"><div class="num">99</div><div class="stat-label">Years between Hepton-linked<br />eclipse pairs (1918/1925 &rarr; 2017/2024)</div></div>
+      <div class="stat-card"><div class="num">7</div><div class="stat-label">Salems crossed (2017)<br />Seven = divine completeness (Gen 2:2-3 KJV)</div></div>
+      <div class="stat-card"><div class="num">5</div><div class="stat-label">Ninevehs crossed <span style="font-size:var(--fs-2xs);opacity:0.5;">(2 in path, 3 near)</span><br />Jonah's call to repent</div></div>
+      <div class="stat-card"><div class="num">5</div><div class="stat-label">Bethlehems near both paths<br />House of Bread</div></div>
+      <div class="stat-card"><div class="num" style="color: #1ABC9C;">5</div><div class="stat-label">Biblical towns in Little Egypt<br />Aleph-Tav apex confirmation</div></div>
+    </div>
+  </section>
+
+  <!-- Narrative: The Chiasm -->
+  <section class="narrative">
+    <div class="at-section-image" style="background-image:url('/images/aleph-tav/cross-sunset.jpeg')"></div>
+    <h2>The Geographic Sermon</h2>
+    <p>When you read the path from south to north, it forms a complete biblical narrative:</p>
+    <div class="chiasm">
+      <div class="chiasm-row"><span class="arrow">&#9650;</span> <strong>Salem</strong> &mdash; Peace / Jerusalem <span class="arrow">&#9650;</span></div>
+      <div class="chiasm-row"><span class="arrow">&#9650;</span> <strong>Little Egypt</strong> &mdash; The world in bondage (Ex 20:2 KJV) <span class="arrow">&#9650;</span></div>
+      <div class="center">&#10010; Bald Knob Cross — Salvation at the center</div>
+      <div class="chiasm-row"><span class="arrow">&#9660;</span> <strong>Little Egypt</strong> &mdash; The world under judgment <span class="arrow">&#9660;</span></div>
+      <div class="chiasm-row"><span class="arrow">&#9660;</span> <strong>Nineveh</strong> &mdash; Repent or perish <span class="arrow">&#9660;</span></div>
+    </div>
+    <p>Above the cross: Peace is offered. Below the cross: Repentance is demanded. At the center: the Cross of Christ, 111 feet tall — three times the number of Aleph (1), the triune signature at the center of the letter. The X formed by the two paths is the <strong>paleo-Hebrew Tav</strong> — the ancient sign of the covenant, the cross drawn in the sky over the very nation that received the gospel and then turned away. The intersection itself lies at <strong>Cedar Lake on Salem Road</strong> (Road of Peace), surrounded by towns bearing the names of Egypt — <strong>Cairo, Thebes, Karnak, and Makanda</strong> ("Star of Egypt") — with <strong>Goshen</strong> to the north, God's place of refuge (Genesis 45:10 KJV). And near both paths: <strong>Bethlehem</strong> ("House of Bread"), reminding us that the Bread of Life (John 6:35 KJV) is the source of both peace and repentance.</p>
+  </section>
+
+  <!-- Narrative: The Double Witness -->
+  <section class="narrative narrative-alt">
+    <h2>The 1806/1811 Precedent <span class="sub">A Warning Repeated and Escalated</span></h2>
+    <p>This was not the first time an X formed over this land. In <strong>1806</strong>, a total solar eclipse predicted by the Shawnee prophet Tenskwatawa crossed the United States from Baja California to Massachusetts. In <strong>1811</strong>, a second eclipse completed a paleo-Hebrew <strong>Tav (X)</strong> over the <strong>New Madrid fault zone</strong>. Three months later, the 1811-1812 New Madrid earthquakes struck &mdash; the largest seismic event in American history.</p>
+    <p>The 2017-2024 pattern repeats the X but adds a third line (the 2023 annular), elevating it from a mere warning cross (Tav) to a <strong>completed divine signature</strong> (Aleph-Tav). What was a warning then has become a signed declaration. Watchmen including Brandon Biggs have likewise pointed to the X over Little Egypt and the New Madrid fault as a sign of impending seismic judgment, echoing the 1811-1812 precedent.</p>
+  </section>
+
+  <!-- Narrative: The Calendar -->
+  <section class="narrative">
+    <h2>A Three-Part Message <span class="sub">Three Hebrew Appointed Times</span></h2>
+    <p>Each eclipse fell on a significant date in the biblical calendar, creating a progression that mirrors the gospel itself:</p>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="num" style="color: var(--color-amber);">Repent</div><div class="stat-label">Elul 1 (2017)<br />Beginning of 40-day repentance</div></div>
+      <div class="stat-card"><div class="num" style="color: var(--color-golden);">Listen</div><div class="stat-label">New Moon (2023)<br />Feast of Trumpets warning</div></div>
+      <div class="stat-card"><div class="num" style="color: var(--color-red);">Be Made New</div><div class="stat-label">Nisan 1 (2024)<br />Biblical New Year / Redemption</div></div>
+    </div>
+    <p>Repentance &rarr; Warning &rarr; New Beginning. The same pattern Jesus preached: <em>"Repent, for the kingdom of heaven is at hand"</em> (Matthew 4:17 KJV).</p>
+  </section>
+
+  <!-- Narrative: The Sign of Jonah -->
+  <section class="narrative narrative-alt">
+    <div class="at-section-image" style="background-image:url('/images/aleph-tav/storm-sea.jpeg')"></div>
+    <h2>The Sign of Jonah <span class="sub">Matthew 12:39-40 KJV</span></h2>
+    <p>Jesus said that no sign would be given to a faithless generation except <strong>the sign of the prophet Jonah</strong> — three days and nights in the belly of the fish (Jonah 1:17 KJV), a foreshadowing of His death and resurrection. But Jonah's message was not just typology: it was a <strong>seven-year warning</strong> to a Gentile nation. Nineveh was given forty days to repent before judgment fell (Jonah 3:4 KJV).</p>
+    <p>America has received the same sign. The 2017 eclipse began a <strong>seven-year window</strong> (2017–2024) that concludes with the April 2024 eclipse crossing multiple towns named <strong>Nineveh</strong> — including <strong>Jonah, Texas</strong>, directly in the path. The message is identical: repent, or face the consequences (Luke 13:3 KJV). As Steve Cioccolanti and watchman Brandon Biggs have both emphasized, America is living through its own Nineveh moment. The question is whether we will respond as Nineveh did — with humility, fasting, and earnest repentance — or as the world that ignored Noah until the flood came (Matthew 24:37-39 KJV).</p>
+  </section>
+
+  <!-- Narrative: The Linguistics -->
+  <section class="narrative narrative-alt">
+    <div class="at-section-image" style="background-image:url('/images/aleph-tav/scroll-hebrew.jpeg')"></div>
+    <h2>"Oth" &mdash; Sign <em>and</em> Letter</h2>
+    <p>The Hebrew word &#1488;&#1493;&#1514; (<em>oth</em>) appears in Genesis 1:14 KJV as <strong>"signs"</strong> (&rlm;&#1488;&#1493;&#1514;&#1493;&#1514;&lrm;, <em>othoth</em>). The exact same word means <strong>"letters"</strong> of the alphabet. The firmament is God's parchment. The sun and moon are His pen. Eclipses are His alphabet.</p>
+    <p>The Aleph-Tav (&#1488;&#1514;) is the untranslated direct object marker embedded in the very first verse of Scripture:</p>
+    <p style="font-family: var(--font-display); font-size: clamp(1rem, 2.5vw, 1.4rem); font-style: italic; text-align: center; padding: 1rem 0; color: rgba(245,240,230,0.6);">&ldquo;In the beginning, God <strong style="color: var(--color-gold);">&#1488;&#1514;</strong> created the heavens and the earth.&rdquo;</p>
+    <p>Jesus declares in Revelation 1:8 KJV: <em>"I am Alpha and Omega, the beginning and the ending."</em> In Hebrew, the conceptual equivalent is <strong>Aleph and Tav</strong> — the first and last letters of the Hebrew alphabet, the same letters that bracket Genesis 1:1 KJV. The apostle John would have understood Jesus to be saying: <em>"I am the Aleph and the Tav — the One who was, who is, and who is to come."</em> The same signature that opens Scripture has been written across this nation by the moon's shadow.</p>
+    <p>In the ancient paleo-Hebrew script, the Aleph (<span style="font-family:serif;">𐤀</span>) was drawn as the head of an ox — strength and authority. The Tav (<span style="font-family:serif;">𐤕</span>) was drawn as an <strong>X</strong> or cross — the sign of the covenant, the mark of God. The cross formed by the 2017 and 2024 eclipse paths is not merely an abstract letter: it is the <strong>paleo-Hebrew Tav</strong>, the ancient sign of the covenant, the very mark that Ezekiel 9 describes the angel placing on the foreheads of those who grieved over the nation's sins (Ezekiel 9:4-6 KJV). What the moon has drawn over America is the cross of Christ (John 6:35 KJV; Acts 4:12 KJV), at a scale visible from space.</p>
+  </section>
+
+  <div class="section-divider"><span class="line"></span><span class="diamond"></span><span class="line"></span></div>
+
+  <!-- Narrative: The Probability -->
+  <section class="narrative narrative-alt">
+    <h2>The Mathematics of Improbability <span class="sub">"Let every matter be established" — Deuteronomy 19:15 KJV</span></h2>
+    <p class="prob-intro">Each of the following patterns can be verified independently. Individual probabilities are calculated using the Poisson distribution — the standard model for rare events in a large area. The combined probability is the product of all five independent events, treating each as conservatively as possible.</p>
+
+    <div class="prob-table">
+      <div class="prob-row">
+        <div>
+          <div class="name">SALEM &times; 7</div>
+          <div class="desc">7 of 26 US Salems in the 2017 path</div>
+        </div>
+        <div class="prob-bar-wrap"><div class="prob-bar rare"></div></div>
+        <div class="odds">1 in 1,300</div>
+      </div>
+      <div class="prob-row">
+        <div>
+          <div class="name">NINEVEH &times; 5</div>
+          <div class="desc">5 of 7 US Ninevehs near the 2024 path <span style="opacity:0.5;">(counts vary by source; up to 11 including Canada)</span></div>
+        </div>
+        <div class="prob-bar-wrap"><div class="prob-bar rare"></div></div>
+        <div class="odds">1 in 200</div>
+      </div>
+      <div class="prob-row">
+        <div>
+          <div class="name">BETHLEHEM &times; 5</div>
+          <div class="desc">5 of 18 US Bethlehems across both paths</div>
+        </div>
+        <div class="prob-bar-wrap"><div class="prob-bar moderate"></div></div>
+        <div class="odds">1 in 10</div>
+      </div>
+      <div class="prob-row">
+        <div>
+          <div class="name">LITTLE EGYPT INTERSECTION</div>
+          <div class="desc">Both eclipse paths cross in &ldquo;Little Egypt&rdquo;</div>
+        </div>
+        <div class="prob-bar-wrap"><div class="prob-bar extreme"></div></div>
+        <div class="odds">1 in 200</div>
+      </div>
+      <div class="prob-row">
+        <div>
+          <div class="name">BALD KNOB CROSS AT APEX</div>
+          <div class="desc">Largest cross in America at the geometric center</div>
+        </div>
+        <div class="prob-bar-wrap"><div class="prob-bar extreme"></div></div>
+        <div class="odds">1 in 400</div>
+      </div>
+    </div>
+
+    <div class="prob-combined">
+      <div class="num">1 in 208 &times; 10<sup>9</sup></div>
+      <div class="stat-label">Combined probability of all five coincidences occurring together</div>
+      <p style="font-family:var(--font-body);font-size:var(--fs-sm);color:rgba(245,240,230,0.45);margin-top:0.5rem;line-height:1.5;">That is roughly <strong style="color:rgba(245,240,230,0.7);">equivalent to flipping a coin 38 times and landing heads every time</strong>. The data and the Bible converge on the same conclusion: this is not random. It is a divine warning — a final call to repentance written across the sky over the nation that has received more light than any other (Luke 12:48 KJV).</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="page-footer">
+    <p>Data sources: NASA Five Millennium Canon of Solar Eclipses, GreatAmericanEclipse.com, EclipseWitness.com</p>
+    <p style="margin-top: 0.3rem;">Insights referenced: Mark Biltz (El Shaddai Ministries), Steve Cioccolanti (Discover Church), Paul Begley &amp; Troy Anderson (Revelation 911), Brandon Biggs, Amanda Grace</p>
+    <p style="margin-top: 0.2rem;">The Last Generation &mdash; Equipping the faithful to discern the times</p>
+    <p class="footer-nav" style="margin-top:0.75rem;font-family:var(--font-ui);font-size:0.5rem;color:rgba(245,240,230,0.3);"><a href="/" style="color:inherit;text-decoration:none;">The Last Generation</a> &middot; <a href="/timeline.html" style="color:inherit;text-decoration:none;">Prophetic Timeline</a> &middot; <a href="/calendar.html" style="color:inherit;text-decoration:none;">Prophecy Calendar</a> &middot; <a href="/rapture.html" style="color:inherit;text-decoration:none;">The Rapture</a> &middot; <a href="/dashboard.html" style="color:inherit;text-decoration:none;">Data Hub</a></p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+
+    // ─── Hero Canvas (subtle starfield) ───
+    const hCanvas = document.getElementById('hero-canvas')
+    const hCtx = hCanvas.getContext('2d')
+    let hW, hH
+    function resizeHero() {
+      hW = hCanvas.width = hCanvas.parentElement.offsetWidth
+      hH = hCanvas.height = hCanvas.parentElement.offsetHeight
+    }
+    resizeHero()
+    window.addEventListener('resize', resizeHero)
+
+    const stars = Array.from({ length: 180 }, () => ({
+      x: Math.random(), y: Math.random(), r: 0.3 + Math.random() * 1.2,
+      a: 0.15 + Math.random() * 0.4, s: 0.001 + Math.random() * 0.003
+    }))
+    function drawHero() {
+      hCtx.clearRect(0, 0, hW, hH)
+      stars.forEach(st => {
+        const flicker = 0.6 + 0.4 * Math.sin(Date.now() * st.s + st.x * 100)
+        hCtx.beginPath()
+        hCtx.arc(st.x * hW, st.y * hH, st.r, 0, Math.PI * 2)
+        hCtx.fillStyle = `rgba(245,240,230,${st.a * flicker})`
+        hCtx.fill()
+      })
+      // Three subtle glowing dots representing the eclipse paths
+      const t = Date.now() * 0.0003
+      const positions = [
+        { x: 0.3, y: 0.5, color: '224,90,58' },
+        { x: 0.5, y: 0.45, color: '232,168,48' },
+        { x: 0.7, y: 0.5, color: '192,57,43' },
+      ]
+      positions.forEach((p, i) => {
+        const pulse = 0.5 + 0.5 * Math.sin(t + i * 2)
+        const g = hCtx.createRadialGradient(p.x * hW, p.y * hH, 0, p.x * hW, p.y * hH, 60 + 30 * pulse)
+        g.addColorStop(0, `rgba(${p.color},${0.08 * pulse})`)
+        g.addColorStop(1, `rgba(${p.color},0)`)
+        hCtx.fillStyle = g
+        hCtx.fillRect(0, 0, hW, hH)
+      })
+      requestAnimationFrame(drawHero)
+    }
+    drawHero()
+
+    // ─── Map ───
+    const map = L.map('map', {
+      center: [37.5, -98.0],
+      zoom: 4,
+      zoomControl: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      touchZoom: false,
+      minZoom: 4,
+      maxZoom: 4,
+      maxBounds: [[24, -128], [50, -64]],
+      maxBoundsViscosity: 1.0,
+    })
+
+    const tileLayer = L.tileLayer('https://tile.opentopomap.org/{z}/{x}/{y}.png', {
+      maxZoom: 17,
+      attribution: '© OpenTopoMap contributors',
+    }).addTo(map)
+    map.on('tileerror', () => {
+      tileLayer.setUrl('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+    })
+
+    // ─── Eclipse Shadow Paths ───
+    const paths = {
+      '2017': {
+        coords: [
+          [44.88, -124.07], [44.95, -123.5], [44.94, -123.03], [44.8, -122.0],
+          [44.5, -120.5], [44.2, -119.0], [43.9, -117.5], [43.5, -116.0],
+          [43.0, -114.5], [42.5, -113.0], [42.9, -110.61], [42.0, -108.0],
+          [41.5, -106.5], [41.0, -105.0], [40.5, -103.0], [40.08, -95.72],
+          [40.0, -97.0], [39.5, -95.5], [39.0, -94.0], [38.5, -92.5],
+          [38.0, -91.0], [37.73, -89.22], [37.5, -89.0], [36.99, -88.31],
+          [36.5, -87.0], [36.0, -85.5], [35.5, -84.0], [34.89, -82.98],
+          [34.5, -82.0], [33.5, -81.0], [32.78, -79.93]
+        ],
+        color: '#5B8DB8',
+        year: 2017,
+      },
+      '2023': {
+        coords: [
+          [44.96, -124.02], [44.0, -122.5], [43.0, -120.5], [42.0, -119.0],
+          [41.0, -117.5], [40.0, -116.0], [39.5, -114.5], [38.5, -113.0],
+          [37.5, -111.5], [36.99, -109.05], [36.5, -108.5], [36.07, -107.96],
+          [35.88, -106.33], [35.5, -105.5], [34.5, -104.5], [33.39, -104.52],
+          [32.5, -103.0], [31.5, -101.5], [30.5, -100.5], [29.62, -99.53],
+          [29.21, -99.79], [28.5, -98.5], [27.80, -97.40]
+        ],
+        color: '#C9A84C',
+        year: 2023,
+      },
+      '2024': {
+        coords: [
+          [23.25, -106.41], [24.5, -105.0], [25.5, -103.5], [26.5, -102.0],
+          [27.5, -101.0], [28.71, -100.50], [29.21, -99.79], [29.62, -99.53],
+          [30.0, -98.5], [31.0, -97.5], [31.72, -97.37],
+          [32.85, -96.01], [33.41, -95.31], [33.98, -94.59],
+          [34.54, -93.85], [35.10, -93.08], [35.66, -92.29],
+          [36.22, -91.48], [36.78, -90.64], [37.33, -89.78],
+          [37.89, -88.88], [38.44, -87.95], [39.0, -86.98],
+          [39.55, -85.98], [40.1, -84.94], [40.64, -83.85],
+          [41.19, -82.72], [41.73, -81.53], [42.27, -80.29],
+          [42.8, -78.99], [43.33, -77.62], [43.85, -76.17],
+          [44.37, -74.65], [44.88, -73.04],
+          [45.5, -71.5], [46.0, -70.0], [46.5, -68.5],
+          [47.0, -67.0], [47.5, -65.0], [47.56, -52.71]
+        ],
+        color: '#A8433A',
+        year: 2024,
+      }
+    }
+
+    // ─── Shadow Path Layers (initialized empty for animation) ───
+    const shadowLayersByYear = {}
+    const centerLinesByYear = {}
+
+    function initShadowPath(year, color) {
+      const layers = []
+      const configs = [
+        { weight: 22, opacity: 0.15 },
+        { weight: 16, opacity: 0.24 },
+        { weight: 10, opacity: 0.35 },
+      ]
+      configs.forEach(s => {
+        layers.push(L.polyline([], {
+          color: '#000', weight: s.weight, opacity: s.opacity,
+          smoothFactor: 1.5, lineCap: 'round', lineJoin: 'round',
+        }).addTo(map))
+      })
+      const center = L.polyline([], {
+        color, weight: 1.5, opacity: 0.55,
+        smoothFactor: 1.5, lineCap: 'round', lineJoin: 'round',
+      }).addTo(map)
+      shadowLayersByYear[year] = layers
+      centerLinesByYear[year] = center
+    }
+
+    initShadowPath(2017, '#5B8DB8')
+    initShadowPath(2023, '#C9A84C')
+    initShadowPath(2024, '#A8433A')
+
+    // ─── US Border Outline ───
+    fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/nation-10m.json')
+      .then(r => r.json())
+      .then(us => {
+        try {
+          const nation = topojson.feature(us, us.objects.nation)
+          L.geoJSON(nation, {
+            style: { fill: false, color: '#3A7BD5', weight: 1.8, opacity: 0.45 },
+          }).addTo(map)
+        } catch (e) {}
+      })
+      .catch(() => {})
+
+    // ─── Label Groups + Leader Lines ───
+    const labelGroups = [
+      { id: 'salem', label: 'Salem', pos: { lat: 43.5, lng: -101.5 },
+        labelPos: { lat: 45, lng: -101.5 },
+        cities: [
+          { lat: 44.94, lng: -123.03 }, { lat: 43.88, lng: -111.90 },
+          { lat: 42.92, lng: -110.61 }, { lat: 40.08, lng: -95.72 },
+          { lat: 36.97, lng: -91.82 }, { lat: 36.99, lng: -88.31 },
+          { lat: 34.89, lng: -82.98 },
+        ] },
+      { id: 'nineveh', label: 'Nineveh', pos: { lat: 43.5, lng: -84 },
+        labelPos: { lat: 45, lng: -84 },
+        cities: [
+          { lat: 31.384, lng: -95.806 }, { lat: 39.362, lng: -86.085 },
+          { lat: 40.049, lng: -84.545 }, { lat: 39.961, lng: -80.308 },
+          { lat: 42.194, lng: -75.602 },
+        ] },
+      { id: 'bethlehem', label: 'Bethlehem', pos: { lat: 32, lng: -85 },
+        labelPos: { lat: 30.5, lng: -87 },
+        cities: [
+          { lat: 36.001, lng: -86.885 }, { lat: 38.401, lng: -85.069 },
+          { lat: 38.539, lng: -85.420 }, { lat: 33.930, lng: -83.745 },
+          { lat: 35.826, lng: -81.307 },
+        ] },
+      { id: 'little-egypt', label: 'Little Egypt', pos: { lat: 41.5, lng: -90 },
+        labelPos: { lat: 48, lng: -94 },
+        cities: [],
+        sublist: ['Cairo', 'Thebes', 'Karnak', 'Makanda', 'Goshen'] },
+    ]
+
+    // Create label markers
+    labelGroups.forEach(g => {
+      const labelPos = g.labelPos || g.pos
+      const icon = L.divIcon({
+        className: '',
+        html: g.sublist
+          ? `<div class="group-label">${g.label}<span class="group-sublist">${g.sublist.map(s => `<span class="group-sublist-item">${s}</span>`).join('')}</span></div>`
+          : `<div class="group-label">${g.label}</div>`,
+      })
+      L.marker([labelPos.lat, labelPos.lng], { icon, interactive: false }).addTo(map)
+    })
+
+    // ─── New Madrid Fault Zone ───
+    const nmszPolygon = [
+      [35.3, -90.6], [36.0, -90.2], [36.7, -89.9], [37.3, -89.5],
+      [37.3, -89.0], [37.0, -88.4], [36.5, -88.3], [36.2, -88.7],
+      [35.8, -89.0], [35.5, -89.7], [35.3, -90.6],
+    ]
+    const nmszFaults = [
+      { name: 'Reelfoot Thrust', coords: [[35.95, -89.70], [36.08, -89.55], [36.22, -89.40], [36.38, -89.25], [36.52, -89.10]] },
+      { name: 'New Madrid N.',   coords: [[36.58, -89.56], [36.72, -89.53], [36.88, -89.51], [37.05, -89.50], [37.18, -89.48]] },
+      { name: 'New Madrid S.',   coords: [[36.55, -89.58], [36.40, -89.60], [36.25, -89.62], [36.10, -89.63], [35.95, -89.65]] },
+      { name: 'Bootheel Line.',  coords: [[36.15, -89.78], [36.30, -89.62], [36.45, -89.48], [36.60, -89.35], [36.75, -89.20]] },
+    ]
+
+    // ─── Little Egypt oval ───
+    const egyptCoords = (() => {
+      const cx = -89.756, cy = 38.084, a = 1.19, b = 1.62, rot = 0.698, n = 36
+      const pts = []
+      for (let i = 0; i < n; i++) {
+        const t = (i / n) * 2 * Math.PI
+        const ex = a * Math.cos(t)
+        const ey = b * Math.sin(t)
+        pts.push([cy + ex * Math.sin(rot) + ey * Math.cos(rot),
+                   cx + ex * Math.cos(rot) - ey * Math.sin(rot)])
+      }
+      return pts
+    })()
+
+    // ─── City Markers (grouped by year for animated reveal) ───
+    const markers = [
+      // ── 2017 ──
+      { lat: 44.94, lng: -123.03, type: 'salem',  year: 2017, popup: 'Salem, OR — #1 of 7. Salem = Peace, shorthand for Jerusalem.' },
+      { lat: 43.88, lng: -111.90, type: 'salem',  year: 2017, popup: 'Salem, ID — #2 of 7.' },
+      { lat: 42.92, lng: -110.61, type: 'salem',  year: 2017, popup: 'Salem, WY — #3 of 7.' },
+      { lat: 40.08, lng: -95.72, type: 'salem',  year: 2017, popup: 'Salem, NE — #4 of 7.' },
+      { lat: 36.97, lng: -91.82, type: 'salem',  year: 2017, popup: 'Salem, MO — #5 of 7.' },
+      { lat: 36.99, lng: -88.31, type: 'salem',  year: 2017, popup: 'Salem, KY — #6 of 7.' },
+      { lat: 34.89, lng: -82.98, type: 'salem',  year: 2017, popup: 'Salem, SC — #7 of 7. Complete = divine completeness.' },
+      // ── 2024 ──
+      { lat: 31.384, lng: -95.806, type: 'nineveh', year: 2024, popup: 'Nineveh, TX — South of the path of totality, deep partial eclipse.' },
+      // ── 2023 (Ring of Fire) ──
+      { lat: 36.999, lng: -109.045, type: 'four-corners', year: 2023, popup: 'Four Corners — The only place where US state boundaries form a cross. The Ring of Fire passed directly over it.' },
+      { lat: 36.07, lng: -107.96, type: 'navajo', year: 2023, popup: 'Chaco Canyon / Navajo Nation — Sacred ancestral lands crossed by the Ring of Fire. Ancient astronomy and prophecy.' },
+      { lat: 35.88, lng: -106.30, type: 'los-alamos', year: 2023, popup: 'Los Alamos, NM — Birthplace of the atomic bomb. A ring of fire over the place of global judgment.' },
+      { lat: 33.39, lng: -104.52, type: 'roswell', year: 2023, popup: 'Roswell, NM — Epicenter of UFO mythology. A sign of false wonders (Matthew 24:24 KJV).' },
+      { lat: 29.21, lng: -99.79, type: 'uvalde', year: 2023, popup: 'Uvalde, TX — Site of the 2022 Robb Elementary School massacre. Innocent blood cried out.' },
+      { lat: 27.80, lng: -97.40, type: 'corpus-christi', year: 2023, popup: 'Corpus Christi, TX — Latin for "Body of Christ." The Ring of Fire exited the US here.' },
+      { lat: 39.362, lng: -86.085, type: 'nineveh', year: 2024, popup: 'Nineveh, IN — Directly in the path, 3m 59s of totality.' },
+      { lat: 40.049, lng: -84.545, type: 'nineveh', year: 2024, popup: 'Nineveh, OH — Directly in the path of totality.' },
+      { lat: 39.961, lng: -80.308, type: 'nineveh', year: 2024, popup: 'Nineveh, PA — South of the path, partial eclipse visible.' },
+      { lat: 42.194, lng: -75.602, type: 'nineveh', year: 2024, popup: 'Nineveh, NY — Deep partial (97%), just north of totality.' },
+      // ── Bethlehem (near both paths) ──
+      { lat: 36.001, lng: -86.885, type: 'bethlehem', year: 2017, popup: 'Bethlehem, TN — On the southern edge of the 2017 path. House of Bread.' },
+      { lat: 38.401, lng: -85.069, type: 'bethlehem', year: 2024, popup: 'Bethlehem, KY — South of the 2024 path, deep partial eclipse.' },
+      { lat: 38.539, lng: -85.420, type: 'bethlehem', year: 2024, popup: 'Bethlehem, IN — South of the 2024 path, deep partial eclipse.' },
+      { lat: 33.930, lng: -83.745, type: 'bethlehem', year: 2017, popup: 'Bethlehem, GA — South of the 2017 path, partial eclipse visible.' },
+      { lat: 35.826, lng: -81.307, type: 'bethlehem', year: 2017, popup: 'Bethlehem, NC — North of the 2017 path, partial eclipse visible.' },
+      // ── Apex (Little Egypt / Aleph-Tav Intersection) ──
+      { lat: 37.005, lng: -89.176, type: 'egypt', year: 'apex', popup: 'Cairo, IL — Southernmost Illinois at the confluence of the Ohio and Mississippi. Named after Egypt\'s capital.' },
+      { lat: 37.219, lng: -89.454, type: 'egypt', year: 'apex', popup: 'Thebes, IL — Nahum 3:8 KJV "Are you better than Thebes?" A warning to those who trust in earthly strength.' },
+      { lat: 37.293, lng: -88.974, type: 'egypt', year: 'apex', popup: 'Karnak, IL — Named after the great Egyptian temple complex.' },
+      { lat: 37.617, lng: -89.214, type: 'egypt', year: 'apex', popup: 'Makanda, IL — "Star of Egypt." The Morning Star at the center of judgment.' },
+      { lat: 39.163, lng: -90.537, type: 'egypt', year: 'apex', popup: 'Goshen, IL — Genesis 45:10 KJV. A place of refuge and provision during judgment.' },
+      { lat: 37.527, lng: -89.437, type: 'cross', year: 'apex', popup: 'Bald Knob Cross, IL — 111-ft cross at the exact apex of the Aleph-Tav intersection. Alto Pass, IL.' },
+      { lat: 37.625, lng: -89.370, type: 'intersection', year: 'apex', popup: 'Cedar Lake / Salem Road — The exact intersection point of the 2017 and 2024 eclipse paths. Salem means "Peace."' },
+      // ── Texas Tav (2023 × 2024 convergence) ──
+      { lat: 30.042, lng: -99.123, type: 'empty-cross', year: 'apex', popup: 'The Empty Cross — Kerrville, TX. 77-ft hollow cross where both eclipse paths converge. The ring of fire and the total shadow meet over the empty cross.' },
+      // ── Biblical Names ──
+      // 2017 path
+      { lat: 36.208, lng: -86.291, type: 'biblical', year: 2017, popup: 'Lebanon, TN — In the 2017 path. Cedars of Lebanon built Solomon\'s Temple (1 Kings 5 KJV).' },
+      // 2024 path
+      { lat: 30.650, lng: -97.525, type: 'biblical', year: 2024, popup: 'Jonah, TX — In the 2024 path. The prophet sent to Nineveh (Jonah 1 KJV). Precedes the Nineveh towns along the path.' },
+      { lat: 40.048, lng: -86.469, type: 'biblical', year: 2024, popup: 'Lebanon, IN — In the 2024 path. Cedars of Lebanon built Solomon\'s Temple (1 Kings 5 KJV).' },
+      { lat: 38.413, lng: -87.769, type: 'biblical', year: 2024, popup: 'Mount Carmel, IL — In the 2024 path. Where Elijah defeated the prophets of Baal (1 Kings 18 KJV). The eclipse exits Illinois here.' },
+      { lat: 42.652, lng: -78.897, type: 'biblical', year: 2024, popup: 'Eden, NY — In the 2024 path, south of Buffalo. The Garden of Eden (Genesis 2 KJV).' },
+      { lat: 44.761, lng: -69.389, type: 'biblical', year: 2024, popup: 'Canaan, ME — In the 2024 path. The Promised Land (Genesis 12 KJV; Joshua 1 KJV). The eclipse reaches this northeastern Promised Land.' },
+      // Apex / Little Egypt region
+      { lat: 37.636, lng: -89.402, type: 'biblical', year: 'apex', popup: 'Jacob, IL — In Little Egypt. Named for the patriarch whose sons went to Egypt for grain (Genesis 42 KJV). The "Little Egypt" region itself recalls this story.' },
+      { lat: 38.553, lng: -89.918, type: 'biblical', year: 'apex', popup: 'Shiloh, IL — Near both eclipse paths. Where the Tabernacle stood for 300 years (Joshua 18:1 KJV). Also a name for the Messiah (Genesis 49:10 KJV).' },
+      { lat: 39.772, lng: -88.873, type: 'biblical', year: 'apex', popup: 'Mount Zion, IL — Near the eclipse overlap zone. The mountain of God\'s presence in Jerusalem (Psalm 132:13 KJV).' },
+    ]
+
+    // ─── Animation Engine ───
+    const markerDataByYear = { 2017: [], 2023: [], 2024: [], apex: [] }
+    markers.forEach(m => markerDataByYear[m.year].push(m))
+
+    const animYears = [2017, 2023, 2024]
+    let animPlaying = false
+    let animFinished = false
+
+    function showMarkersForYear(year) {
+      const shapeTypes = ['four-corners', 'navajo', 'los-alamos', 'roswell', 'uvalde', 'corpus-christi']
+      markerDataByYear[year].forEach((m, i) => {
+        setTimeout(() => {
+          const isShape = shapeTypes.includes(m.type)
+          const icon = L.divIcon({
+            className: '',
+            html: m.type === 'cross'
+              ? '<div class="cross-marker"></div>'
+              : isShape
+              ? `<div class="shape-node shape-${m.type}"></div>`
+              : `<div class="city-dot type-${m.type}"></div>`,
+            iconSize: m.type === 'cross' ? [14, 14] : isShape ? [10, 10] : [8, 8],
+            iconAnchor: m.type === 'cross' ? [7, 7] : isShape ? [5, 5] : [4, 4],
+          })
+          const marker = L.marker([m.lat, m.lng], { icon })
+          marker.bindPopup(`<div class="location-popup"><h4>${m.popup.split(' — ')[0]}</h4><p>${m.popup}</p></div>`)
+          marker.addTo(map)
+        }, i * 100)
+      })
+    }
+
+    function showApexMarkers() {
+      // Create Little Egypt oval border
+      L.polygon(egyptCoords, {
+        color: '#000', fillColor: '#1ABC9C',
+        fillOpacity: 0.06, opacity: 0.35, weight: 3,
+        interactive: false,
+      }).addTo(map)
+      L.polygon(egyptCoords, {
+        color: '#1ABC9C', fill: false,
+        opacity: 0.6, weight: 1.5,
+        interactive: false,
+      }).addTo(map)
+      markerDataByYear['apex'].forEach((m, i) => {
+        setTimeout(() => {
+          const icon = L.divIcon({
+            className: '',
+            html: m.type === 'cross'
+              ? '<div class="cross-marker"></div>'
+              : m.type === 'empty-cross'
+              ? '<div class="empty-cross-marker"></div>'
+              : m.type === 'intersection'
+              ? '<div class="x-marker"></div>'
+              : `<div class="city-dot type-${m.type}"></div>`,
+            iconSize: m.type === 'cross' || m.type === 'empty-cross' ? [16, 20] : m.type === 'intersection' ? [12, 12] : [8, 8],
+            iconAnchor: m.type === 'cross' || m.type === 'empty-cross' ? [8, 10] : m.type === 'intersection' ? [6, 6] : [4, 4],
+          })
+          const marker = L.marker([m.lat, m.lng], { icon, zIndexOffset: m.type === 'intersection' ? 1000 : 0 })
+          marker.bindPopup(`<div class="location-popup"><h4>${m.popup.split(' — ')[0]}</h4><p>${m.popup}</p></div>`)
+          marker.addTo(map)
+        }, i * 150)
+      })
+      // Show New Madrid Fault Zone after apex markers
+      setTimeout(() => {
+        L.polygon(nmszPolygon, {
+          color: '#000', fillColor: '#C0392B',
+          fillOpacity: 0.14, opacity: 0.4, weight: 3.5,
+          interactive: true,
+        }).bindPopup(`<div class="location-popup"><h4>New Madrid Seismic Zone</h4><p>The 1811–1812 sequence of earthquakes — the strongest in US history — reversed the course of the Mississippi River and rang church bells in Boston. The 2024 eclipse path crosses directly over this fault zone, connecting the trembling of the earth with the darkening of the sky.</p></div>`).addTo(map)
+        L.polygon(nmszPolygon, {
+          color: '#C0392B', fill: false, dashArray: '5 5',
+          interactive: true,
+        }).addTo(map)
+        // Add fault lines inside
+        faultLines.forEach(coords => {
+          L.polyline(coords, {
+            color: '#C0392B', weight: 2, opacity: 0.6,
+            dashArray: '3 4',
+            interactive: false,
+          }).addTo(map)
+        })
+      }, markerDataByYear['apex'].length * 150 + 600)
+    }
+
+    function animateYear(year) {
+      const coords = paths[String(year)].coords
+      const total = coords.length
+      let ptIndex = 0
+
+      function step() {
+        if (ptIndex >= total) {
+          showMarkersForYear(year)
+          const nextIdx = animYears.indexOf(year) + 1
+          if (nextIdx < animYears.length) {
+            setTimeout(() => animateYear(animYears[nextIdx]), 700)
+          } else {
+            animPlaying = false
+            animFinished = true
+            setTimeout(showApexMarkers, 500)
+          }
+          return
+        }
+        ptIndex++
+        const pts = coords.slice(0, ptIndex)
+        shadowLayersByYear[year].forEach(l => l.setLatLngs(pts))
+        centerLinesByYear[year].setLatLngs(pts)
+        setTimeout(step, 35)
+      }
+      step()
+    }
+
+    function startAnimation() {
+      if (animPlaying || animFinished) return
+      animPlaying = true
+      setTimeout(() => animateYear(2017), 400)
+    }
+
+    // Auto-trigger when map scrolls into view
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) startAnimation()
+    }, { threshold: 0.25 })
+    observer.observe(document.getElementById('map-section'))
+
+    // ─── Initial map bounds ───
+    map.fitBounds(L.latLngBounds([23, -125], [50, -50]), { padding: [40, 40] })
+
+  })
+  </script>
+</body>
+</html>

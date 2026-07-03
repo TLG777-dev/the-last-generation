@@ -1,0 +1,17 @@
+name: Cache Disaster Data
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  cache:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger cache-disasters Edge Function
+        run: |
+          curl -s -X POST "${{ secrets.SUPABASE_FUNCTION_URL }}/cache-disasters" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -w "\nHTTP %{http_code}" || echo "Request failed"

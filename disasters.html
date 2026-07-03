@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Live natural disaster tracker — earthquakes, floods, cyclones, volcanoes, and wildfires. Real-time data from USGS and GDACS." />
+  <title>World Watch — Natural Disasters | The Last Generation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,300&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+  <link rel="stylesheet" href="/src/nav.css" />
+  <link rel="stylesheet" href="/src/disasters.css" />
+  <script type="speculationrules">
+    {"prerender":[{"where":{"href_matches":"/*"}}]}
+  </script>
+</head>
+<body>
+  <div id="site-headerMount" data-page-title="World Watch" data-badge="REAL-TIME"></div>
+  <script src="/src/nav-component.js" defer></script>
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Bible verse rotator -->
+  <div id="bible-verse">
+    <div class="bv-content" id="bv-content"></div>
+    <div class="bv-ref" id="bv-ref"></div>
+  </div>
+
+  <!-- Map container -->
+  <div id="map"></div>
+
+  <!-- Map loading bar -->
+  <div id="map-loading" class="map-loading"><div class="map-loading-bar"></div></div>
+
+  <!-- Filter panel -->
+  <div id="filter-panel" class="open">
+    <div class="fp-header" id="fp-toggle">
+      <span class="fp-title">Filters</span>
+      <span class="fp-arrow">&#9654;</span>
+    </div>
+    <div class="fp-body" id="fp-body">
+      <div class="fp-section">
+        <span class="fp-label">Magnitude</span>
+        <div class="fp-btns" id="fp-mag">
+          <button class="fp-btn" data-mag="1">M1+</button>
+          <button class="fp-btn active" data-mag="2.5">M2.5+</button>
+          <button class="fp-btn" data-mag="4.5">M4.5+</button>
+          <button class="fp-btn" data-mag="6">M6+</button>
+        </div>
+      </div>
+      <div class="fp-section">
+        <span class="fp-label">Year</span>
+        <select id="fp-year" class="fp-select"></select>
+      </div>
+      <div class="fp-section">
+        <span class="fp-label">Type</span>
+        <div class="fp-toggles" id="fp-toggles">
+          <button class="fp-tog active" data-type="earthquake"><span class="fp-tog-dot" style="background:#EF4444"></span><span>Earthquakes</span><span class="fp-tog-count" id="tc-earthquake">—</span></button>
+          <button class="fp-tog active" data-type="flood"><span class="fp-tog-dot" style="background:#3B82F6"></span><span>Floods</span><span class="fp-tog-count" id="tc-flood">—</span></button>
+          <button class="fp-tog active" data-type="cyclone"><span class="fp-tog-dot" style="background:#F59E0B"></span><span>Cyclones</span><span class="fp-tog-count" id="tc-cyclone">—</span></button>
+          <button class="fp-tog active" data-type="volcano"><span class="fp-tog-dot" style="background:#8B5CF6"></span><span>Volcanoes</span><span class="fp-tog-count" id="tc-volcano">—</span></button>
+          <button class="fp-tog active" data-type="wildfire"><span class="fp-tog-dot" style="background:#F97316"></span><span>Wildfires</span><span class="fp-tog-count" id="tc-wildfire">—</span></button>
+          <button class="fp-tog active" data-type="fireball"><span class="fp-tog-dot" style="background:#FF6B35"></span><span>Fireballs</span><span class="fp-tog-count" id="tc-fireball">—</span></button>
+        </div>
+      </div>
+      <div class="fp-section collapsed" id="alert-panel">
+        <div class="ap-header" id="ap-toggle">
+          <span class="ap-title">Recent Events</span>
+          <span class="ap-count" id="ap-count">0</span>
+          <span class="ap-arrow">&#9660;</span>
+        </div>
+        <div class="ap-body" id="ap-body">
+          <div class="ap-list" id="ap-list"></div>
+        </div>
+      </div>
+      <div class="fp-section">
+        <button class="fp-graph-btn open" id="fp-graph-toggle">&#9660; Earthquake Frequency</button>
+      </div>
+      <div class="fp-section fp-graph-area open" id="fp-graph-area">
+        <div class="eq-trend" id="eq-trend"></div>
+        <canvas id="eq-graph" class="eq-graph"></canvas>
+        <div class="eq-composition" id="eq-composition"></div>
+      </div>
+      <div class="fp-section">
+        <button class="fp-graph-btn" data-graph="flood">&#9654; Flood Frequency</button>
+      </div>
+      <div class="fp-section fp-graph-area" id="graph-area-flood">
+        <div class="eq-trend" id="trend-flood"></div>
+        <canvas id="graph-flood" class="eq-graph"></canvas>
+        <div class="eq-graph-label">Flood events (2000&ndash;present) &middot; Source: NASA EONET</div>
+      </div>
+      <div class="fp-section">
+        <button class="fp-graph-btn" data-graph="cyclone">&#9654; Cyclone Frequency</button>
+      </div>
+      <div class="fp-section fp-graph-area" id="graph-area-cyclone">
+        <div class="eq-trend" id="trend-cyclone"></div>
+        <canvas id="graph-cyclone" class="eq-graph"></canvas>
+        <div class="eq-graph-label">Cyclone events (2000&ndash;present) &middot; Source: NASA EONET</div>
+      </div>
+      <div class="fp-section">
+        <button class="fp-graph-btn" data-graph="volcano">&#9654; Volcano Frequency</button>
+      </div>
+      <div class="fp-section fp-graph-area" id="graph-area-volcano">
+        <div class="eq-trend" id="trend-volcano"></div>
+        <canvas id="graph-volcano" class="eq-graph"></canvas>
+        <div class="eq-graph-label">Volcanic events (2000&ndash;present) &middot; Source: NASA EONET</div>
+      </div>
+      <div class="fp-section">
+        <button class="fp-graph-btn" data-graph="wildfire">&#9654; Wildfire Frequency</button>
+      </div>
+      <div class="fp-section fp-graph-area" id="graph-area-wildfire">
+        <div class="eq-trend" id="trend-wildfire"></div>
+        <canvas id="graph-wildfire" class="eq-graph"></canvas>
+        <div class="eq-graph-label">Wildfire events (2000&ndash;present) &middot; Source: NASA EONET</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline controls -->
+  <div id="timeline-bar">
+    <button class="tl-btn" id="tl-step-back" title="Step Back">&#9664;&#9664;</button>
+    <button class="tl-btn" id="tl-play" title="Auto-Play">&#9654;</button>
+    <button class="tl-btn" id="tl-step-fwd" title="Step Forward">&#9654;&#9654;</button>
+    <div class="tl-track">
+      <input type="range" id="tl-slider" class="tl-slider" min="0" max="100" value="100" step="1" />
+      <div class="tl-labels">
+        <span class="tl-label" id="tl-label-start">—</span>
+        <span class="tl-label tl-label-current" id="tl-label-current">Now</span>
+        <span class="tl-label" id="tl-label-end">—</span>
+      </div>
+    </div>
+    <button class="tl-btn" id="tl-reset" title="Reset to start">&#124;&#9664;</button>
+    <button class="tl-btn active" id="tl-live" title="Jump to present">&#9679;</button>
+  </div>
+
+  <!-- Timeline Legend -->
+  <div id="tl-legend">
+    <button class="tl-tog active" data-type="earthquake"><span class="tl-tog-dot" style="background:#EF4444"></span><span class="tl-tog-lbl">EQ</span><span class="fp-tog-count" id="tc-eq">—</span></button>
+    <button class="tl-tog active" data-type="flood"><span class="tl-tog-dot" style="background:#3B82F6"></span><span class="tl-tog-lbl">FL</span><span class="fp-tog-count" id="tc-fl">—</span></button>
+    <button class="tl-tog active" data-type="cyclone"><span class="tl-tog-dot" style="background:#F59E0B"></span><span class="tl-tog-lbl">TC</span><span class="fp-tog-count" id="tc-tc">—</span></button>
+    <button class="tl-tog active" data-type="volcano"><span class="tl-tog-dot" style="background:#8B5CF6"></span><span class="tl-tog-lbl">VF</span><span class="fp-tog-count" id="tc-vf">—</span></button>
+    <button class="tl-tog active" data-type="wildfire"><span class="tl-tog-dot" style="background:#F97316"></span><span class="tl-tog-lbl">WF</span><span class="fp-tog-count" id="tc-wf">—</span></button>
+    <button class="tl-tog active" data-type="fireball"><span class="tl-tog-dot" style="background:#FF6B35"></span><span class="tl-tog-lbl">FB</span><span class="fp-tog-count" id="tc-fb">—</span></button>
+  </div>
+
+  <!-- Event popup -->
+  <div id="event-popup" class="event-popup"></div>
+
+  <!-- Data notice -->
+  <div class="data-notice">Earthquake data: USGS &middot; Disaster alerts: GDACS (UN/European Commission) &middot; Fireballs: NASA CNEOS</div>
+
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script type="module" src="/src/disasters.js"></script>
+</body>
+</html>

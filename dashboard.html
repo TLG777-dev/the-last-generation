@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Data hub — live countdowns, prophetic markers, and converging signs in one view." />
+  <title>Data Hub | The Last Generation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,300;1,500&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/nav.css" />
+  <link rel="stylesheet" href="/src/dashboard.css" />
+  <script type="speculationrules">
+    {"prerender":[{"where":{"href_matches":"/*"}}]}
+  </script>
+</head>
+<body>
+  <div id="site-headerMount" data-page-title="Data Hub" data-badge="LIVE"></div>
+  <script src="/src/nav-component.js" defer></script>
+  <canvas id="bg-canvas"></canvas>
+
+  <div id="dash-content">
+    <div class="dh-top">
+      <h1 class="dh-title">Data Hub</h1>
+      <p class="dh-sub" id="dh-timestamp">Loading...</p>
+    </div>
+
+    <div id="zones-root"></div>
+
+    <footer id="dash-footer">
+      <p class="footer-text">All data from public sources. Verify independently.</p>
+      <p class="footer-maranatha">Maranatha</p>
+      <p class="footer-nav"><a href="/">The Last Generation</a> &middot; <a href="/timeline.html">Prophetic Timeline</a> &middot; <a href="/calendar.html">Prophecy Calendar</a> &middot; <a href="/rapture.html">The Rapture</a> &middot; <a href="/dashboard.html">Data Hub</a></p>
+    </footer>
+  </div>
+
+  <script type="module" src="/src/dashboard.js"></script>
+</body>
+</html>
