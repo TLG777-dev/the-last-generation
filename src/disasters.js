@@ -1978,6 +1978,7 @@ async function loadLast30DaysBeacons() {
 
   hideMapLoading();
   updateDataSourceLabel('Last 30d');
+  updateToggleCounts();
 
   /* Build a GeoJSON source with ALL events as small dots */
   const allFeatures = events.map(e => ({
