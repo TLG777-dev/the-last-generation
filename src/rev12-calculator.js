@@ -2,6 +2,48 @@
 // Keplerian orbital elements from JPL Horizons (DE441)
 // Accurate to ~1 arcminute for planets, ~5 arcminutes for Moon
 
+/* ── Starfield Canvas ── */
+(function initStarfield() {
+  const canvas = document.getElementById('r12-starfield')
+  if (!canvas) return
+  const ctx = canvas.getContext('2d')
+  let stars = []
+  let w, h
+
+  function resize() {
+    w = canvas.width = canvas.offsetWidth
+    h = canvas.height = canvas.offsetHeight
+    stars = []
+    const count = Math.floor((w * h) / 1200)
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 1.2 + 0.2,
+        a: Math.random() * 0.6 + 0.2,
+        twinkleSpeed: Math.random() * 0.02 + 0.005,
+        twinkleOffset: Math.random() * Math.PI * 2
+      })
+    }
+  }
+
+  function draw(time) {
+    ctx.clearRect(0, 0, w, h)
+    for (const s of stars) {
+      const flicker = Math.sin(time * s.twinkleSpeed + s.twinkleOffset) * 0.15 + s.a
+      ctx.beginPath()
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2)
+      ctx.fillStyle = `rgba(220,215,200,${Math.max(0.1, flicker)})`
+      ctx.fill()
+    }
+    requestAnimationFrame(draw)
+  }
+
+  window.addEventListener('resize', resize)
+  resize()
+  requestAnimationFrame(draw)
+})()
+
 const D2R = Math.PI / 180, R2D = 180 / Math.PI
 
 // ── Julian Date ──
