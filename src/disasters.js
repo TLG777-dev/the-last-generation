@@ -1509,61 +1509,13 @@ function rebuildLast30Beacons() {
       map.setPaintProperty('beacon-glow-layer', 'circle-opacity', glow);
     }, 50);
   }
-  updateRecentPanel(grouped);
 }
 
-function updateRecentPanel(grouped) {
+function updateRecentPanelVisibility() {
   if (!rpBody) return;
-  rpBody.innerHTML = '';
-  const TYPE_ORDER = ['earthquake', 'flood', 'cyclone', 'volcano', 'wildfire', 'fireball'];
-  TYPE_ORDER.forEach(type => {
-    const items = grouped?.[type];
-    if (!items || items.length === 0) return;
-    const group = document.createElement('div');
-    group.className = 'rp-group';
-    group.dataset.type = type;
-    group.innerHTML = `
-      <div class="rp-group-header">
-        <span class="rp-group-dot" style="background:${TYPE_COLORS[type]}"></span>
-        <span class="rp-group-name">${TYPE_LABELS[type]}s</span>
-        <span class="rp-group-count">${items.length}</span>
-        <span class="rp-group-arrow">&#9660;</span>
-      </div>
-      <div class="rp-group-items"></div>
-    `;
-    const hdr = group.querySelector('.rp-group-header');
-    hdr.addEventListener('click', () => group.classList.toggle('collapsed'));
-    const container = group.querySelector('.rp-group-items');
-    items.forEach(ev => {
-      const row = document.createElement('div');
-      row.className = 'rp-event';
-      const now = Date.now();
-      const diff = now - ev.timestamp;
-      let ago = '';
-      if (diff < 60000) ago = 'just now';
-      else if (diff < 3600000) ago = Math.floor(diff / 60000) + 'm ago';
-      else if (diff < 86400000) ago = Math.floor(diff / 3600000) + 'h ago';
-      else ago = Math.floor(diff / 86400000) + 'd ago';
-      const magStr = ev.magnitude > 0 ? `M${ev.magnitude.toFixed(1)}` : TYPE_ICONS_PANEL[type] || '●';
-      const depthStr = ev.depth > 0 ? ` · ${ev.depth}km` : '';
-      row.innerHTML = `
-        <span class="rp-event-mag" style="color:${TYPE_COLORS[type]}">${magStr}</span>
-        <div class="rp-event-body">
-          <div class="rp-event-title">${ev.title}</div>
-          <div class="rp-event-meta"><span>${ago}</span>${depthStr ? `<span>${depthStr}</span>` : ''}</div>
-        </div>
-      `;
-      row.addEventListener('click', () => {
-        map.flyTo({ center: [ev.lng, ev.lat], zoom: 7, duration: 1200 });
-        rpBody.querySelectorAll('.rp-event.highlighted').forEach(el => el.classList.remove('highlighted'));
-        row.classList.add('highlighted');
-        setTimeout(() => {
-          showEventPopup({ type: ev.type, magnitude: ev.magnitude, depth: ev.depth, title: ev.title, timestamp: ev.timestamp, url: ev.url, color: ev.color, id: ev.id, lat: ev.lat, lng: ev.lng });
-        }, 1300);
-      });
-      container.appendChild(row);
-    });
-    rpBody.appendChild(group);
+  rpBody.querySelectorAll('.rp-group').forEach(group => {
+    const type = group.dataset.type;
+    if (type) group.style.display = enabledTypes.has(type) ? '' : 'none';
   });
 }
 
@@ -2120,14 +2072,6 @@ function populateRecentPanel(groupedEvents) {
       container.appendChild(row);
     });
     rpBody.appendChild(group);
-  });
-}
-
-function updateRecentPanelVisibility() {
-  if (!rpBody) return;
-  rpBody.querySelectorAll('.rp-group').forEach(group => {
-    const type = group.dataset.type;
-    if (type) group.style.display = enabledTypes.has(type) ? '' : 'none';
   });
 }
 
