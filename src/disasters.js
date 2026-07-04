@@ -1801,7 +1801,9 @@ function showEventPopup(props, lngLat) {
 map.on('click', () => {
   document.getElementById('event-popup').classList.remove('visible');
   document.getElementById('event-popup').style.display = 'none';
+  const wasOpen = document.getElementById('event-drawer')?.classList.contains('open');
   document.getElementById('event-drawer')?.classList.remove('open');
+  if (wasOpen && isLast30Mode) showRecentPanel();
 });
 
 /* ── Map Loading Bar ── */
@@ -2153,11 +2155,15 @@ const drawerTitle = document.getElementById('ed-title');
 const drawerClose = document.getElementById('ed-close');
 
 if (drawerClose) {
-  drawerClose.addEventListener('click', () => drawer.classList.remove('open'));
+  drawerClose.addEventListener('click', () => {
+    drawer.classList.remove('open');
+    if (isLast30Mode) showRecentPanel();
+  });
 }
 
 function openEventDrawer(props) {
   if (!drawer || !drawerBody) return;
+  if (isLast30Mode) hideRecentPanel();
   drawerTitle.textContent = `${TYPE_LABELS[props.type] || 'Event'} Details`;
   const mag = props.magnitude ? parseFloat(props.magnitude).toFixed(1) : 'N/A';
   const depth = props.depth ? `${parseFloat(props.depth).toFixed(0)} km` : 'N/A';
