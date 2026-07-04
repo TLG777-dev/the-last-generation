@@ -225,6 +225,15 @@ body { font-family: var(--font-ui); color: rgba(245,240,230,0.8); -webkit-font-s
 .tl-tog-dot { width: 4px; height: 4px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
 .tl-tog-lbl { font-size: 0.42rem; letter-spacing: 0.03em; }
 .tl-tog .fp-tog-count { font-size: 0.4rem; }
+.tl-divider { width: 1px; height: 0.6rem; background: rgba(245,240,230,0.12); flex-shrink: 0; }
+.tl-last30-btn {
+  font-family: var(--font-ui); font-size: var(--fs-3xs); font-weight: 500;
+  padding: 0.15rem 0.4rem; border-radius: 4px; flex-shrink: 0;
+  border: 1px solid transparent; background: transparent;
+  color: rgba(245,240,230,0.3); cursor: pointer; transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.tl-last30-btn:hover { border-color: rgba(212,175,55,0.1); color: rgba(245,240,230,0.5); }
+.tl-last30-btn.active { color: #E2D5A3; background: rgba(212,175,55,0.1); border-color: rgba(212,175,55,0.15); animation: tlPulseGlow 3s ease-in-out infinite; }
 
 /* ── Alert Panel ── */
 #alert-panel {
@@ -590,6 +599,7 @@ body { font-family: var(--font-ui); color: rgba(245,240,230,0.8); -webkit-font-s
   .tl-label { font-size: var(--fs-3xs); }
   #tl-legend { bottom: 3rem; flex-wrap: wrap; justify-content: center; gap: 0.25rem; }
   .tl-tog { font-size: var(--fs-3xs); padding: 0.1rem 0.2rem; }
+  .tl-last30-btn { font-size: var(--fs-3xs); padding: 0.1rem 0.2rem; }
   .data-notice { font-size: 0.4rem; }
   .data-source { font-size: 0.5rem; }
   .fp-title { font-size: 0.45rem; }
