@@ -1905,8 +1905,15 @@ if (fpLast30) {
     isLast30Mode = !isLast30Mode;
     fpLast30.classList.toggle('active', isLast30Mode);
     if (fpYearSelect) fpYearSelect.disabled = isLast30Mode;
-    if (isLast30Mode) loadLast30DaysBeacons();
-    else { selectedYear = fpYearSelect ? parseInt(fpYearSelect.value) : new Date().getFullYear(); switchYear(selectedYear); }
+    if (isLast30Mode) {
+      loadLast30DaysBeacons();
+    } else {
+      /* Clean up Last 30 dots layer */
+      if (map.getLayer('last30-all')) map.removeLayer('last30-all');
+      if (map.getSource('last30-all')) map.removeSource('last30-all');
+      selectedYear = fpYearSelect ? parseInt(fpYearSelect.value) : new Date().getFullYear();
+      switchYear(selectedYear);
+    }
   });
 }
 
@@ -1921,7 +1928,7 @@ async function loadLast30DaysBeacons() {
 
   try {
     const [eqResp, gdacsResp, fbResp] = await Promise.allSettled([
-      fetch(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${new Date(thirtyDaysAgo).toISOString().slice(0,10)}&endtime=${new Date(now).toISOString().slice(0,10)}&minmagnitude=5&orderby=magnitude&limit=100`),
+      fetch(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${new Date(thirtyDaysAgo).toISOString().slice(0,10)}&endtime=${new Date(now).toISOString().slice(0,10)}&minmagnitude=4.5&orderby=magnitude&limit=500`),
       fetch('/api/gdacs/events4app'),
       fetch('/api/fireball?limit=200')
     ]);
@@ -1963,10 +1970,7 @@ async function loadLast30DaysBeacons() {
   events = dedupEvents(workingEvents);
   computeStepBuckets();
 
-  const typeCounts = {};
-  events.forEach(e => { typeCounts[e.type] = (typeCounts[e.type] || 0) + 1; });
-
-  /* Remove all bucket layers, show beacons only */
+  /* Remove all bucket layers */
   for (let i = 0; i < NUM_PLAY_STEPS; i++) {
     const layerId = 'bl-' + i;
     if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', 'none');
@@ -1974,29 +1978,72 @@ async function loadLast30DaysBeacons() {
 
   hideMapLoading();
   updateDataSourceLabel('Last 30d');
-  startPulse();
+
+  /* Build a GeoJSON source with ALL events as small dots */
+  const allFeatures = events.map(e => ({
+    type: 'Feature',
+    geometry: { type: 'Point', coordinates: [e.lng, e.lat] },
+    properties: { type: e.type, magnitude: e.magnitude, color: e.color, title: e.title, timestamp: e.timestamp, depth: e.depth, id: e.id },
+  }));
+
+  const allSourceId = 'last30-all';
+  if (map.getSource(allSourceId)) map.removeSource(allSourceId);
+  if (map.getLayer(allSourceId)) map.removeLayer(allSourceId);
+  map.addSource(allSourceId, { type: 'geojson', data: { type: 'FeatureCollection', features: allFeatures } });
+  map.addLayer({
+    id: allSourceId,
+    type: 'circle',
+    source: allSourceId,
+    paint: {
+      'circle-color': ['get', 'color'],
+      'circle-radius': [
+        'interpolate', ['linear'], ['get', 'magnitude'],
+        2, 2, 4, 3, 5, 4, 6, 5, 7, 6, 8, 7,
+      ],
+      'circle-opacity': 0.4,
+      'circle-stroke-width': 0,
+    },
+  });
+
+  /* Click handler for small dots */
+  map.on('click', allSourceId, (e) => {
+    if (e.features?.length > 0) {
+      const p = e.features[0].properties;
+      showEventPopup(p, e.lngLat);
+    }
+  });
+  map.on('mouseenter', allSourceId, () => { map.getCanvas().style.cursor = 'pointer'; });
+  map.on('mouseleave', allSourceId, () => { map.getCanvas().style.cursor = ''; });
+
+  /* Place prominent beacon markers for the MOST RECENT event of each type */
+  Object.values(beaconMarkers).forEach(m => { try { m.remove(); } catch(_) {} });
+  Object.keys(beaconMarkers).forEach(k => delete beaconMarkers[k]);
 
   const types = [...enabledTypes];
   types.forEach(type => {
-    const latest = [...events].filter(e => e.type === type).sort((a, b) => b.magnitude - a.magnitude || b.timestamp - a.timestamp)[0];
-    if (!latest) return;
-    if (!beaconMarkers[type]) {
-      const el = document.createElement('div');
-      el.className = 'beacon-label';
-      beaconMarkers[type] = new maplibregl.Marker({ element: el });
-    }
-    const marker = beaconMarkers[type];
-    const el = marker.getElement();
+    const ofType = events.filter(e => e.type === type);
+    if (ofType.length === 0) return;
+
+    /* Most recent by timestamp */
+    const latest = ofType.sort((a, b) => b.timestamp - a.timestamp)[0];
+
+    const el = document.createElement('div');
+    el.className = 'beacon-label';
+    const marker = new maplibregl.Marker({ element: el });
+    beaconMarkers[type] = marker;
+
     const title = type === 'earthquake' ? `M ${latest.magnitude.toFixed(1)} — ${latest.title}` : latest.title;
     const lbl = title.length > TITLE_MAX_LEN ? title.substring(0, TITLE_TRUNC_LEN) + '...' : title;
     const depthStr = type === 'earthquake' ? ` · ${latest.depth.toFixed(0)} km` : '';
     const dateStr = formatDate(latest.timestamp);
-    el.innerHTML = `<div>${lbl}</div><div style="font-weight:300;font-size:0.5rem;opacity:0.7;margin-top:1px">${dateStr}${depthStr}</div>`;
+    el.innerHTML = `<div>${lbl}</div><div style="font-weight:300;font-size:0.5rem;opacity:0.7;margin-top:1px">${dateStr}${depthStr} · ${ofType.length} events</div>`;
     el.style.color = TYPE_COLORS[type];
     el.style.display = '';
     marker.setLngLat([latest.lng, latest.lat]);
     marker.addTo(map);
   });
+
+  startPulse();
 }
 
 /* ── 5. Event Detail Drawer ── */
