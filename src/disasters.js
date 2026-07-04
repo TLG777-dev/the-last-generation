@@ -2098,14 +2098,13 @@ async function loadLast30DaysBeacons() {
   map.on('mouseenter', allSourceId, () => { map.getCanvas().style.cursor = 'pointer'; });
   map.on('mouseleave', allSourceId, () => { map.getCanvas().style.cursor = ''; });
 
-  /* Populate side panel AND place beacon markers with size hierarchy */
+  /* Populate side panel AND place beacon glow dots (no text labels) */
   Object.values(beaconMarkers).forEach(m => { try { m.remove(); } catch(_) {} });
   Object.keys(beaconMarkers).forEach(k => delete beaconMarkers[k]);
 
   const BEACONS_PER_TYPE = 7;
   const grouped = {};
   const beaconFeatures = [];
-  const leaderFeatures = [];
 
   [...enabledTypes].forEach(type => {
     const ofType = events
@@ -2115,25 +2114,6 @@ async function loadLast30DaysBeacons() {
 
     grouped[type].forEach((e, idx) => {
       const isFirst = idx === 0;
-      const el = document.createElement('div');
-      el.className = 'beacon-label';
-      const marker = new maplibregl.Marker({ element: el });
-      const key = `${type}-${idx}`;
-      beaconMarkers[key] = marker;
-
-      const title = type === 'earthquake' ? `M ${e.magnitude.toFixed(1)} — ${e.title}` : e.title;
-      const lbl = title.length > TITLE_MAX_LEN ? title.substring(0, TITLE_TRUNC_LEN) + '…' : title;
-      const depthStr = type === 'earthquake' ? ` · ${e.depth.toFixed(0)} km` : '';
-      const ago = timeAgo(e.timestamp);
-      el.innerHTML = `<div>${lbl}</div><div style="font-weight:300;font-size:${isFirst ? '0.5rem' : '0.38rem'};opacity:${isFirst ? 0.7 : 0.35};margin-top:1px">${ago}${depthStr}</div>`;
-      el.style.color = TYPE_COLORS[type];
-      el.style.display = '';
-      el.style.fontSize = isFirst ? '' : '0.75em';
-      el.style.opacity = isFirst ? '1' : '0.55';
-      marker.setLngLat([e.lng, e.lat]);
-      marker.addTo(map);
-
-      /* Glow dot on map — first per type is full size, others smaller */
       beaconFeatures.push({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: [e.lng, e.lat] },
