@@ -190,8 +190,15 @@ function showConflictPopup(c) {
   `;
   popup.style.display = 'block';
   const p = map.project([c.lng, c.lat]);
-  popup.style.left = `${p.x + 15}px`;
-  popup.style.top = `${p.y - 20}px`;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const pw = popup.offsetWidth || 280, ph = popup.offsetHeight || 160;
+  let px = p.x + 15, py = p.y - 20;
+  if (px + pw > vw - 12) px = vw - pw - 12;
+  if (px < 12) px = 12;
+  if (py + ph > vh - 12) py = vh - ph - 12;
+  if (py < 12) py = 12;
+  popup.style.left = `${px}px`;
+  popup.style.top = `${py}px`;
   popup.classList.add('visible');
 }
 
@@ -743,22 +750,30 @@ drawConflictGraph();
 (function initBg() {
   const bg = document.getElementById('bg-canvas');
   if (!bg) return;
-  const dpr = window.devicePixelRatio || 1;
-  const w = window.innerWidth, h = window.innerHeight;
-  bg.width = w * dpr; bg.height = h * dpr;
-  bg.style.width = w + 'px'; bg.style.height = h + 'px';
-  const ctx = bg.getContext('2d');
-  ctx.scale(dpr, dpr);
-  ctx.fillStyle = '#050510';
-  ctx.fillRect(0, 0, w, h);
-  for (let i = 0; i < 60; i++) {
-    const x = Math.random() * w, y = Math.random() * h;
-    const r = Math.random() * 1.2;
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(220,60,60,${0.02 + Math.random() * 0.03})`;
-    ctx.fill();
+  function drawBg() {
+    const dpr = window.devicePixelRatio || 1;
+    const w = window.innerWidth, h = window.innerHeight;
+    bg.width = w * dpr; bg.height = h * dpr;
+    bg.style.width = w + 'px'; bg.style.height = h + 'px';
+    const ctx = bg.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = '#050510';
+    ctx.fillRect(0, 0, w, h);
+    for (let i = 0; i < 60; i++) {
+      const x = Math.random() * w, y = Math.random() * h;
+      const r = Math.random() * 1.2;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(220,60,60,${0.02 + Math.random() * 0.03})`;
+      ctx.fill();
+    }
   }
+  drawBg();
+  let bgTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(bgTimer);
+    bgTimer = setTimeout(drawBg, 150);
+  });
 })();
 
 /* ── Loading Overlay ── */

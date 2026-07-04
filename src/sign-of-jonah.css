@@ -339,6 +339,12 @@ html, body {
   z-index: 50;
   pointer-events: none;
   white-space: nowrap;
+  max-width: 90vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-height: 600px) {
+  .info-overlay { bottom: 60px; }
 }
 
 .date-main {

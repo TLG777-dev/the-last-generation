@@ -780,8 +780,8 @@ body {
   background: none;
   border: 1px solid var(--border);
   color: var(--text-secondary);
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   cursor: pointer;
   border-radius: var(--radius);
   transition: all 0.2s;
@@ -789,6 +789,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+@media (max-width: 480px) {
+  .mv-nav-btn {
+    width: 44px;
+    height: 44px;
+  }
 }
 .mv-nav-btn:hover { border-color: var(--gold); color: var(--gold); }
 .mv-grid {

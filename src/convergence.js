@@ -277,6 +277,8 @@
         el.dataset.desc = ev.desc || '';
         el.addEventListener('mouseenter', showTooltip);
         el.addEventListener('mouseleave', hideTooltip);
+        el.addEventListener('touchstart', function(e){ e.preventDefault(); showTooltip(e); }, { passive: false });
+        el.addEventListener('touchend', function(){ setTimeout(hideTooltip, 2000); }, { passive: true });
         lane.appendChild(el);
       });
 
@@ -455,6 +457,17 @@
     function endDrag(){ isDown = false; scroll.classList.remove('grabbing'); }
     scroll.addEventListener('mouseup', endDrag);
     scroll.addEventListener('mouseleave', endDrag);
+    let touchStartX = 0, touchScrollLeft = 0;
+    scroll.addEventListener('touchstart', function(e){
+      if(e.target.closest('.cv-event')) return;
+      touchStartX = e.touches[0].pageX;
+      touchScrollLeft = scroll.scrollLeft;
+    }, { passive: true });
+    scroll.addEventListener('touchmove', function(e){
+      if(e.target.closest('.cv-event')) return;
+      const dx = e.touches[0].pageX - touchStartX;
+      if(Math.abs(dx) > 10) scroll.scrollLeft = touchScrollLeft - dx;
+    }, { passive: true });
   }
 
   // ─── Sync sidebar + timeline vertical scroll ───

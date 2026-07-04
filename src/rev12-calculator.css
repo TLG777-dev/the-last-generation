@@ -1,3 +1,5 @@
+@import './typography.css';
+
 :root {
   --bg: #0a0a0f;
   --bg-card: rgba(15, 15, 25, 0.8);
@@ -12,9 +14,6 @@
   --match: rgba(80, 200, 120, 0.8);
   --match-bg: rgba(80, 200, 120, 0.08);
   --nomatch: rgba(200, 80, 80, 0.6);
-  --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-body: 'Crimson Pro', Georgia, serif;
-  --font-ui: 'Inter', -apple-system, sans-serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,9 +22,10 @@ body {
   background: var(--bg);
   color: var(--txt);
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: var(--fs-base);
   line-height: 1.5;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 
@@ -44,13 +44,13 @@ body {
 }
 .calc-intro h1 {
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  font-size: var(--fs-title);
   font-weight: 700;
   color: var(--txt-bright);
   margin-bottom: 0.8rem;
 }
 .kjv {
-  font-size: 0.7rem;
+  font-size: var(--fs-2xs);
   font-weight: 400;
   color: var(--gold);
   vertical-align: super;
@@ -59,7 +59,7 @@ body {
 blockquote {
   font-family: var(--font-body);
   font-style: italic;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   color: var(--txt);
   line-height: 1.6;
   max-width: 700px;
@@ -70,7 +70,7 @@ blockquote {
 }
 .calc-subtitle {
   font-family: var(--font-ui);
-  font-size: 0.7rem;
+  font-size: var(--fs-sm);
   color: var(--txt-dim);
   letter-spacing: 0.04em;
 }
@@ -81,7 +81,7 @@ blockquote {
 }
 .calc-criteria h2 {
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: var(--fs-heading);
   font-weight: 600;
   color: var(--txt-bright);
   margin-bottom: 1rem;
@@ -109,14 +109,14 @@ blockquote {
 }
 .criteria-label {
   font-family: var(--font-display);
-  font-size: 0.85rem;
+  font-size: var(--fs-base);
   font-weight: 600;
   color: var(--txt-bright);
   margin-bottom: 0.3rem;
 }
 .criteria-desc {
   font-family: var(--font-ui);
-  font-size: 0.6rem;
+  font-size: var(--fs-xs);
   color: var(--txt-dim);
   line-height: 1.4;
 }
@@ -131,7 +131,7 @@ blockquote {
 }
 .calc-controls h2 {
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: var(--fs-heading);
   font-weight: 600;
   color: var(--txt-bright);
   margin-bottom: 1rem;
@@ -149,20 +149,21 @@ blockquote {
 }
 .control-group label {
   font-family: var(--font-ui);
-  font-size: 0.6rem;
+  font-size: var(--fs-xs);
   color: var(--txt-dim);
   letter-spacing: 0.04em;
 }
 .control-group input,
 .control-group select {
   font-family: var(--font-ui);
-  font-size: 0.75rem;
+  font-size: var(--fs-sm);
   padding: 0.4rem 0.6rem;
   background: rgba(255,255,255,0.04);
   border: 1px solid var(--border);
   border-radius: 4px;
   color: var(--txt-bright);
-  width: 140px;
+  width: 100%;
+  max-width: 140px;
 }
 .control-group input:focus,
 .control-group select:focus {
@@ -171,7 +172,7 @@ blockquote {
 }
 .calc-btn {
   font-family: var(--font-ui);
-  font-size: 0.7rem;
+  font-size: var(--fs-sm);
   font-weight: 600;
   padding: 0.5rem 1.2rem;
   background: rgba(212, 175, 55, 0.15);
@@ -223,7 +224,7 @@ blockquote {
   left: 50%; top: 50%;
   transform: translate(-50%, -50%);
   font-family: var(--font-ui);
-  font-size: 0.6rem;
+  font-size: var(--fs-xs);
   color: var(--txt);
 }
 
@@ -233,14 +234,14 @@ blockquote {
 }
 .calc-results h2 {
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: var(--fs-heading);
   font-weight: 600;
   color: var(--txt-bright);
   margin-bottom: 1rem;
 }
 .result-count {
   font-family: var(--font-ui);
-  font-size: 0.65rem;
+  font-size: var(--fs-xs);
   color: var(--gold);
   font-weight: 400;
 }
@@ -253,7 +254,7 @@ blockquote {
   width: 100%;
   border-collapse: collapse;
   font-family: var(--font-ui);
-  font-size: 0.65rem;
+  font-size: var(--fs-xs);
 }
 .results-table th {
   padding: 0.5rem 0.6rem;
@@ -286,7 +287,7 @@ blockquote {
   border-radius: 3px;
   color: var(--match);
   font-weight: 600;
-  font-size: 0.6rem;
+  font-size: var(--fs-2xs);
 }
 
 /* JPL Section */
@@ -299,14 +300,14 @@ blockquote {
 }
 .jpl-section h2 {
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: var(--fs-heading);
   font-weight: 600;
   color: var(--txt-bright);
   margin-bottom: 1rem;
 }
 .jpl-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: 0.8rem;
 }
 .jpl-card {
@@ -317,7 +318,7 @@ blockquote {
 }
 .jpl-card-title {
   font-family: var(--font-display);
-  font-size: 0.8rem;
+  font-size: var(--fs-base);
   font-weight: 600;
   color: var(--txt-bright);
   margin-bottom: 0.5rem;
@@ -326,7 +327,7 @@ blockquote {
   display: flex;
   justify-content: space-between;
   font-family: var(--font-ui);
-  font-size: 0.6rem;
+  font-size: var(--fs-xs);
   padding: 0.2rem 0;
 }
 .jpl-label { color: var(--txt-dim); }
@@ -335,7 +336,7 @@ blockquote {
 .jpl-nomatch { color: var(--nomatch); font-weight: 600; }
 .jpl-loading {
   font-family: var(--font-ui);
-  font-size: 0.65rem;
+  font-size: var(--fs-xs);
   color: var(--txt-dim);
   padding: 1rem;
   text-align: center;
@@ -386,7 +387,16 @@ blockquote {
 @media (max-width: 768px) {
   .calc-main { padding: 1.5rem 1rem 3rem; }
   .control-row { flex-direction: column; }
-  .control-group input, .control-group select { width: 100%; }
+  .control-group input, .control-group select { width: 100%; max-width: none; }
   .calc-btn { width: 100%; }
   .criteria-grid { grid-template-columns: repeat(2, 1fr); }
+  .detail-grid { grid-template-columns: 1fr; }
+  .jpl-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .calc-main { padding: 1rem 0.8rem 2rem; }
+  .criteria-grid { grid-template-columns: 1fr; }
+  .calc-controls { padding: 0.8rem; }
+  .calc-btn { min-height: 44px; }
+  .control-group input, .control-group select { min-height: 44px; font-size: var(--fs-sm); }
 }
