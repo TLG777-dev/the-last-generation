@@ -1578,8 +1578,6 @@ function toggleType(btn, type) {
     b.classList.toggle('active', nowActive);
   });
   filteredEvents = getFilteredEvents();
-  updateBucketFilter();
-
   updateAlertPanel();
   if (isLast30Mode) {
     rebuildLast30Beacons();
@@ -1587,6 +1585,7 @@ function toggleType(btn, type) {
     if (enabledTypes.size > 0) startPulse();
     else stopPulse();
   }
+  updateBucketFilter();
 }
 
 document.querySelectorAll('.fp-tog').forEach(btn => {
