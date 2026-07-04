@@ -284,7 +284,7 @@ function initLayers() {
     source: 'beacon-source',
     paint: {
       'circle-color': ['get', 'color'],
-      'circle-radius': 18,
+      'circle-radius': ['case', ['==', ['get', 'isFirst'], 1], 18, 10],
       'circle-opacity': 0,
       'circle-stroke-width': 0,
     },
@@ -296,7 +296,7 @@ function initLayers() {
     source: 'beacon-source',
     paint: {
       'circle-color': ['get', 'color'],
-      'circle-radius': 35,
+      'circle-radius': ['case', ['==', ['get', 'isFirst'], 1], 35, 18],
       'circle-opacity': 0,
       'circle-blur': 0.7,
       'circle-stroke-width': 0,
@@ -309,9 +309,9 @@ function initLayers() {
     source: 'beacon-source',
     paint: {
       'circle-color': ['get', 'color'],
-      'circle-radius': [
-        'interpolate', ['linear'], ['zoom'],
-        1, 2, 5, 3, 10, 4,
+      'circle-radius': ['case', ['==', ['get', 'isFirst'], 1],
+        ['interpolate', ['linear'], ['zoom'], 1, 3, 5, 5, 10, 6],
+        ['interpolate', ['linear'], ['zoom'], 1, 1.5, 5, 2.5, 10, 3],
       ],
       'circle-opacity': 1,
       'circle-stroke-width': 0,
@@ -2098,18 +2098,61 @@ async function loadLast30DaysBeacons() {
   map.on('mouseenter', allSourceId, () => { map.getCanvas().style.cursor = 'pointer'; });
   map.on('mouseleave', allSourceId, () => { map.getCanvas().style.cursor = ''; });
 
-  /* Populate Recent Events side panel instead of beacon labels */
+  /* Populate side panel AND place beacon markers with size hierarchy */
   Object.values(beaconMarkers).forEach(m => { try { m.remove(); } catch(_) {} });
   Object.keys(beaconMarkers).forEach(k => delete beaconMarkers[k]);
 
   const BEACONS_PER_TYPE = 7;
   const grouped = {};
+  const beaconFeatures = [];
+  const leaderFeatures = [];
+
   [...enabledTypes].forEach(type => {
-    grouped[type] = events
+    const ofType = events
       .filter(e => e.type === type)
-      .sort((a, b) => b.timestamp - a.timestamp)
-      .slice(0, BEACONS_PER_TYPE);
+      .sort((a, b) => b.timestamp - a.timestamp);
+    grouped[type] = ofType.slice(0, BEACONS_PER_TYPE);
+
+    grouped[type].forEach((e, idx) => {
+      const isFirst = idx === 0;
+      const el = document.createElement('div');
+      el.className = 'beacon-label';
+      const marker = new maplibregl.Marker({ element: el });
+      const key = `${type}-${idx}`;
+      beaconMarkers[key] = marker;
+
+      const title = type === 'earthquake' ? `M ${e.magnitude.toFixed(1)} — ${e.title}` : e.title;
+      const lbl = title.length > TITLE_MAX_LEN ? title.substring(0, TITLE_TRUNC_LEN) + '…' : title;
+      const depthStr = type === 'earthquake' ? ` · ${e.depth.toFixed(0)} km` : '';
+      const ago = timeAgo(e.timestamp);
+      el.innerHTML = `<div>${lbl}</div><div style="font-weight:300;font-size:${isFirst ? '0.5rem' : '0.38rem'};opacity:${isFirst ? 0.7 : 0.35};margin-top:1px">${ago}${depthStr}</div>`;
+      el.style.color = TYPE_COLORS[type];
+      el.style.display = '';
+      el.style.fontSize = isFirst ? '' : '0.75em';
+      el.style.opacity = isFirst ? '1' : '0.55';
+      marker.setLngLat([e.lng, e.lat]);
+      marker.addTo(map);
+
+      /* Glow dot on map — first per type is full size, others smaller */
+      beaconFeatures.push({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [e.lng, e.lat] },
+        properties: { color: TYPE_COLORS[type], isFirst: isFirst ? 1 : 0 },
+      });
+    });
   });
+
+  /* Update beacon-source with all dots */
+  map.getSource('beacon-source')?.setData({
+    type: 'FeatureCollection', features: beaconFeatures,
+  });
+
+  /* Make beacon layers visible */
+  map.setPaintProperty('beacon-layer', 'circle-opacity', 0.45);
+  map.setPaintProperty('beacon-glow-layer', 'circle-opacity', 0.15);
+  map.setPaintProperty('beacon-dot-layer', 'circle-opacity', 1);
+  startPulse();
+
   populateRecentPanel(grouped);
   showRecentPanel();
   } catch (err) { console.warn('loadLast30DaysBeacons error:', err); }
