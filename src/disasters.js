@@ -1803,6 +1803,8 @@ map.on('click', () => {
   document.getElementById('event-popup').style.display = 'none';
   const wasOpen = document.getElementById('event-drawer')?.classList.contains('open');
   document.getElementById('event-drawer')?.classList.remove('open');
+  const bd = document.getElementById('event-backdrop');
+  if (bd) bd.style.display = 'none';
   if (wasOpen && isLast30Mode) showRecentPanel();
 });
 
@@ -2157,6 +2159,17 @@ const drawerClose = document.getElementById('ed-close');
 if (drawerClose) {
   drawerClose.addEventListener('click', () => {
     drawer.classList.remove('open');
+    const bd = document.getElementById('event-backdrop');
+    if (bd) bd.style.display = 'none';
+    if (isLast30Mode) showRecentPanel();
+  });
+}
+
+const eventBackdrop = document.getElementById('event-backdrop');
+if (eventBackdrop) {
+  eventBackdrop.addEventListener('click', () => {
+    drawer.classList.remove('open');
+    eventBackdrop.style.display = 'none';
     if (isLast30Mode) showRecentPanel();
   });
 }
@@ -2204,6 +2217,8 @@ function openEventDrawer(props) {
 
   drawerBody.innerHTML = html;
   drawer.classList.add('open');
+  const bd = document.getElementById('event-backdrop');
+  if (bd) bd.style.display = 'block';
 }
 
 /* ── 6. Enhanced click handler — drawer opens from showEventPopup ── */
