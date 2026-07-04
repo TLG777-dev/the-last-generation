@@ -432,8 +432,12 @@ async function verifyDate(dateStr) {
   const targets = { sun: '10', moon: '301', mercury: '199', venus: '299', mars: '499', jupiter: '599', saturn: '699' }
   const results = {}
 
+  const stopDate = new Date(dateStr)
+  stopDate.setDate(stopDate.getDate() + 1)
+  const stopStr = stopDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+
   for (const [name, id] of Object.entries(targets)) {
-    results[name] = await fetchJPLFromAPI(id, dateStr, dateStr.replace(/(\d{4})-(\d{2})-\d{2}/, '$1-$2-28'))
+    results[name] = await fetchJPLFromAPI(id, dateStr, stopStr)
     await new Promise(r => setTimeout(r, 300))
   }
 
