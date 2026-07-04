@@ -2077,7 +2077,6 @@ async function loadLast30DaysBeacons() {
         const c = f.geometry?.coordinates || [];
         if (c.length < 2) return;
         const ts = f.properties?.date ? new Date(f.properties.date).getTime() : Date.now();
-        if (ts < thirtyDaysAgo) return;
         const cats = f.categories || [];
         const eonetType = cats[0]?.id || '';
         const type = catMap[eonetType] || 'volcano';
