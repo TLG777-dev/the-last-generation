@@ -1,5 +1,4 @@
 # Cloudflare Pages redirects
-/apophis      /apophis.html      200
 
 # API proxies (Cloudflare Pages — 200 = proxy, not redirect)
 /api/kvert/*  http://kvert.febras.net/van/:splat  200
