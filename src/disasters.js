@@ -130,6 +130,18 @@ map.on('load', () => {
 populateYearDropdown();
 loadHistoricalEarthquakeData();
 
+/* ── Feed Status Tracking ── */
+const feedStatus = { USGS: 'pending', EONET: 'pending', GDACS: 'pending', Fireball: 'pending', KVERT: 'pending' };
+
+function updateDataSourceLabel(year) {
+  const active = Object.entries(feedStatus).filter(([_, s]) => s === 'ok').map(([n]) => n);
+  const down = Object.entries(feedStatus).filter(([_, s]) => s === 'fail').map(([n]) => n);
+  const label = document.getElementById('data-source');
+  let text = `${active.join(' + ') || 'No data'} ${year} — ${events.length.toLocaleString()} events`;
+  if (down.length > 0) text += ` \u00b7 ${down.join(', ')} unavailable`;
+  label.textContent = text;
+}
+
 // Initial load
 loadYearData();
 
@@ -154,18 +166,6 @@ document.getElementById('fp-year').addEventListener('change', function() {
   selectedYear = year;
   switchYear(year);
 });
-
-/* ── Feed Status Tracking ── */
-const feedStatus = { USGS: 'pending', EONET: 'pending', GDACS: 'pending', Fireball: 'pending', KVERT: 'pending' };
-
-function updateDataSourceLabel(year) {
-  const active = Object.entries(feedStatus).filter(([_, s]) => s === 'ok').map(([n]) => n);
-  const down = Object.entries(feedStatus).filter(([_, s]) => s === 'fail').map(([n]) => n);
-  const label = document.getElementById('data-source');
-  let text = `${active.join(' + ') || 'No data'} ${year} — ${events.length.toLocaleString()} events`;
-  if (down.length > 0) text += ` \u00b7 ${down.join(', ')} unavailable`;
-  label.textContent = text;
-}
 
 /* ── Year Switching ── */
 async function switchYear(year, isRefresh) {
