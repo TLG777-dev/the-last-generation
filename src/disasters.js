@@ -885,6 +885,19 @@ function updateBucketFilter() {
     const id = BUCKET_LAYER + i;
     if (map.getLayer(id)) map.setFilter(id, filterExpr);
   }
+  if (map.getLayer('last30-all')) {
+    map.setFilter('last30-all', ['in', ['get', 'type'], ['literal', types]]);
+  }
+  if (map.getLayer('beacon-layer')) {
+    map.setFilter('beacon-layer', ['in', ['get', 'type'], ['literal', types]]);
+  }
+  if (map.getLayer('beacon-glow-layer')) {
+    map.setFilter('beacon-glow-layer', ['in', ['get', 'type'], ['literal', types]]);
+  }
+  if (map.getLayer('beacon-dot-layer')) {
+    map.setFilter('beacon-dot-layer', ['in', ['get', 'type'], ['literal', types]]);
+  }
+  updateRecentPanelVisibility();
 }
 
 function updateBeacon() {
@@ -1955,6 +1968,7 @@ function populateRecentPanel(groupedEvents) {
     if (!items || items.length === 0) return;
     const group = document.createElement('div');
     group.className = 'rp-group';
+    group.dataset.type = type;
     group.innerHTML = `
       <div class="rp-group-header">
         <span class="rp-group-dot" style="background:${TYPE_COLORS[type]}"></span>
@@ -1996,6 +2010,14 @@ function populateRecentPanel(groupedEvents) {
       container.appendChild(row);
     });
     rpBody.appendChild(group);
+  });
+}
+
+function updateRecentPanelVisibility() {
+  if (!rpBody) return;
+  rpBody.querySelectorAll('.rp-group').forEach(group => {
+    const type = group.dataset.type;
+    if (type) group.style.display = enabledTypes.has(type) ? '' : 'none';
   });
 }
 
