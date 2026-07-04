@@ -2016,31 +2016,44 @@ async function loadLast30DaysBeacons() {
   map.on('mouseenter', allSourceId, () => { map.getCanvas().style.cursor = 'pointer'; });
   map.on('mouseleave', allSourceId, () => { map.getCanvas().style.cursor = ''; });
 
-  /* Place prominent beacon markers for the MOST RECENT event of each type */
+  /* Place prominent beacon markers for events within the last 7 days */
   Object.values(beaconMarkers).forEach(m => { try { m.remove(); } catch(_) {} });
   Object.keys(beaconMarkers).forEach(k => delete beaconMarkers[k]);
 
-  const types = [...enabledTypes];
-  types.forEach(type => {
-    const ofType = events.filter(e => e.type === type);
-    if (ofType.length === 0) return;
+  const sevenDaysAgo = now - 7 * 24 * 3600 * 1000;
+  const recentEvents = events.filter(e => e.timestamp >= sevenDaysAgo);
 
-    /* Most recent by timestamp */
-    const latest = ofType.sort((a, b) => b.timestamp - a.timestamp)[0];
+  /* Sort recent events: most recent first, then by magnitude */
+  recentEvents.sort((a, b) => b.timestamp - a.timestamp || b.magnitude - a.magnitude);
+
+  /* Group by type, take the most recent per type for the main beacon */
+  const types = [...enabledTypes];
+  const beaconCount = { earthquake: 0, flood: 0, cyclone: 0, volcano: 0, wildfire: 0, fireball: 0 };
+  const MAX_BEACONS_PER_TYPE = 3;
+
+  recentEvents.forEach(e => {
+    if (!enabledTypes.has(e.type)) return;
+    if (beaconCount[e.type] >= MAX_BEACONS_PER_TYPE) return;
+    beaconCount[e.type]++;
 
     const el = document.createElement('div');
     el.className = 'beacon-label';
+    const isFirst = beaconCount[e.type] === 1;
     const marker = new maplibregl.Marker({ element: el });
-    beaconMarkers[type] = marker;
+    const key = `${e.type}-${beaconCount[e.type]}`;
+    beaconMarkers[key] = marker;
 
-    const title = type === 'earthquake' ? `M ${latest.magnitude.toFixed(1)} — ${latest.title}` : latest.title;
+    const title = e.type === 'earthquake' ? `M ${e.magnitude.toFixed(1)} — ${e.title}` : e.title;
     const lbl = title.length > TITLE_MAX_LEN ? title.substring(0, TITLE_TRUNC_LEN) + '...' : title;
-    const depthStr = type === 'earthquake' ? ` · ${latest.depth.toFixed(0)} km` : '';
-    const dateStr = formatDate(latest.timestamp);
-    el.innerHTML = `<div>${lbl}</div><div style="font-weight:300;font-size:0.5rem;opacity:0.7;margin-top:1px">${dateStr}${depthStr} · ${ofType.length} events</div>`;
-    el.style.color = TYPE_COLORS[type];
+    const depthStr = e.type === 'earthquake' ? ` · ${e.depth.toFixed(0)} km` : '';
+    const dateStr = formatDate(e.timestamp);
+    const ago = timeAgo(e.timestamp);
+    el.innerHTML = `<div>${lbl}</div><div style="font-weight:300;font-size:${isFirst ? '0.5rem' : '0.42rem'};opacity:${isFirst ? 0.7 : 0.4};margin-top:1px">${dateStr}${depthStr} · ${ago}</div>`;
+    el.style.color = TYPE_COLORS[e.type];
     el.style.display = '';
-    marker.setLngLat([latest.lng, latest.lat]);
+    el.style.fontSize = isFirst ? '' : '0.85em';
+    el.style.opacity = isFirst ? '1' : '0.7';
+    marker.setLngLat([e.lng, e.lat]);
     marker.addTo(map);
   });
 
