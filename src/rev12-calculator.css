@@ -398,27 +398,6 @@ body {
 /* ══════════════════════════════════════════════
    JPL VERIFICATION
    ══════════════════════════════════════════════ */
-.r12-jpl-verify {
-  margin-bottom: 3rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 1.5rem;
-}
-.r12-jpl-header {
-  text-align: center;
-  margin-bottom: 1rem;
-}
-.r12-jpl-header .r12-section-title { margin-bottom: 0.3rem; }
-.r12-jpl-header .r12-section-sub {
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 1rem;
-}
-.r12-jpl-header .calc-btn {
-  margin: 0 auto;
-}
 .jpl-section {
   margin-top: 1rem;
 }
@@ -582,6 +561,14 @@ body {
 }
 .results-table tr:hover td {
   background: rgba(212, 175, 55, 0.03);
+}
+.results-note {
+  font-family: var(--font-ui);
+  font-size: var(--fs-2xs);
+  color: var(--txt-dim);
+  text-align: center;
+  margin-top: 0.8rem;
+  letter-spacing: 0.02em;
 }
 .td-match {
   color: var(--match) !important;

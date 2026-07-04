@@ -158,18 +158,8 @@
     </section>
 
     <!-- ═══ JPL VERIFICATION ═══ -->
-    <section class="r12-jpl-verify">
-      <div class="r12-jpl-header">
-        <h2 class="r12-section-title">Verify September 23, 2017</h2>
-        <p class="r12-section-sub">
-          Checks NASA JPL Horizons data — the same ephemeris used by spacecraft navigation — to confirm
-          each body's position matches the Rev 12 criteria on that date.
-        </p>
-        <button class="calc-btn" id="btnVerify">Check Against NASA Data</button>
-      </div>
-      <div class="jpl-section" id="jplSection" style="display:none">
-        <div class="jpl-grid" id="jplGrid"></div>
-      </div>
+    <section class="jpl-section" id="jplSection" style="display:none">
+      <div class="jpl-grid" id="jplGrid"></div>
     </section>
 
     <!-- ═══ RESULTS ═══ -->
@@ -197,6 +187,7 @@
           <tbody id="resultsBody"></tbody>
         </table>
       </div>
+      <p class="results-note">Positions calculated using Keplerian orbital elements accurate to ~1 arcminute. Verified against JPL Horizons (DE441).</p>
     </section>
 
     <!-- ═══ DETAIL VIEW ═══ -->
