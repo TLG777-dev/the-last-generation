@@ -18,7 +18,7 @@
   <div id="site-headerMount" data-page-title="Weekly Digest"></div>
   <script src="/nav-component.js" defer></script>
 
-  <!-- ═══ HERO ═══ -->
+  <!-- HERO -->
   <section id="dg-hero">
     <div class="dg-hero-bg"></div>
     <div class="dg-hero-overlay"></div>
@@ -43,177 +43,99 @@
     </div>
   </section>
 
-  <!-- ═══ DIGEST CONTENT ═══ -->
+  <!-- DIGEST CONTENT -->
   <section class="dg-section">
     <div class="dg-section-inner">
 
       <!-- Period Nav -->
       <nav class="dg-period-nav">
-        <button class="dg-period-btn active">This Week</button>
-        <button class="dg-period-btn">Last Week</button>
-        <button class="dg-period-btn">This Month</button>
+        <button class="dg-period-btn active" data-period="week">This Week</button>
+        <button class="dg-period-btn" data-period="month">This Month</button>
       </nav>
 
-      <div class="dg-date-banner">
-        Week of June 1 &ndash; June 7, 2026
+      <div class="dg-date-banner" id="dgDateBanner">Loading...</div>
+
+      <!-- Loading State -->
+      <div id="dgLoading" class="dg-loading">
+        <div class="dg-loading-spinner"></div>
+        <span>Fetching live data...</span>
       </div>
 
       <!-- Earthquakes -->
-      <div class="dg-feed-card" style="border-left:3px solid var(--dg-red);">
+      <div class="dg-feed-card" id="dgEarthquakes" style="border-left:3px solid var(--dg-red); display:none;">
         <div class="dg-feed-header">
-          <div class="dg-feed-name">Major Earthquakes</div>
-          <span class="dg-feed-count red">M5+ &middot; 14 events</span>
+          <div class="dg-feed-name">Earthquakes</div>
+          <span class="dg-feed-count red" id="dgEqCount">Loading...</span>
         </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-red);"></div>
-          <div class="dg-feed-item-text">M6.3 — Near coast of central Chile. Depth 22km. No tsunami reported.</div>
-          <span class="dg-feed-item-meta">June 5</span>
-        </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-amber);"></div>
-          <div class="dg-feed-item-text">M5.8 — Japan, Ryukyu Islands. Felt across southern Okinawa.</div>
-          <span class="dg-feed-item-meta">June 4</span>
-        </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-amber);"></div>
-          <div class="dg-feed-item-text">M5.6 — Indonesia, Sulawesi. No significant damage reported.</div>
-          <span class="dg-feed-item-meta">June 3</span>
-        </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-amber);"></div>
-          <div class="dg-feed-item-text">M5.5 — Alaska, Aleutian Trench. Deep event at 68km.</div>
-          <span class="dg-feed-item-meta">June 2</span>
-        </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-amber);"></div>
-          <div class="dg-feed-item-text">M5.4 — Papua New Guinea. Aftershock sequence continues from May M6.1.</div>
-          <span class="dg-feed-item-meta">June 1</span>
-        </div>
+        <div id="dgEqItems"></div>
         <div style="margin-top:0.5rem;">
           <a href="/disasters.html" class="dg-feed-item-text" style="font-size:var(--fs-xs);color:var(--dg-gold-dim);">View all earthquakes &rarr;</a>
         </div>
       </div>
 
       <!-- Natural Disasters -->
-      <div class="dg-feed-card" style="border-left:3px solid var(--dg-amber);">
+      <div class="dg-feed-card" id="dgDisasters" style="border-left:3px solid var(--dg-amber); display:none;">
         <div class="dg-feed-header">
           <div class="dg-feed-name">Natural Disasters</div>
-          <span class="dg-feed-count amber">EONET &middot; 11 events</span>
+          <span class="dg-feed-count amber" id="dgDisCount">Loading...</span>
         </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-amber);"></div>
-          <div class="dg-feed-item-text">Cyclone "Biparjoy" — Category 3 in Bay of Bengal. Evacuations underway in Bangladesh.</div>
-          <span class="dg-feed-item-meta">Active</span>
-        </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-red);"></div>
-          <div class="dg-feed-item-text">Flooding — Eastern Kenya. 12,000 displaced by seasonal rains.</div>
-          <span class="dg-feed-item-meta">Ongoing</span>
-        </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-amber);"></div>
-          <div class="dg-feed-item-text">Wildfire — Northern California, Siskiyou County. 8,000 acres burned.</div>
-          <span class="dg-feed-item-meta">June 3</span>
-        </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-amber);"></div>
-          <div class="dg-feed-item-text">Volcanic Activity — Mount Merapi, Indonesia. Ash plume 2.5km. Aviation advisory issued.</div>
-          <span class="dg-feed-item-meta">Monitoring</span>
-        </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-amber);"></div>
-          <div class="dg-feed-item-text">Tornado Outbreak — U.S. Midwest. 14 confirmed tornadoes across 3 states.</div>
-          <span class="dg-feed-item-meta">June 1</span>
-        </div>
+        <div id="dgDisItems"></div>
         <div style="margin-top:0.5rem;">
           <a href="/disasters.html" class="dg-feed-item-text" style="font-size:var(--fs-xs);color:var(--dg-gold-dim);">All disaster data &rarr;</a>
         </div>
       </div>
 
-      <!-- Global Conflicts -->
-      <div class="dg-feed-card" style="border-left:3px solid var(--dg-red);">
+      <!-- Fireballs -->
+      <div class="dg-feed-card" id="dgFireballs" style="border-left:3px solid var(--dg-blue); display:none;">
+        <div class="dg-feed-header">
+          <div class="dg-feed-name">Fireball Events</div>
+          <span class="dg-feed-count blue" id="dgFbCount">Loading...</span>
+        </div>
+        <div id="dgFbItems"></div>
+        <div style="margin-top:0.5rem;">
+          <a href="/disasters.html" class="dg-feed-item-text" style="font-size:var(--fs-xs);color:var(--dg-gold-dim);">All fireball data &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Apophis -->
+      <div class="dg-feed-card" id="dgApophis" style="border-left:3px solid var(--dg-gold); display:none;">
+        <div class="dg-feed-header">
+          <div class="dg-feed-name">Apophis (99942)</div>
+          <span class="dg-feed-count green" id="dgApoCount">Tracking</span>
+        </div>
+        <div id="dgApoItems"></div>
+        <div style="margin-top:0.5rem;">
+          <a href="/apophis.html" class="dg-feed-item-text" style="font-size:var(--fs-xs);color:var(--dg-gold-dim);">Track Apophis &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Conflicts (curated) -->
+      <div class="dg-feed-card" id="dgConflicts" style="border-left:3px solid var(--dg-red);">
         <div class="dg-feed-header">
           <div class="dg-feed-name">Global Conflicts</div>
-          <span class="dg-feed-count red">GDELT &middot; 8+ hotspots</span>
+          <span class="dg-feed-count red">Monitoring</span>
         </div>
         <div class="dg-feed-item">
           <div class="dg-feed-item-dot" style="background:var(--dg-red);"></div>
-          <div class="dg-feed-item-text">Ukraine War — Intensified drone strikes on Odesa. Regional escalation continues.</div>
+          <div class="dg-feed-item-text">Ukraine-Russia War — Continued drone and missile exchanges. Front lines largely static.</div>
           <span class="dg-feed-item-meta">Ongoing</span>
         </div>
         <div class="dg-feed-item">
           <div class="dg-feed-item-dot" style="background:var(--dg-red);"></div>
-          <div class="dg-feed-item-text">Israel-Gaza — Clashes in Judea and Samaria. Security operations ongoing.</div>
+          <div class="dg-feed-item-text">Israel-Gaza — Security operations in Judea and Samaria. Tensions remain elevated.</div>
           <span class="dg-feed-item-meta">Ongoing</span>
         </div>
         <div class="dg-feed-item">
           <div class="dg-feed-item-dot" style="background:var(--dg-amber);"></div>
-          <div class="dg-feed-item-text">Sudan — Civil war enters 14th month. Humanitarian crisis deepens.</div>
+          <div class="dg-feed-item-text">Sudan — Civil war continues. Humanitarian crisis deepens.</div>
           <span class="dg-feed-item-meta">Ongoing</span>
-        </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-amber);"></div>
-          <div class="dg-feed-item-text">Myanmar — Shan State clashes intensify. 30,000 displaced this month.</div>
-          <span class="dg-feed-item-meta">June 4</span>
-        </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-amber);"></div>
-          <div class="dg-feed-item-text">South China Sea — Naval standoff at Second Thomas Shoal. Rising tensions.</div>
-          <span class="dg-feed-item-meta">June 2</span>
         </div>
         <div style="margin-top:0.5rem;">
           <a href="/conflicts.html" class="dg-feed-item-text" style="font-size:var(--fs-xs);color:var(--dg-gold-dim);">Monitor conflicts &rarr;</a>
         </div>
       </div>
 
-      <!-- Celestial Events -->
-      <div class="dg-feed-card" style="border-left:3px solid var(--dg-blue);">
-        <div class="dg-feed-header">
-          <div class="dg-feed-name">Celestial Events</div>
-          <span class="dg-feed-count blue">Tracking</span>
-        </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-gold);"></div>
-          <div class="dg-feed-item-text">Apophis (99942) — Currently at 1.8 AU. Nominal trajectory confirms April 13, 2029 flyby at 31,000 km altitude.</div>
-          <span class="dg-feed-item-meta">JPL</span>
-        </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-gold);"></div>
-          <div class="dg-feed-item-text">Solar Activity — Sunspot AR3748 released M5.3 flare on June 4. CME directed away from Earth.</div>
-          <span class="dg-feed-item-meta">June 4</span>
-        </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-gold);"></div>
-          <div class="dg-feed-item-text">NeoWISE — 14 new NEOs detected this week. None on impact risk list.</div>
-          <span class="dg-feed-item-meta">NASA</span>
-        </div>
-        <div style="margin-top:0.5rem;">
-          <a href="/apophis.html" class="dg-feed-item-text" style="font-size:var(--fs-xs);color:var(--dg-gold-dim);">Track Apophis &rarr;</a>
-        </div>
-      </div>
-
-      <!-- Prophetic Calendar -->
-      <div class="dg-feed-card" style="border-left:3px solid var(--dg-gold);">
-        <div class="dg-feed-header">
-          <div class="dg-feed-name">Prophetic Calendar</div>
-          <span class="dg-feed-count green">This month</span>
-        </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-gold);"></div>
-          <div class="dg-feed-item-text">Sivan 5786 — The month of Pentecost (Shavuot) begins. Marks the giving of the Torah and the outpouring of the Holy Spirit.</div>
-          <span class="dg-feed-item-meta">June</span>
-        </div>
-        <div class="dg-feed-item">
-          <div class="dg-feed-item-dot" style="background:var(--dg-gold);"></div>
-          <div class="dg-feed-item-text">Next Shemitah boundary: Rosh Hashanah 5790 — September 2029. 1,174 days from this week.</div>
-          <span class="dg-feed-item-meta">5790</span>
-        </div>
-        <div style="margin-top:0.5rem;">
-          <a href="/calendar.html" class="dg-feed-item-text" style="font-size:var(--fs-xs);color:var(--dg-gold-dim);">Full calendar &rarr;</a>
-        </div>
-      </div>
-
-      <!-- Summary Section -->
+      <!-- Summary -->
       <div class="dg-scripture-block">
         <p>"And there shall be signs in the sun, and in the moon, and in the stars; and upon the earth distress of nations, with perplexity; the sea and the waves roaring; Men's hearts failing them for fear, and for looking after those things which are coming on the earth: for the powers of heaven shall be shaken."</p>
         <span class="ref">&mdash; Luke 21:25-26 (KJV)</span>
@@ -224,7 +146,7 @@
     </div>
   </section>
 
-  <!-- ═══ FOOTER ═══ -->
+  <!-- FOOTER -->
   <footer id="dg-footer">
     <div class="dg-footer-inner">
       <p class="dg-footer-text">"Watch therefore, for ye know neither the day nor the hour." &mdash; Matthew 25:13 (KJV)</p>
