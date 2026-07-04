@@ -555,11 +555,11 @@ body { font-family: var(--font-ui); color: rgba(245,240,230,0.8); -webkit-font-s
   .share-panel { right: 0.4rem; top: 3.8rem; }
   .live-status { top: 3.2rem; right: 0.4rem; }
   #search-container { display: none; }
-  .event-drawer { width: 90vw; max-width: 90vw; max-height: 50vh; top: auto; bottom: 5rem; right: 0.5rem; left: auto; }
+  .event-drawer { width: 90vw; max-width: 90vw; max-height: 40vh; top: auto; bottom: 4rem; right: 0.5rem; left: auto; }
   .fp-region-btns { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .fp-region-btns::-webkit-scrollbar { display: none; }
   .recent-panel {
-    top: auto; right: 0; bottom: 0; left: 0;
+    top: auto; right: 0; bottom: 3.5rem; left: 0;
     width: 100%; max-height: none; border-radius: 12px 12px 0 0;
     border-bottom: none; z-index: 55;
   }

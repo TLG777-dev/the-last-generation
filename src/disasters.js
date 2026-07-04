@@ -1471,6 +1471,102 @@ document.querySelectorAll('#fp-mag .fp-btn').forEach(btn => {
 });
 
 /* ── Type Toggles ── */
+function rebuildLast30Beacons() {
+  if (!isLast30Mode || !mapReady) return;
+  const BEACONS_PER_TYPE = 7;
+  const grouped = {};
+  const beaconFeatures = [];
+
+  [...enabledTypes].forEach(type => {
+    const ofType = events
+      .filter(e => e.type === type)
+      .sort((a, b) => b.timestamp - a.timestamp);
+    grouped[type] = ofType.slice(0, BEACONS_PER_TYPE);
+
+    grouped[type].forEach((e, idx) => {
+      const isFirst = idx === 0;
+      beaconFeatures.push({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [e.lng, e.lat] },
+        properties: { type, color: TYPE_COLORS[type], isFirst: isFirst ? 1 : 0 },
+      });
+    });
+  });
+
+  map.getSource('beacon-source')?.setData({
+    type: 'FeatureCollection', features: beaconFeatures,
+  });
+
+  if (!pulseTimer) {
+    map.setPaintProperty('beacon-layer', 'circle-opacity', 0.8);
+    map.setPaintProperty('beacon-glow-layer', 'circle-opacity', 0.35);
+    map.setPaintProperty('beacon-dot-layer', 'circle-opacity', 1);
+    pulseTimer = setInterval(() => {
+      const t = performance.now() / 1000;
+      const glow = 0.15 + 0.3 * (0.5 + 0.5 * Math.sin(t * 1.8));
+      const opacity = 0.5 + 0.3 * Math.sin(t * 3.5);
+      map.setPaintProperty('beacon-layer', 'circle-opacity', opacity);
+      map.setPaintProperty('beacon-glow-layer', 'circle-opacity', glow);
+    }, 50);
+  }
+  updateRecentPanel(grouped);
+}
+
+function updateRecentPanel(grouped) {
+  if (!rpBody) return;
+  rpBody.innerHTML = '';
+  const TYPE_ORDER = ['earthquake', 'flood', 'cyclone', 'volcano', 'wildfire', 'fireball'];
+  TYPE_ORDER.forEach(type => {
+    const items = grouped?.[type];
+    if (!items || items.length === 0) return;
+    const group = document.createElement('div');
+    group.className = 'rp-group';
+    group.dataset.type = type;
+    group.innerHTML = `
+      <div class="rp-group-header">
+        <span class="rp-group-dot" style="background:${TYPE_COLORS[type]}"></span>
+        <span class="rp-group-name">${TYPE_LABELS[type]}s</span>
+        <span class="rp-group-count">${items.length}</span>
+        <span class="rp-group-arrow">&#9660;</span>
+      </div>
+      <div class="rp-group-items"></div>
+    `;
+    const hdr = group.querySelector('.rp-group-header');
+    hdr.addEventListener('click', () => group.classList.toggle('collapsed'));
+    const container = group.querySelector('.rp-group-items');
+    items.forEach(ev => {
+      const row = document.createElement('div');
+      row.className = 'rp-event';
+      const now = Date.now();
+      const diff = now - ev.timestamp;
+      let ago = '';
+      if (diff < 60000) ago = 'just now';
+      else if (diff < 3600000) ago = Math.floor(diff / 60000) + 'm ago';
+      else if (diff < 86400000) ago = Math.floor(diff / 3600000) + 'h ago';
+      else ago = Math.floor(diff / 86400000) + 'd ago';
+      const magStr = ev.magnitude > 0 ? `M${ev.magnitude.toFixed(1)}` : TYPE_ICONS_PANEL[type] || '●';
+      const depthStr = ev.depth > 0 ? ` · ${ev.depth}km` : '';
+      row.innerHTML = `
+        <span class="rp-event-mag" style="color:${TYPE_COLORS[type]}">${magStr}</span>
+        <div class="rp-event-body">
+          <div class="rp-event-title">${ev.title}</div>
+          <div class="rp-event-meta"><span>${ago}</span>${depthStr ? `<span>${depthStr}</span>` : ''}</div>
+        </div>
+      `;
+      row.addEventListener('click', () => {
+        map.flyTo({ center: [ev.lng, ev.lat], zoom: 7, duration: 1200 });
+        rpBody.querySelectorAll('.rp-event.highlighted').forEach(el => el.classList.remove('highlighted'));
+        row.classList.add('highlighted');
+        setTimeout(() => {
+          showEventPopup({ type: ev.type, magnitude: ev.magnitude, depth: ev.depth, title: ev.title, timestamp: ev.timestamp, url: ev.url, color: ev.color, id: ev.id, lat: ev.lat, lng: ev.lng });
+        }, 1300);
+      });
+      container.appendChild(row);
+    });
+    rpBody.appendChild(group);
+  });
+}
+
 function toggleType(btn, type) {
   const nowActive = !enabledTypes.has(type);
   if (nowActive) {
@@ -1485,7 +1581,9 @@ function toggleType(btn, type) {
   updateBucketFilter();
 
   updateAlertPanel();
-  if (selectedYear === new Date().getFullYear()) {
+  if (isLast30Mode) {
+    rebuildLast30Beacons();
+  } else if (selectedYear === new Date().getFullYear()) {
     if (enabledTypes.size > 0) startPulse();
     else stopPulse();
   }
