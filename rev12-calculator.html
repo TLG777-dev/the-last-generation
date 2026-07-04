@@ -150,7 +150,6 @@
           </select>
         </div>
         <button class="calc-btn" id="btnSweep">Run Sweep</button>
-        <button class="calc-btn calc-btn-secondary" id="btnVerify" title="Verify Sep 23, 2017 against JPL Horizons">Verify Against JPL</button>
       </div>
       <div class="progress-bar" id="progressBar">
         <div class="progress-fill" id="progressFill"></div>
@@ -159,9 +158,18 @@
     </section>
 
     <!-- ═══ JPL VERIFICATION ═══ -->
-    <section class="jpl-section" id="jplSection" style="display:none">
-      <h2>JPL Horizons Verification — Sep 23, 2017</h2>
-      <div class="jpl-grid" id="jplGrid"></div>
+    <section class="r12-jpl-verify">
+      <div class="r12-jpl-header">
+        <h2 class="r12-section-title">Verify September 23, 2017</h2>
+        <p class="r12-section-sub">
+          Checks NASA JPL Horizons data — the same ephemeris used by spacecraft navigation — to confirm
+          each body's position matches the Rev 12 criteria on that date.
+        </p>
+        <button class="calc-btn" id="btnVerify">Check Against NASA Data</button>
+      </div>
+      <div class="jpl-section" id="jplSection" style="display:none">
+        <div class="jpl-grid" id="jplGrid"></div>
+      </div>
     </section>
 
     <!-- ═══ RESULTS ═══ -->
