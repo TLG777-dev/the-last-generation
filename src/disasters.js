@@ -284,7 +284,7 @@ function initLayers() {
     source: 'beacon-source',
     paint: {
       'circle-color': ['get', 'color'],
-      'circle-radius': ['case', ['==', ['get', 'isFirst'], 1], 18, 10],
+      'circle-radius': ['case', ['==', ['get', 'isFirst'], 1], 22, 12],
       'circle-opacity': 0,
       'circle-stroke-width': 0,
     },
@@ -296,9 +296,9 @@ function initLayers() {
     source: 'beacon-source',
     paint: {
       'circle-color': ['get', 'color'],
-      'circle-radius': ['case', ['==', ['get', 'isFirst'], 1], 35, 18],
+      'circle-radius': ['case', ['==', ['get', 'isFirst'], 1], 45, 24],
       'circle-opacity': 0,
-      'circle-blur': 0.7,
+      'circle-blur': 0.65,
       'circle-stroke-width': 0,
     },
   });
@@ -308,10 +308,10 @@ function initLayers() {
     type: 'circle',
     source: 'beacon-source',
     paint: {
-      'circle-color': ['get', 'color'],
+      'circle-color': '#fff',
       'circle-radius': ['case', ['==', ['get', 'isFirst'], 1],
-        ['interpolate', ['linear'], ['zoom'], 1, 3, 5, 5, 10, 6],
-        ['interpolate', ['linear'], ['zoom'], 1, 1.5, 5, 2.5, 10, 3],
+        ['interpolate', ['linear'], ['zoom'], 1, 3.5, 5, 5.5, 10, 7],
+        ['interpolate', ['linear'], ['zoom'], 1, 2, 5, 3, 10, 3.5],
       ],
       'circle-opacity': 1,
       'circle-stroke-width': 0,
@@ -2129,13 +2129,13 @@ async function loadLast30DaysBeacons() {
 
   /* Make beacon layers visible — startPulse would clear the data, so do it manually */
   if (!pulseTimer) {
-    map.setPaintProperty('beacon-layer', 'circle-opacity', 0.7);
-    map.setPaintProperty('beacon-glow-layer', 'circle-opacity', 0.25);
+    map.setPaintProperty('beacon-layer', 'circle-opacity', 0.8);
+    map.setPaintProperty('beacon-glow-layer', 'circle-opacity', 0.35);
     map.setPaintProperty('beacon-dot-layer', 'circle-opacity', 1);
     pulseTimer = setInterval(() => {
       const t = performance.now() / 1000;
-      const glow = 0.05 + 0.2 * (0.5 + 0.5 * Math.sin(t * 1.8));
-      const opacity = 0.4 + 0.3 * Math.sin(t * 3.5);
+      const glow = 0.15 + 0.3 * (0.5 + 0.5 * Math.sin(t * 1.8));
+      const opacity = 0.5 + 0.3 * Math.sin(t * 3.5);
       map.setPaintProperty('beacon-layer', 'circle-opacity', opacity);
       map.setPaintProperty('beacon-glow-layer', 'circle-opacity', glow);
     }, 50);
