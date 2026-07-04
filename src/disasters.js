@@ -138,8 +138,8 @@ function updateDataSourceLabel(year) {
   const down = Object.entries(feedStatus).filter(([_, s]) => s === 'fail').map(([n]) => n);
   const label = document.getElementById('data-source');
   let text = `${active.join(' + ') || 'No data'} ${year} — ${events.length.toLocaleString()} events`;
-  if (down.length > 0) text += ` \u00b7 ${down.join(', ')} unavailable`;
-  label.textContent = text;
+  if (down.length > 0) text += ` · ${down.join(', ')} unavailable`;
+  if (label) label.textContent = text;
 }
 
 // Initial load
@@ -1775,6 +1775,7 @@ function showEventPopup(props, lngLat) {
         <span>${depthText || TYPE_LABELS[type]}</span>
         <span>${formatDateTime(props.timestamp)}</span>
       </div>
+      <div style="margin-top:0.3rem;font-size:0.42rem;color:rgba(80,180,230,0.5);cursor:pointer">Click for full details &rarr;</div>
     </div>
   `;
   popup.style.display = 'block';
@@ -1782,11 +1783,15 @@ function showEventPopup(props, lngLat) {
   popup.style.top = `${lngLat.y - 10}px`;
   popup.style.transform = lngLat.lng < 0 ? 'translateX(0)' : 'translateX(-100%)';
   popup.classList.add('visible');
+
+  /* Also open the detail drawer */
+  openEventDrawer({ ...props, lat: lngLat.lat, lng: lngLat.lng });
 }
 
 map.on('click', () => {
   document.getElementById('event-popup').classList.remove('visible');
   document.getElementById('event-popup').style.display = 'none';
+  document.getElementById('event-drawer')?.classList.remove('open');
 });
 
 /* ── Map Loading Bar ── */
@@ -1797,4 +1802,375 @@ function showMapLoading(text) {
 
 function hideMapLoading() {
   document.getElementById('map-loading').classList.remove('active');
+}
+
+/* ══════════════════════════════════════════════════════
+   ENHANCED FEATURES — World Watch v2
+   ══════════════════════════════════════════════════════ */
+
+/* ── 1. Real-Time Status Badge ── */
+let lastRefreshTime = Date.now();
+function updateLiveStatus() {
+  const el = document.getElementById('live-time');
+  if (!el) return;
+  const diff = Date.now() - lastRefreshTime;
+  const secs = Math.floor(diff / 1000);
+  if (secs < 60) el.textContent = 'Updated just now';
+  else if (secs < 3600) el.textContent = `Updated ${Math.floor(secs / 60)}m ago`;
+  else el.textContent = `Updated ${Math.floor(secs / 3600)}h ago`;
+}
+setInterval(updateLiveStatus, 15000);
+updateLiveStatus();
+
+/* ── 2. Location Search (Nominatim geocoding) ── */
+const REGION_CENTERS = {
+  'global':      { center: [10, 30], zoom: 1.5 },
+  'americas':    { center: [-80, 15], zoom: 2.8 },
+  'europe':      { center: [15, 50], zoom: 3.2 },
+  'asia-pacific': { center: [115, 15], zoom: 2.8 },
+  'middle-east': { center: [42, 30], zoom: 3.8 },
+  'africa':      { center: [20, 5], zoom: 3 },
+};
+
+const searchInput = document.getElementById('search-input');
+const searchClear = document.getElementById('search-clear');
+const searchResults = document.getElementById('search-results');
+let searchDebounce = null;
+
+if (searchInput) {
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim();
+    searchClear.style.display = q ? 'block' : 'none';
+    if (q.length < 2) { searchResults.style.display = 'none'; return; }
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(() => fetchSearchResults(q), 350);
+  });
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { searchResults.style.display = 'none'; searchInput.blur(); }
+  });
+}
+
+if (searchClear) {
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    searchClear.style.display = 'none';
+    searchResults.style.display = 'none';
+  });
+}
+
+async function fetchSearchResults(query) {
+  try {
+    const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`, {
+      headers: { 'Accept': 'application/json' }
+    });
+    const data = await resp.json();
+    if (!data || data.length === 0) { searchResults.style.display = 'none'; return; }
+    searchResults.innerHTML = data.map(r =>
+      `<div class="search-result-item" data-lat="${r.lat}" data-lon="${r.lon}">${r.display_name.substring(0, 60)}</div>`
+    ).join('');
+    searchResults.style.display = 'block';
+    searchResults.querySelectorAll('.search-result-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const lat = parseFloat(el.dataset.lat);
+        const lon = parseFloat(el.dataset.lon);
+        map.flyTo({ center: [lon, lat], zoom: 5, duration: 1500 });
+        searchResults.style.display = 'none';
+        searchInput.value = el.textContent;
+      });
+    });
+  } catch (_) { searchResults.style.display = 'none'; }
+}
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#search-container')) searchResults.style.display = 'none';
+});
+
+/* ── 3. Region Quick-Filters ── */
+document.querySelectorAll('.region-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const region = btn.dataset.region;
+    const r = REGION_CENTERS[region];
+    if (r) map.flyTo({ center: r.center, zoom: r.zoom, duration: 1200 });
+  });
+});
+
+/* ── 4. "Last 30 Days" Toggle ── */
+let isLast30Mode = false;
+const fpLast30 = document.getElementById('fp-last30');
+const fpYearSelect = document.getElementById('fp-year');
+
+if (fpLast30) {
+  fpLast30.addEventListener('click', () => {
+    isLast30Mode = !isLast30Mode;
+    fpLast30.classList.toggle('active', isLast30Mode);
+    if (fpYearSelect) fpYearSelect.disabled = isLast30Mode;
+    if (isLast30Mode) loadLast30DaysBeacons();
+    else { selectedYear = fpYearSelect ? parseInt(fpYearSelect.value) : new Date().getFullYear(); switchYear(selectedYear); }
+  });
+}
+
+async function loadLast30DaysBeacons() {
+  stopPlay();
+  stopPulse();
+  const id = ++requestId;
+  showMapLoading('Loading last 30 days...');
+  const now = Date.now();
+  const thirtyDaysAgo = now - 30 * 24 * 3600 * 1000;
+  const workingEvents = [];
+
+  try {
+    const [eqResp, gdacsResp, fbResp] = await Promise.allSettled([
+      fetch(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${new Date(thirtyDaysAgo).toISOString().slice(0,10)}&endtime=${new Date(now).toISOString().slice(0,10)}&minmagnitude=5&orderby=magnitude&limit=100`),
+      fetch('/api/gdacs/events4app'),
+      fetch('/api/fireball?limit=200')
+    ]);
+
+    if (eqResp.status === 'fulfilled' && eqResp.value.ok) {
+      const eqData = await eqResp.value.json();
+      (eqData.features || []).forEach(f => {
+        const p = f.properties, c = f.geometry.coordinates;
+        workingEvents.push({ id: `eq-${p.net}-${p.code}-${p.time}`, type: 'earthquake', lat: c[1], lng: c[0], magnitude: p.mag || 0, depth: c[2] || 0, timestamp: p.time, title: p.place || 'Unknown', description: `M ${(p.mag||0).toFixed(1)} — ${p.place||'Unknown'}`, url: p.url || '', color: TYPE_COLORS.earthquake });
+      });
+    }
+
+    if (gdacsResp.status === 'fulfilled' && gdacsResp.value.ok) {
+      const gdData = await gdacsResp.value.json();
+      const typeMap = { EQ: 'earthquake', TC: 'cyclone', FL: 'flood', VF: 'volcano', WF: 'wildfire' };
+      (gdData.features || []).forEach(f => {
+        const p = f.properties || {}, c = f.geometry?.coordinates || [];
+        if (c.length < 2) return;
+        const t = typeMap[(p.eventtype||'').toUpperCase()];
+        if (!t) return;
+        const ts = p.todate ? new Date(p.todate).getTime() : Date.now();
+        if (ts < thirtyDaysAgo) return;
+        workingEvents.push({ id: `gdacs-${p.eventid||Math.random()}`, type: t, lat: c[1], lng: c[0], magnitude: parseFloat(p.magnitude || p.severity || 0), depth: 0, timestamp: ts, title: p.name || p.eventtype || 'Unknown', description: p.name || `${TYPE_LABELS[t]} alert`, url: p.url || '', color: TYPE_COLORS[t] });
+      });
+    }
+
+    if (fbResp.status === 'fulfilled' && fbResp.value.ok) {
+      const fbData = await fbResp.value.json();
+      (fbData.data || []).forEach(row => {
+        const ts = new Date(row[0]).getTime();
+        if (ts < thirtyDaysAgo || ts > now) return;
+        const ie = row[2] ? parseFloat(row[2]) : 0;
+        workingEvents.push({ id: `fb-${row[0]}`, type: 'fireball', lat: row[3] ? parseFloat(row[3]) * (row[4]==='S'?-1:1) : 0, lng: row[5] ? parseFloat(row[5]) * (row[6]==='W'?-1:1) : 0, magnitude: ie, depth: row[7] ? parseFloat(row[7]) : 0, timestamp: ts, title: `${ie >= 1 ? ie.toFixed(2)+' kt' : (ie*1000).toFixed(0)+' t TNT'} impact`, description: row[7] ? `Altitude: ${row[7]} km` : 'Fireball', url: '', color: TYPE_COLORS.fireball });
+      });
+    }
+  } catch (_) {}
+
+  if (id !== requestId) return;
+  events = dedupEvents(workingEvents);
+  computeStepBuckets();
+
+  const typeCounts = {};
+  events.forEach(e => { typeCounts[e.type] = (typeCounts[e.type] || 0) + 1; });
+
+  /* Remove all bucket layers, show beacons only */
+  for (let i = 0; i < NUM_PLAY_STEPS; i++) {
+    const layerId = 'bl-' + i;
+    if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', 'none');
+  }
+
+  hideMapLoading();
+  updateDataSourceLabel('Last 30d');
+  startPulse();
+
+  const types = [...enabledTypes];
+  types.forEach(type => {
+    const latest = [...events].filter(e => e.type === type).sort((a, b) => b.magnitude - a.magnitude || b.timestamp - a.timestamp)[0];
+    if (!latest) return;
+    if (!beaconMarkers[type]) {
+      const el = document.createElement('div');
+      el.className = 'beacon-label';
+      beaconMarkers[type] = new maplibregl.Marker({ element: el });
+    }
+    const marker = beaconMarkers[type];
+    const el = marker.getElement();
+    const title = type === 'earthquake' ? `M ${latest.magnitude.toFixed(1)} — ${latest.title}` : latest.title;
+    const lbl = title.length > TITLE_MAX_LEN ? title.substring(0, TITLE_TRUNC_LEN) + '...' : title;
+    const depthStr = type === 'earthquake' ? ` · ${latest.depth.toFixed(0)} km` : '';
+    const dateStr = formatDate(latest.timestamp);
+    el.innerHTML = `<div>${lbl}</div><div style="font-weight:300;font-size:0.5rem;opacity:0.7;margin-top:1px">${dateStr}${depthStr}</div>`;
+    el.style.color = TYPE_COLORS[type];
+    el.style.display = '';
+    marker.setLngLat([latest.lng, latest.lat]);
+    marker.addTo(map);
+  });
+}
+
+/* ── 5. Event Detail Drawer ── */
+const drawer = document.getElementById('event-drawer');
+const drawerBody = document.getElementById('ed-body');
+const drawerTitle = document.getElementById('ed-title');
+const drawerClose = document.getElementById('ed-close');
+
+if (drawerClose) {
+  drawerClose.addEventListener('click', () => drawer.classList.remove('open'));
+}
+
+function openEventDrawer(props) {
+  if (!drawer || !drawerBody) return;
+  drawerTitle.textContent = `${TYPE_LABELS[props.type] || 'Event'} Details`;
+  const mag = props.magnitude ? parseFloat(props.magnitude).toFixed(1) : 'N/A';
+  const depth = props.depth ? `${parseFloat(props.depth).toFixed(0)} km` : 'N/A';
+  const date = formatDateTime(props.timestamp);
+  const lat = parseFloat(props.lat || 0).toFixed(4);
+  const lng = parseFloat(props.lng || 0).toFixed(4);
+
+  let html = `
+    <div class="ed-row"><span class="ed-label">Type</span><span class="ed-value" style="color:${props.color}">${TYPE_LABELS[props.type] || props.type}</span></div>
+    <div class="ed-row"><span class="ed-label">Magnitude</span><span class="ed-value">${mag}</span></div>
+    <div class="ed-row"><span class="ed-label">Depth</span><span class="ed-value">${depth}</span></div>
+    <div class="ed-row"><span class="ed-label">Location</span><span class="ed-value">${props.title || 'Unknown'}</span></div>
+    <div class="ed-row"><span class="ed-label">Coordinates</span><span class="ed-value">${lat}, ${lng}</span></div>
+    <div class="ed-row"><span class="ed-label">Time (UTC)</span><span class="ed-value">${date}</span></div>
+  `;
+  if (props.url) {
+    html += `<div class="ed-row"><span class="ed-label">Source</span><span class="ed-value"><a href="${props.url}" target="_blank" rel="noopener" style="color:rgba(80,180,230,0.7);text-decoration:underline">View &rarr;</a></span></div>`;
+  }
+
+  /* Nearby events */
+  const nearby = events.filter(e => {
+    if (e.id === props.id) return false;
+    const dLat = Math.abs(e.lat - parseFloat(props.lat));
+    const dLng = Math.abs(e.lng - parseFloat(props.lng));
+    return dLat < 5 && dLng < 5;
+  }).slice(0, 5);
+
+  if (nearby.length > 0) {
+    html += `<div class="ed-section-title">Nearby Events (5&deg;)</div>`;
+    nearby.forEach(n => {
+      const nMag = n.magnitude ? `M${n.magnitude.toFixed(1)}` : '';
+      const nDist = Math.sqrt(Math.pow(n.lat - parseFloat(props.lat), 2) + Math.pow(n.lng - parseFloat(props.lng), 2)).toFixed(0);
+      html += `<div class="ed-nearby-item" style="font-size:0.45rem;color:rgba(245,240,230,0.4)">
+        <span style="color:${n.color}">&bull;</span> ${n.title.substring(0, 40)} ${nMag} <span style="opacity:0.5">${nDist}&deg;</span>
+      </div>`;
+    });
+  }
+
+  drawerBody.innerHTML = html;
+  drawer.classList.add('open');
+}
+
+/* ── 6. Enhanced click handler — drawer opens from showEventPopup ── */
+
+/* ── 7. Mini-Map ── */
+let miniMap = null;
+const miniMapContainer = document.getElementById('mini-map-container');
+const miniMapViewport = document.getElementById('mini-map-viewport');
+
+function initMiniMap() {
+  if (miniMap || !miniMapContainer || !window.maplibregl) return;
+  try {
+    miniMapContainer.style.display = 'block';
+    miniMap = new maplibregl.Map({
+      container: 'mini-map',
+      style: { version: 8, sources: { basemap: { type: 'raster', tiles: ['https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'], tileSize: 256 } }, layers: [{ id: 'mini-layer', type: 'raster', source: 'basemap' }], bgColor: '#0a0a14' },
+      center: [10, 30], zoom: 0.8, attributionControl: false, interactive: false,
+    });
+    map.on('moveend', updateMiniMapViewport);
+  } catch (_) { miniMapContainer.style.display = 'none'; }
+}
+
+function updateMiniMapViewport() {
+  if (!miniMapViewport || !miniMap) return;
+  try {
+    const b = map.getBounds();
+    const mb = miniMap.getBounds();
+    if (!mb || !b) return;
+    const mw = 120, mh = 80;
+    const left = ((b.getWest() - mb.getWest()) / (mb.getEast() - mb.getWest())) * mw;
+    const right = ((b.getEast() - mb.getWest()) / (mb.getEast() - mb.getWest())) * mw;
+    const top = ((mb.getNorth() - b.getNorth()) / (mb.getNorth() - mb.getSouth())) * mh;
+    const bottom = ((mb.getNorth() - b.getSouth()) / (mb.getNorth() - mb.getSouth())) * mh;
+    miniMapViewport.style.left = `${Math.max(0, left)}px`;
+    miniMapViewport.style.width = `${Math.min(mw, right - left)}px`;
+    miniMapViewport.style.top = `${Math.max(0, top)}px`;
+    miniMapViewport.style.height = `${Math.min(mh, bottom - top)}px`;
+  } catch (_) {}
+}
+
+setTimeout(initMiniMap, 2000);
+
+/* ── 8. Share / Export ── */
+const shareToggle = document.getElementById('share-toggle');
+const sharePanel = document.getElementById('share-panel');
+if (shareToggle) {
+  shareToggle.addEventListener('click', () => {
+    sharePanel.style.display = sharePanel.style.display === 'none' ? 'flex' : 'none';
+  });
+}
+
+document.getElementById('btn-share-url')?.addEventListener('click', () => {
+  const c = map.getCenter();
+  const z = map.getZoom();
+  const url = `${location.origin}/disasters#lat=${c.lat.toFixed(4)}&lng=${c.lng.toFixed(4)}&zoom=${z.toFixed(1)}&year=${selectedYear}`;
+  navigator.clipboard?.writeText(url).then(() => {
+    const btn = document.getElementById('btn-share-url');
+    btn.querySelector('span').textContent = 'Copied!';
+    setTimeout(() => btn.querySelector('span').textContent = 'Share', 2000);
+  }).catch(() => {});
+});
+
+document.getElementById('btn-export-csv')?.addEventListener('click', () => {
+  const filtered = getFilteredEvents();
+  const header = 'Type,Magnitude,Depth (km),Title,Latitude,Longitude,Timestamp (UTC)\n';
+  const rows = filtered.map(e =>
+    `${e.type},${e.magnitude || ''},${e.depth || ''},"${(e.title||'').replace(/"/g,'""')}",${e.lat},${e.lng},${new Date(e.timestamp).toISOString()}`
+  ).join('\n');
+  const blob = new Blob([header + rows], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `world-watch-${selectedYear}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+/* ── 9. URL Hash Restore ── */
+function restoreFromHash() {
+  const hash = location.hash.slice(1);
+  if (!hash) return;
+  const params = {};
+  hash.split('&').forEach(p => { const [k, v] = p.split('='); params[k] = parseFloat(v); });
+  if (params.lat && params.lng && params.zoom) {
+    setTimeout(() => map.flyTo({ center: [params.lng, params.lat], zoom: params.zoom, duration: 0 }), 500);
+  }
+}
+restoreFromHash();
+
+/* ── 10. Collapsible filter panel (mobile: auto-collapse) ── */
+function checkMobileFilter() {
+  if (window.innerWidth <= 640) {
+    document.getElementById('filter-panel')?.classList.remove('open');
+  }
+}
+window.addEventListener('resize', checkMobileFilter);
+
+/* ── 11. Depth color helper (for future use) ── */
+function depthColor(depth) {
+  if (depth < 70) return '#EF4444';
+  if (depth < 300) return '#DC2626';
+  if (depth < 500) return '#B91C1C';
+  return '#7F1D1D';
+}
+
+/* ── 12. Cluster helper (simplified — count nearby at low zoom) ── */
+function clusterCount(features, radiusDeg) {
+  const clusters = [];
+  const used = new Set();
+  features.forEach((f, i) => {
+    if (used.has(i)) return;
+    const cluster = [f];
+    used.add(i);
+    features.forEach((g, j) => {
+      if (used.has(j)) return;
+      if (Math.abs(f.lat - g.lat) < radiusDeg && Math.abs(f.lng - g.lng) < radiusDeg) {
+        cluster.push(g);
+        used.add(j);
+      }
+    });
+    clusters.push(cluster);
+  });
+  return clusters;
 }

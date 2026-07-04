@@ -20,6 +20,34 @@
   <script src="/nav-component.js" defer></script>
   <canvas id="bg-canvas"></canvas>
 
+  <!-- Search Bar -->
+  <div id="search-container">
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="search-input" class="search-input" placeholder="Search location..." autocomplete="off" />
+      <button id="search-clear" class="search-clear" style="display:none">&times;</button>
+    </div>
+    <div id="search-results" class="search-results" style="display:none"></div>
+  </div>
+
+  <!-- Real-time Status Badge -->
+  <div id="live-status" class="live-status">
+    <span class="live-dot"></span>
+    <span class="live-text">Live</span>
+    <span class="live-sep">&middot;</span>
+    <span class="live-time" id="live-time">Updated just now</span>
+  </div>
+
+  <!-- Region Quick-Filters -->
+  <div id="region-bar" class="region-bar">
+    <button class="region-btn active" data-region="global">Global</button>
+    <button class="region-btn" data-region="americas">Americas</button>
+    <button class="region-btn" data-region="europe">Europe</button>
+    <button class="region-btn" data-region="asia-pacific">Asia-Pacific</button>
+    <button class="region-btn" data-region="middle-east">Middle East</button>
+    <button class="region-btn" data-region="africa">Africa</button>
+  </div>
+
   <!-- Bible verse rotator -->
   <div id="bible-verse">
     <div class="bv-content" id="bv-content"></div>
@@ -31,6 +59,27 @@
 
   <!-- Map loading bar -->
   <div id="map-loading" class="map-loading"><div class="map-loading-bar"></div></div>
+
+  <!-- Magnitude Legend -->
+  <div id="mag-legend" class="mag-legend">
+    <span class="ml-title">Magnitude</span>
+    <div class="ml-items">
+      <span class="ml-item"><span class="ml-dot" style="width:4px;height:4px"></span>M2.5</span>
+      <span class="ml-item"><span class="ml-dot" style="width:7px;height:7px"></span>M4.5</span>
+      <span class="ml-item"><span class="ml-dot" style="width:11px;height:11px"></span>M6+</span>
+    </div>
+    <span class="ml-title" style="margin-top:4px">Depth</span>
+    <div class="ml-items">
+      <span class="ml-item"><span class="ml-dot" style="background:#EF4444"></span>Shallow</span>
+      <span class="ml-item"><span class="ml-dot" style="background:#B91C1C"></span>Deep</span>
+    </div>
+  </div>
+
+  <!-- Mini-Map -->
+  <div id="mini-map-container" class="mini-map-container" style="display:none">
+    <div id="mini-map" class="mini-map"></div>
+    <div class="mini-map-viewport" id="mini-map-viewport"></div>
+  </div>
 
   <!-- Filter panel -->
   <div id="filter-panel" class="open">
@@ -49,8 +98,11 @@
         </div>
       </div>
       <div class="fp-section">
-        <span class="fp-label">Year</span>
-        <select id="fp-year" class="fp-select"></select>
+        <span class="fp-label">Period</span>
+        <div class="fp-period-btns">
+          <select id="fp-year" class="fp-select"></select>
+          <button class="fp-btn fp-period-btn" id="fp-last30" title="Show only beacons of the most significant events from the past 30 days">Last 30 Days</button>
+        </div>
       </div>
       <div class="fp-section">
         <span class="fp-label">Type</span>
@@ -115,6 +167,30 @@
       </div>
     </div>
   </div>
+
+  <!-- Event Detail Drawer -->
+  <div id="event-drawer" class="event-drawer">
+    <div class="ed-header">
+      <span class="ed-title" id="ed-title">Event Details</span>
+      <button class="ed-close" id="ed-close">&times;</button>
+    </div>
+    <div class="ed-body" id="ed-body"></div>
+  </div>
+
+  <!-- Share/Export Panel -->
+  <div id="share-panel" class="share-panel" style="display:none">
+    <button class="share-btn" id="btn-share-url" title="Copy link to current view">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      <span>Share</span>
+    </button>
+    <button class="share-btn" id="btn-export-csv" title="Export filtered events as CSV">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>CSV</span>
+    </button>
+  </div>
+  <button id="share-toggle" class="share-toggle" title="Share / Export">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+  </button>
 
   <!-- Timeline controls -->
   <div id="timeline-bar">
