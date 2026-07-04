@@ -75,6 +75,64 @@ blockquote {
   letter-spacing: 0.04em;
 }
 
+/* ── Explain Cards ── */
+.calc-explain {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.explain-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.2rem 1.4rem;
+}
+.explain-card h2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  font-weight: 600;
+  color: var(--txt-bright);
+  margin-bottom: 0.6rem;
+}
+.explain-card p {
+  font-size: var(--fs-sm);
+  color: var(--txt);
+  line-height: 1.6;
+  margin-bottom: 0.6rem;
+}
+.explain-card p:last-child {
+  margin-bottom: 0;
+}
+.explain-highlight {
+  border-color: var(--gold-dim);
+  background: rgba(212, 175, 55, 0.04);
+}
+.explain-highlight h2 {
+  color: var(--gold);
+}
+.explain-verse {
+  font-style: italic;
+  color: var(--gold-dim);
+  font-size: var(--fs-xs) !important;
+  margin-top: 0.8rem !important;
+}
+.explain-note {
+  font-size: var(--fs-xs) !important;
+  color: var(--txt-dim) !important;
+}
+.explain-card strong {
+  color: var(--txt-bright);
+  font-weight: 600;
+}
+.explain-card em {
+  color: var(--gold);
+  font-style: italic;
+}
+
 /* Criteria */
 .calc-criteria {
   margin-bottom: 2.5rem;
@@ -399,4 +457,5 @@ blockquote {
   .calc-controls { padding: 0.8rem; }
   .calc-btn { min-height: 44px; }
   .control-group input, .control-group select { min-height: 44px; font-size: var(--fs-sm); }
+  .explain-card { padding: 1rem; }
 }
