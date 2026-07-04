@@ -10,7 +10,16 @@ export async function onRequest(context) {
   }
 
   try {
-    const resp = await fetch('https://ssd-api.jpl.nasa.gov/fireball.api?limit=200', {
+    const url = new URL(context.request.url)
+    const dateMin = url.searchParams.get('date-min') || ''
+    const dateMax = url.searchParams.get('date-max') || ''
+    const limit = url.searchParams.get('limit') || '200'
+
+    let apiUrl = `https://ssd-api.jpl.nasa.gov/fireball.api?limit=${limit}`
+    if (dateMin) apiUrl += `&date-min=${dateMin}`
+    if (dateMax) apiUrl += `&date-max=${dateMax}`
+
+    const resp = await fetch(apiUrl, {
       headers: { 'User-Agent': 'TheLastGeneration/1.0' },
     });
     const body = await resp.text();

@@ -11,6 +11,9 @@
     const start = new Date(now)
     if (period === 'week') {
       start.setDate(now.getDate() - 7)
+    } else if (period === 'lastweek') {
+      end.setDate(now.getDate() - 7)
+      start.setDate(now.getDate() - 14)
     } else {
       start.setDate(now.getDate() - 30)
     }
@@ -70,19 +73,31 @@
   }
 
   /* ── EONET Disasters ── */
-  async function fetchDisasters () {
+  async function fetchDisasters (start, end) {
     try {
       const categories = 'wildfires,severeStorms,volcanoes,floods,drought,earthquakes,seaAndLakeIce'
-      const resp = await fetch(`https://eonet.gsfc.nasa.gov/api/v3/events/geojson?category=${categories}&status=open&limit=30`)
-      if (!resp.ok) throw new Error('EONET fetch failed')
-      const data = await resp.json()
-      return (data.features || []).map(f => {
+      const openResp = await fetch(`https://eonet.gsfc.nasa.gov/api/v3/events/geojson?category=${categories}&status=open&limit=30`)
+      const openData = openResp.ok ? await openResp.json() : { features: [] }
+
+      let closedData = { features: [] }
+      if (period !== 'week') {
+        const closedResp = await fetch(`https://eonet.gsfc.nasa.gov/api/v3/events/geojson?category=${categories}&status=closed&start=${start}&end=${end}&limit=30`)
+        if (closedResp.ok) closedData = await closedResp.json()
+      }
+
+      const all = [...(openData.features || []), ...(closedData.features || [])]
+      const seen = new Set()
+      return all.filter(f => {
+        if (seen.has(f.id)) return false
+        seen.add(f.id)
+        return true
+      }).map(f => {
         const p = f.properties
         return {
           title: p.title,
           category: p.categories?.[0]?.title || 'Event',
           date: p.date,
-          source: p.sources?.[0]?.url || ''
+          status: p.geometry ? 'active' : 'closed'
         }
       })
     } catch (e) {
@@ -98,15 +113,16 @@
     if (!events.length) { card.style.display = 'none'; return }
 
     card.style.display = 'block'
-    count.textContent = `EONET · ${events.length} active`
+    count.textContent = `EONET · ${events.length} events`
     items.innerHTML = events.slice(0, 6).map(e => {
       const color = e.category === 'Wildfires' ? 'var(--dg-amber)'
         : e.category === 'Volcanoes' ? 'var(--dg-red)'
         : 'var(--dg-amber)'
+      const dateStr = e.date ? fmtDate(new Date(e.date).getTime()) : ''
       return `<div class="dg-feed-item">
         <div class="dg-feed-item-dot" style="background:${color};"></div>
         <div class="dg-feed-item-text">${e.title}</div>
-        <span class="dg-feed-item-meta">${e.category}</span>
+        <span class="dg-feed-item-meta">${dateStr || e.category}</span>
       </div>`
     }).join('')
   }
@@ -114,16 +130,11 @@
   /* ── Fireballs (JPL) ── */
   async function fetchFireballs (start, end) {
     try {
-      const resp = await fetch(`/api/fireball?limit=50`)
+      const apiUrl = `/api/fireball?limit=200&date-min=${start}&date-max=${end}`
+      const resp = await fetch(apiUrl)
       if (!resp.ok) throw new Error('Fireball fetch failed')
       const data = await resp.json()
-      const events = (data.data || []).filter(e => {
-        const d = new Date(e.date ? e.date.replace('/', '-') : e.calDate)
-        const s = new Date(start)
-        const en = new Date(end)
-        return d >= s && d <= en
-      })
-      return events.map(e => ({
+      return (data.data || []).map(e => ({
         date: e.date || e.calDate,
         energy: e.energy ? (e.energy / 1e10).toFixed(1) : '?',
         vel: e.vel ? e.vel.toFixed(10) : '?',
@@ -215,7 +226,7 @@
 
     const [quakes, disasters, fireballs, apophis] = await Promise.all([
       fetchEarthquakes(range.start, range.end),
-      fetchDisasters(),
+      fetchDisasters(range.start, range.end),
       fetchFireballs(range.start, range.end),
       fetchApophis()
     ])
