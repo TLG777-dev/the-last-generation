@@ -2029,11 +2029,9 @@ async function loadLast30DaysBeacons() {
   /* Group by type, take the most recent per type for the main beacon */
   const types = [...enabledTypes];
   const beaconCount = { earthquake: 0, flood: 0, cyclone: 0, volcano: 0, wildfire: 0, fireball: 0 };
-  const MAX_BEACONS_PER_TYPE = 3;
 
   recentEvents.forEach(e => {
     if (!enabledTypes.has(e.type)) return;
-    if (beaconCount[e.type] >= MAX_BEACONS_PER_TYPE) return;
     beaconCount[e.type]++;
 
     const el = document.createElement('div');
