@@ -47,7 +47,7 @@ let skyGroup
 let cameraAzimuth = 170
 let cameraElevation = -12
 let cameraFov = 70
-let currentJD = 2457448  // Mar 1, 2016
+let currentJD = 2458020.0282  // Sep 23, 2017 — Revelation 12 sign
 
 // Playback state
 let isPlaying = false

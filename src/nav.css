@@ -34,7 +34,7 @@
 
 .header-badge {
   font-family: var(--font-ui); font-weight: 500;
-  font-size: 0.4rem; letter-spacing: 0.08em;
+  font-size: var(--fs-4xs); letter-spacing: 0.08em;
   color: rgba(80,180,230,0.85); background: rgba(80,180,230,0.08);
   padding: 0.04rem 0.25rem; border-radius: 3px;
   text-transform: uppercase; border: 1px solid rgba(80,180,230,0.12);
@@ -56,7 +56,7 @@
 
 .nav-cat-trigger {
   font-family: var(--font-ui); font-weight: 400;
-  font-size: 0.6rem; letter-spacing: 0.06em;
+  font-size: var(--fs-xs); letter-spacing: 0.06em;
   text-transform: uppercase;
   color: rgba(245,240,230,0.5);
   background: none; border: none; cursor: pointer;
@@ -103,7 +103,7 @@
 .nav-cat-item {
   display: block; width: 100%;
   font-family: var(--font-ui); font-weight: 300;
-  font-size: 0.62rem; letter-spacing: 0.04em;
+  font-size: var(--fs-xs); letter-spacing: 0.04em;
   color: rgba(245,240,230,0.5);
   text-decoration: none;
   padding: 0.3rem 0.7rem;
@@ -134,7 +134,7 @@
 
 .header-end .data-source {
   font-family: var(--font-ui); font-weight: 300;
-  font-size: 0.45rem;
+  font-size: var(--fs-3xs);
   color: rgba(245,240,230,0.2);
   letter-spacing: 0.03em; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis; max-width: 100px;
@@ -199,7 +199,7 @@
   }
 
   .nav-cat-trigger {
-    font-size: 0.7rem; letter-spacing: 0.1em;
+    font-size: var(--fs-sm); letter-spacing: 0.1em;
     padding: 0.55rem 0.3rem;
     color: rgba(245,240,230,0.6);
     width: 100%; justify-content: space-between;
@@ -229,7 +229,7 @@
   }
 
   .nav-cat-item {
-    font-size: 0.65rem;
+    font-size: var(--fs-xs);
     padding: 0.35rem 0.6rem 0.35rem 0.9rem;
     color: rgba(245,240,230,0.4);
   }
@@ -240,7 +240,7 @@
   .header-nav { width: 100%; border-left: none; }
   .header-page-title { display: none; }
   .header-end .data-source { display: none; }
-  .header-badge { font-size: 0.35rem; padding: 0.02rem 0.2rem; }
+  .header-badge { font-size: var(--fs-4xs); padding: 0.02rem 0.2rem; }
   .header-brand { font-size: var(--fs-xs); }
 }
 

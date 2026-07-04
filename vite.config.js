@@ -21,6 +21,18 @@ export default defineConfig({
         target: 'http://kvert.febras.net/van',
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api\/kvert/, '')
+      },
+      '/api/jpl-horizons': {
+        target: 'https://ssd.jpl.nasa.gov',
+        changeOrigin: true,
+        rewrite: path => {
+          const url = new URL(path, 'http://localhost')
+          const params = url.searchParams
+          const command = params.get('command') || '399'
+          const start = params.get('start') || '2017-Sep-23'
+          const stop = params.get('stop') || '2017-Sep-24'
+          return `/api/horizons.api?format=json&COMMAND='${command}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='${start}'&STOP_TIME='${stop}'&STEP_SIZE='1 d'`
+        }
       }
     }
   },
@@ -45,6 +57,7 @@ export default defineConfig({
         'rev12-calculator': resolve(__dirname, 'rev12-calculator.html'),
         betrothal: resolve(__dirname, 'betrothal.html'),
         digest: resolve(__dirname, 'digest.html'),
+        'bible-downloads': resolve(__dirname, 'bible-downloads.html'),
       }
     }
   }

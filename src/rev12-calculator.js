@@ -360,7 +360,7 @@ function runSweep(startYear, endYear, stepDays, onProgress) {
 
 // ── JPL Horizons API (for verification) ──
 async function fetchJPLFromAPI(target, start, stop) {
-  const url = `https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='${target}'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='${start}'&STOP_TIME='${stop}'&STEP_SIZE='1 d'`
+  const url = `/api/jpl-horizons?command=${encodeURIComponent(target)}&start=${encodeURIComponent(start)}&stop=${encodeURIComponent(stop)}`
   const resp = await fetch(url)
   const json = await resp.json()
   if (!json.result) return null

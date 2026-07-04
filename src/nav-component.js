@@ -94,6 +94,7 @@
     + '<a href="/digest.html" class="nav-cat-item">Digest</a>'
     + '<a href="/glossary.html" class="nav-cat-item">Glossary</a>'
     + '<a href="/library.html" class="nav-cat-item">Library</a>'
+    + '<a href="/bible-downloads.html" class="nav-cat-item">Bible Downloads</a>'
     + '</div></div>'
 
     + '</nav>'
