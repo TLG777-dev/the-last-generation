@@ -2247,7 +2247,7 @@ function openEventDrawer(props) {
     nearby.forEach(n => {
       const nMag = n.magnitude ? `M${n.magnitude.toFixed(1)}` : '';
       const nDist = Math.sqrt(Math.pow(n.lat - parseFloat(props.lat), 2) + Math.pow(n.lng - parseFloat(props.lng), 2)).toFixed(0);
-      html += `<div class="ed-nearby-item" style="font-size:0.45rem;color:rgba(245,240,230,0.4)">
+      html += `<div class="ed-nearby-item" style="font-size:var(--fs-4xs);color:rgba(245,240,230,0.4)">
         <span style="color:${n.color}">&bull;</span> ${n.title.substring(0, 40)} ${nMag} <span style="opacity:0.5">${nDist}&deg;</span>
       </div>`;
     });
@@ -2262,7 +2262,7 @@ function openEventDrawer(props) {
 /* ── Hover Date Tooltip ── */
 const hoverTooltip = document.createElement('div');
 hoverTooltip.id = 'hover-tooltip';
-hoverTooltip.style.cssText = 'display:none;position:fixed;z-index:200;pointer-events:none;font-family:var(--font-ui);font-size:0.42rem;font-weight:400;color:rgba(245,240,230,0.7);background:rgba(8,6,12,0.9);border:1px solid rgba(212,175,55,0.15);border-radius:4px;padding:0.15rem 0.35rem;white-space:nowrap;backdrop-filter:blur(6px);';
+hoverTooltip.style.cssText = 'display:none;position:fixed;z-index:200;pointer-events:none;font-family:var(--font-ui);font-size:var(--fs-4xs);font-weight:400;color:rgba(245,240,230,0.7);background:rgba(8,6,12,0.9);border:1px solid rgba(212,175,55,0.15);border-radius:4px;padding:0.15rem 0.35rem;white-space:nowrap;backdrop-filter:blur(6px);';
 document.body.appendChild(hoverTooltip);
 
 function showHoverTooltip(e, props) {
@@ -2315,10 +2315,10 @@ function showEventPopup(props, lngLat) {
         <span style="font-weight:600;font-size:0.55rem;color:rgba(245,240,230,0.85)">${TYPE_LABELS[type]} ${magText}</span>
         <span id="popup-close-btn" style="margin-left:auto;cursor:pointer;font-size:0.65rem;color:rgba(245,240,230,0.3);line-height:1">&times;</span>
       </div>
-      <div style="font-weight:300;font-size:0.48rem;color:rgba(245,240,230,0.5);line-height:1.3;margin-bottom:0.2rem">${props.title}</div>
-      <div style="font-weight:500;font-size:0.42rem;color:rgba(212,175,55,0.6);margin-bottom:0.15rem">${date}</div>
-      <div style="font-size:0.38rem;color:rgba(245,240,230,0.2)">${depthText || TYPE_LABELS[type]}</div>
-      <div id="popup-details-btn" style="margin-top:0.25rem;font-size:0.4rem;color:rgba(80,180,230,0.5);cursor:pointer">Full details &rarr;</div>
+      <div style="font-weight:300;font-size:var(--fs-4xs);color:rgba(245,240,230,0.5);line-height:1.3;margin-bottom:0.2rem">${props.title}</div>
+      <div style="font-weight:500;font-size:var(--fs-4xs);color:rgba(212,175,55,0.6);margin-bottom:0.15rem">${date}</div>
+      <div style="font-size:var(--fs-4xs);color:rgba(245,240,230,0.2)">${depthText || TYPE_LABELS[type]}</div>
+      <div id="popup-details-btn" style="margin-top:0.25rem;font-size:var(--fs-4xs);color:rgba(80,180,230,0.5);cursor:pointer">Full details &rarr;</div>
     </div>
   `;
   popup.style.display = 'block';
