@@ -115,16 +115,6 @@
           <button class="fp-tog active" data-type="fireball"><span class="fp-tog-dot" style="background:#FF6B35"></span><span>Fireballs</span><span class="fp-tog-count" id="tc-fireball">—</span></button>
         </div>
       </div>
-      <div class="fp-section collapsed" id="alert-panel">
-        <div class="ap-header" id="ap-toggle">
-          <span class="ap-title">Recent Events</span>
-          <span class="ap-count" id="ap-count">0</span>
-          <span class="ap-arrow">&#9660;</span>
-        </div>
-        <div class="ap-body" id="ap-body">
-          <div class="ap-list" id="ap-list"></div>
-        </div>
-      </div>
       <div class="fp-section">
         <button class="fp-graph-btn open" id="fp-graph-toggle">&#9660; Earthquake Frequency</button>
       </div>
@@ -166,6 +156,16 @@
         <div class="eq-graph-label">Wildfire events (2000&ndash;present) &middot; Source: NASA EONET</div>
       </div>
     </div>
+  </div>
+
+  <!-- Recent Events Side Panel (Last 30 Days) -->
+  <div id="recent-panel" class="recent-panel" style="display:none">
+    <div class="rp-header">
+      <span class="rp-title">Recent Events</span>
+      <span class="rp-subtitle" id="rp-subtitle">Last 30 days</span>
+      <button class="rp-close" id="rp-close">&times;</button>
+    </div>
+    <div class="rp-body" id="rp-body"></div>
   </div>
 
   <!-- Event Detail Drawer -->

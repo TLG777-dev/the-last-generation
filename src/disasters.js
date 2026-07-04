@@ -125,6 +125,14 @@ map.on('load', () => {
     initBucketLayers();
   }
   renderAll();
+  /* Default to Last 30 Days mode */
+  isLast30Mode = true;
+  fpLast30.classList.add('active');
+  if (fpYearSelect) fpYearSelect.disabled = true;
+  loadLast30DaysBeacons().then(() => {
+    initialLoad = false;
+    startRefresh();
+  });
 });
 
 populateYearDropdown();
@@ -142,8 +150,8 @@ function updateDataSourceLabel(year) {
   if (label) label.textContent = text;
 }
 
-// Initial load
-loadYearData();
+// Initial load — skip year data, default to Last 30 Days
+// loadYearData() deferred to map.on('load') if not in 30-day mode
 
 setupBibleVerses();
 
@@ -1658,16 +1666,17 @@ document.getElementById('fp-toggle').addEventListener('click', () => {
   document.getElementById('filter-panel').classList.toggle('open');
 });
 
-/* ── Alert Panel ── */
-document.getElementById('ap-toggle').addEventListener('click', () => {
-  document.getElementById('alert-panel').classList.toggle('collapsed');
+/* ── Alert Panel (removed — replaced by Recent Events side panel) ── */
+document.getElementById('ap-toggle')?.addEventListener('click', () => {
+  document.getElementById('alert-panel')?.classList.toggle('collapsed');
 });
 
 function updateAlertPanel() {
-  const sorted = [...filteredEvents].sort((a, b) => b.timestamp - a.timestamp);
-  const recent = sorted.slice(0, 50);
   const list = document.getElementById('ap-list');
   const countEl = document.getElementById('ap-count');
+  if (!list || !countEl) return;
+  const sorted = [...filteredEvents].sort((a, b) => b.timestamp - a.timestamp);
+  const recent = sorted.slice(0, 50);
   countEl.textContent = filteredEvents.length;
 
   if (sorted.length === 0) {
@@ -1900,6 +1909,76 @@ document.querySelectorAll('.region-btn').forEach(btn => {
 let isLast30Mode = false;
 const fpLast30 = document.getElementById('fp-last30');
 const fpYearSelect = document.getElementById('fp-year');
+const recentPanel = document.getElementById('recent-panel');
+const rpBody = document.getElementById('rp-body');
+const rpClose = document.getElementById('rp-close');
+
+if (rpClose) rpClose.addEventListener('click', () => { recentPanel.style.display = 'none'; });
+
+function showRecentPanel() {
+  if (recentPanel) recentPanel.style.display = 'flex';
+  const st = document.getElementById('share-toggle'); if (st) st.style.display = 'none';
+  const sp = document.getElementById('share-panel'); if (sp) sp.style.display = 'none';
+}
+function hideRecentPanel() {
+  if (recentPanel) recentPanel.style.display = 'none';
+  const st = document.getElementById('share-toggle'); if (st) st.style.display = '';
+}
+
+function populateRecentPanel(groupedEvents) {
+  if (!rpBody) return;
+  rpBody.innerHTML = '';
+  const TYPE_ICONS_PANEL = { earthquake: '●', flood: '●', cyclone: '●', volcano: '●', wildfire: '●', fireball: '●' };
+  const TYPE_ORDER = ['earthquake', 'flood', 'cyclone', 'volcano', 'wildfire', 'fireball'];
+
+  TYPE_ORDER.forEach(type => {
+    const items = groupedEvents[type];
+    if (!items || items.length === 0) return;
+    const group = document.createElement('div');
+    group.className = 'rp-group';
+    group.innerHTML = `
+      <div class="rp-group-header">
+        <span class="rp-group-dot" style="background:${TYPE_COLORS[type]}"></span>
+        <span class="rp-group-name">${TYPE_LABELS[type]}s</span>
+        <span class="rp-group-count">${items.length}</span>
+        <span class="rp-group-arrow">&#9660;</span>
+      </div>
+      <div class="rp-group-items"></div>
+    `;
+    const hdr = group.querySelector('.rp-group-header');
+    hdr.addEventListener('click', () => group.classList.toggle('collapsed'));
+
+    const container = group.querySelector('.rp-group-items');
+    items.forEach(ev => {
+      const row = document.createElement('div');
+      row.className = 'rp-event';
+      row.dataset.id = ev.id;
+      row.dataset.lng = ev.lng;
+      row.dataset.lat = ev.lat;
+      const magStr = ev.type === 'earthquake' ? `M ${ev.magnitude.toFixed(1)}` : (ev.magnitude > 0 ? ev.magnitude.toFixed(1) : '—');
+      const depthStr = ev.type === 'earthquake' && ev.depth ? `${ev.depth.toFixed(0)} km` : '';
+      const ago = timeAgo(ev.timestamp);
+      row.innerHTML = `
+        <span class="rp-event-mag" style="color:${TYPE_COLORS[type]}">${magStr}</span>
+        <div class="rp-event-body">
+          <div class="rp-event-title">${ev.title}</div>
+          <div class="rp-event-meta"><span>${ago}</span>${depthStr ? `<span>${depthStr}</span>` : ''}</div>
+        </div>
+      `;
+      row.addEventListener('click', () => {
+        map.flyTo({ center: [ev.lng, ev.lat], zoom: 7, duration: 1200 });
+        rpBody.querySelectorAll('.rp-event.highlighted').forEach(el => el.classList.remove('highlighted'));
+        row.classList.add('highlighted');
+        setTimeout(() => {
+          const p = { type: ev.type, magnitude: ev.magnitude, depth: ev.depth, title: ev.title, timestamp: ev.timestamp, url: ev.url, color: ev.color, id: ev.id, lat: ev.lat, lng: ev.lng };
+          openEventDrawer(p);
+        }, 1300);
+      });
+      container.appendChild(row);
+    });
+    rpBody.appendChild(group);
+  });
+}
 
 if (fpLast30) {
   fpLast30.addEventListener('click', () => {
@@ -1909,6 +1988,7 @@ if (fpLast30) {
     if (isLast30Mode) {
       loadLast30DaysBeacons();
     } else {
+      hideRecentPanel();
       /* Clean up Last 30 dots layer */
       if (map.getLayer('last30-all')) map.removeLayer('last30-all');
       if (map.getSource('last30-all')) map.removeSource('last30-all');
@@ -1919,6 +1999,7 @@ if (fpLast30) {
 }
 
 async function loadLast30DaysBeacons() {
+  try {
   stopPlay();
   stopPulse();
   const id = ++requestId;
@@ -2017,41 +2098,21 @@ async function loadLast30DaysBeacons() {
   map.on('mouseenter', allSourceId, () => { map.getCanvas().style.cursor = 'pointer'; });
   map.on('mouseleave', allSourceId, () => { map.getCanvas().style.cursor = ''; });
 
-  /* Place beacon markers for the 7 most recent events of each type */
+  /* Populate Recent Events side panel instead of beacon labels */
   Object.values(beaconMarkers).forEach(m => { try { m.remove(); } catch(_) {} });
   Object.keys(beaconMarkers).forEach(k => delete beaconMarkers[k]);
 
-  const types = [...enabledTypes];
   const BEACONS_PER_TYPE = 7;
-
-  types.forEach(type => {
-    const ofType = events.filter(e => e.type === type).sort((a, b) => b.timestamp - a.timestamp);
-    if (ofType.length === 0) return;
-
-    ofType.slice(0, BEACONS_PER_TYPE).forEach((e, idx) => {
-      const el = document.createElement('div');
-      el.className = 'beacon-label';
-      const isFirst = idx === 0;
-      const marker = new maplibregl.Marker({ element: el });
-      const key = `${type}-${idx}`;
-      beaconMarkers[key] = marker;
-
-      const title = type === 'earthquake' ? `M ${e.magnitude.toFixed(1)} — ${e.title}` : e.title;
-      const lbl = title.length > TITLE_MAX_LEN ? title.substring(0, TITLE_TRUNC_LEN) + '...' : title;
-      const depthStr = type === 'earthquake' ? ` · ${e.depth.toFixed(0)} km` : '';
-      const dateStr = formatDate(e.timestamp);
-      const ago = timeAgo(e.timestamp);
-      el.innerHTML = `<div>${lbl}</div><div style="font-weight:300;font-size:${isFirst ? '0.5rem' : '0.42rem'};opacity:${isFirst ? 0.7 : 0.4};margin-top:1px">${dateStr}${depthStr} · ${ago}</div>`;
-      el.style.color = TYPE_COLORS[type];
-      el.style.display = '';
-      el.style.fontSize = isFirst ? '' : '0.85em';
-      el.style.opacity = isFirst ? '1' : '0.7';
-      marker.setLngLat([e.lng, e.lat]);
-      marker.addTo(map);
-    });
+  const grouped = {};
+  [...enabledTypes].forEach(type => {
+    grouped[type] = events
+      .filter(e => e.type === type)
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, BEACONS_PER_TYPE);
   });
-
-  startPulse();
+  populateRecentPanel(grouped);
+  showRecentPanel();
+  } catch (err) { console.warn('loadLast30DaysBeacons error:', err); }
 }
 
 /* ── 5. Event Detail Drawer ── */
