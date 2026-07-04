@@ -309,9 +309,9 @@ function initLayers() {
     source: 'beacon-source',
     paint: {
       'circle-color': '#fff',
-      'circle-radius': ['case', ['==', ['get', 'isFirst'], 1],
-        ['interpolate', ['linear'], ['zoom'], 1, 3.5, 5, 5.5, 10, 7],
-        ['interpolate', ['linear'], ['zoom'], 1, 2, 5, 3, 10, 3.5],
+      'circle-radius': [
+        'interpolate', ['linear'], ['get', 'isFirst'],
+        0, 3, 1, 5.5,
       ],
       'circle-opacity': 1,
       'circle-stroke-width': 0,
@@ -2028,10 +2028,14 @@ async function loadLast30DaysBeacons() {
   const workingEvents = [];
 
   try {
-    const [eqResp, gdacsResp, fbResp] = await Promise.allSettled([
-      fetch(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${new Date(thirtyDaysAgo).toISOString().slice(0,10)}&endtime=${new Date(now).toISOString().slice(0,10)}&minmagnitude=4.5&orderby=magnitude&limit=500`),
+    const startStr = new Date(thirtyDaysAgo).toISOString().slice(0,10);
+    const endStr = new Date(now).toISOString().slice(0,10);
+    const [eqResp, gdacsResp, fbResp, eonetResp, kvertResp] = await Promise.allSettled([
+      fetch(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${startStr}&endtime=${endStr}&minmagnitude=4.5&orderby=magnitude&limit=500`),
       fetch('/api/gdacs/events4app'),
-      fetch('/api/fireball?limit=200')
+      fetch('/api/fireball?limit=200'),
+      fetch(`https://eonet.gsfc.nasa.gov/api/v3/events/geojson?category=volcanoes&status=open`),
+      fetch('/api/kvert/index?type=6')
     ]);
 
     if (eqResp.status === 'fulfilled' && eqResp.value.ok) {
@@ -2063,6 +2067,39 @@ async function loadLast30DaysBeacons() {
         if (ts < thirtyDaysAgo || ts > now) return;
         const ie = row[2] ? parseFloat(row[2]) : 0;
         workingEvents.push({ id: `fb-${row[0]}`, type: 'fireball', lat: row[3] ? parseFloat(row[3]) * (row[4]==='S'?-1:1) : 0, lng: row[5] ? parseFloat(row[5]) * (row[6]==='W'?-1:1) : 0, magnitude: ie, depth: row[7] ? parseFloat(row[7]) : 0, timestamp: ts, title: `${ie >= 1 ? ie.toFixed(2)+' kt' : (ie*1000).toFixed(0)+' t TNT'} impact`, description: row[7] ? `Altitude: ${row[7]} km` : 'Fireball', url: '', color: TYPE_COLORS.fireball });
+      });
+    }
+
+    if (eonetResp.status === 'fulfilled' && eonetResp.value.ok) {
+      const eonetData = await eonetResp.value.json();
+      const catMap = { 'volcanoes': 'volcano', 'wildfires': 'wildfire', 'floods': 'flood', 'severeStorms': 'cyclone' };
+      (eonetData.features || []).forEach(f => {
+        const c = f.geometry?.coordinates || [];
+        if (c.length < 2) return;
+        const ts = f.properties?.date ? new Date(f.properties.date).getTime() : Date.now();
+        if (ts < thirtyDaysAgo) return;
+        const cats = f.categories || [];
+        const eonetType = cats[0]?.id || '';
+        const type = catMap[eonetType] || 'volcano';
+        workingEvents.push({ id: `eonet-${f.id}`, type, lat: c[1], lng: c[0], magnitude: 0, depth: 0, timestamp: ts, title: f.properties?.title || 'Volcanic activity', description: f.properties?.title || 'Volcanic event', url: '', color: TYPE_COLORS[type] });
+      });
+    }
+
+    if (kvertResp.status === 'fulfilled' && kvertResp.value.ok) {
+      const kvertText = await kvertResp.value.text();
+      const doc = new DOMParser().parseFromString(kvertText, 'text/html');
+      doc.querySelectorAll('table tr').forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length < 6) return;
+        const dateStr = cells[0]?.textContent?.trim();
+        const volcanoName = cells[1]?.textContent?.trim()?.toLowerCase();
+        const level = cells[2]?.textContent?.trim();
+        if (!dateStr || !volcanoName) return;
+        const ts = new Date(dateStr).getTime();
+        if (isNaN(ts) || ts < thirtyDaysAgo) return;
+        const coords = KVERT_COORDS[volcanoName];
+        if (!coords) return;
+        workingEvents.push({ id: `kvert-${volcanoName}-${ts}`, type: 'volcano', lat: coords.lat, lng: coords.lng, magnitude: 0, depth: 0, timestamp: ts, title: `KVERT: ${volcanoName} — Level ${level}`, description: `KVERT volcanic alert level ${level}`, url: '', color: TYPE_COLORS.volcano });
       });
     }
   } catch (_) {}
