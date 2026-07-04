@@ -1740,6 +1740,10 @@ document.querySelectorAll('[data-graph]').forEach(btn => {
 document.getElementById('fp-toggle').addEventListener('click', () => {
   document.getElementById('filter-panel').classList.toggle('open');
 });
+/* Auto-open filter panel on desktop only */
+if (window.innerWidth > 640) {
+  document.getElementById('filter-panel').classList.add('open');
+}
 
 /* ── Alert Panel (removed — replaced by Recent Events side panel) ── */
 document.getElementById('ap-toggle')?.addEventListener('click', () => {
@@ -2001,21 +2005,40 @@ if (rpToggle) rpToggle.addEventListener('click', (e) => {
   if (isMobile && rpBody) {
     rpBody.classList.toggle('expanded');
     rpCollapseIcon.classList.toggle('rotated');
+    mobileExpanded = rpBody.classList.contains('expanded');
   }
 });
 
+let mobileExpanded = false;
 function showRecentPanel() {
-  if (recentPanel) recentPanel.style.display = 'flex';
+  if (!recentPanel) return;
+  recentPanel.style.display = 'flex';
   const isMobile = window.innerWidth <= 640;
   if (isMobile && rpBody) {
+    if (mobileExpanded) {
+      rpBody.classList.add('expanded');
+      rpCollapseIcon.classList.add('rotated');
+    } else {
+      rpBody.classList.remove('expanded');
+      rpCollapseIcon.classList.remove('rotated');
+    }
+  } else if (!isMobile && rpBody) {
     rpBody.classList.remove('expanded');
-    rpCollapseIcon.classList.remove('rotated');
   }
   const st = document.getElementById('share-toggle'); if (st) st.style.display = 'none';
   const sp = document.getElementById('share-panel'); if (sp) sp.style.display = 'none';
 }
 function hideRecentPanel() {
-  if (recentPanel) recentPanel.style.display = 'none';
+  if (!recentPanel) return;
+  const isMobile = window.innerWidth <= 640;
+  if (isMobile) {
+    /* On mobile, just collapse — keep header visible */
+    if (rpBody) rpBody.classList.remove('expanded');
+    if (rpCollapseIcon) rpCollapseIcon.classList.remove('rotated');
+    mobileExpanded = false;
+  } else {
+    recentPanel.style.display = 'none';
+  }
   const st = document.getElementById('share-toggle'); if (st) st.style.display = '';
 }
 
@@ -2083,6 +2106,7 @@ if (fpLast30) {
     if (isLast30Mode) {
       loadLast30DaysBeacons();
     } else {
+      mobileExpanded = false;
       hideRecentPanel();
       /* Clean up Last 30 dots layer */
       if (map.getLayer('last30-all')) map.removeLayer('last30-all');
