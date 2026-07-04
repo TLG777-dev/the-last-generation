@@ -431,35 +431,100 @@ body {
   text-align: center;
 }
 .jpl-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.jpl-summary {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  background: rgba(80, 200, 120, 0.06);
+  border: 1px solid rgba(80, 200, 120, 0.2);
+  border-radius: 8px;
+}
+.jpl-summary-icon {
+  font-size: 1.5rem;
+  color: var(--match);
+  flex-shrink: 0;
+}
+.jpl-summary-partial {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+.jpl-summary-text {
+  font-family: var(--font-ui);
+  font-size: var(--fs-sm);
+  color: var(--txt);
+  line-height: 1.4;
+}
+.jpl-summary-text strong {
+  color: var(--txt-bright);
 }
 .jpl-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 1rem;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+}
+.jpl-card-match {
+  border-color: rgba(80, 200, 120, 0.2);
+}
+.jpl-card-nomatch {
+  border-color: rgba(200, 80, 80, 0.2);
+}
+.jpl-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+.jpl-card-icon {
+  font-size: 0.8rem;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.jpl-card-match .jpl-card-icon {
+  background: rgba(80, 200, 120, 0.15);
+  color: var(--match);
+}
+.jpl-card-nomatch .jpl-card-icon {
+  background: rgba(200, 80, 80, 0.15);
+  color: var(--nomatch);
 }
 .jpl-card-title {
   font-family: var(--font-display);
   font-size: var(--fs-base);
   font-weight: 600;
   color: var(--txt-bright);
-  margin-bottom: 0.5rem;
-  text-transform: capitalize;
 }
-.jpl-row {
-  display: flex;
-  justify-content: space-between;
+.jpl-card-criteria {
   font-family: var(--font-ui);
   font-size: var(--fs-xs);
-  padding: 0.15rem 0;
+  color: var(--gold-dim);
+  margin-bottom: 0.15rem;
 }
-.jpl-label { color: var(--txt-dim); }
-.jpl-value { color: var(--txt); }
-.jpl-match { color: var(--match); font-weight: 500; }
-.jpl-nomatch { color: var(--nomatch); font-weight: 500; }
+.jpl-card-desc {
+  font-family: var(--font-ui);
+  font-size: var(--fs-xs);
+  color: var(--txt-dim);
+  margin-bottom: 0.3rem;
+}
+.jpl-card-status {
+  font-family: var(--font-ui);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+}
+.jpl-card-status.jpl-match { color: var(--match); }
+.jpl-card-status.jpl-nomatch { color: var(--nomatch); }
 .jpl-loading {
   text-align: center;
   color: var(--txt-dim);
@@ -612,7 +677,7 @@ body {
   .control-group input, .control-group select { width: 100%; max-width: none; }
   .calc-btn { width: 100%; }
   .criteria-grid { grid-template-columns: repeat(2, 1fr); }
-  .jpl-grid { grid-template-columns: 1fr; }
+  .jpl-grid { gap: 0.5rem; }
   .detail-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 480px) {

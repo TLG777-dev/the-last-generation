@@ -542,40 +542,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
   btnVerify.addEventListener('click', async () => {
     jplSection.style.display = 'block'
-    jplGrid.innerHTML = '<div class="jpl-loading">Fetching JPL Horizons data for Sep 23, 2017...</div>'
+    jplGrid.innerHTML = '<div class="jpl-loading">Fetching NASA JPL Horizons data for September 23, 2017...</div>'
 
     try {
       const data = await Rev12Calc.verifyDate('Sep 23, 2017')
       jplGrid.innerHTML = ''
 
-      for (const [name, pos] of Object.entries(data)) {
+      const bodies = [
+        { key: 'sun', label: 'Sun', criteria: 'Clothed with the Sun', desc: 'Positioned along Virgo\'s body', check: p => p.ra >= 175 && p.ra <= 185 && p.dec >= -5 && p.dec <= 5 },
+        { key: 'moon', label: 'Moon', criteria: 'Moon at Her Feet', desc: 'Near Virgo\'s foot region', check: p => p.ra >= 208 && p.ra <= 218 && p.dec >= -13 && p.dec <= -3 },
+        { key: 'jupiter', label: 'Jupiter', criteria: 'The Child in the Womb', desc: 'Inside Virgo\'s torso', check: p => p.ra >= 200 && p.ra <= 210 && p.dec >= -14 && p.dec <= -4 },
+        { key: 'venus', label: 'Venus', criteria: 'Crown Planet in Leo', desc: 'Among Leo\'s stars', check: p => p.ra >= 151 && p.ra <= 161 && p.dec >= 6 && p.dec <= 17 },
+        { key: 'mars', label: 'Mars', criteria: 'Crown Planet in Leo', desc: 'Among Leo\'s stars', check: p => p.ra >= 158 && p.ra <= 168 && p.dec >= 4 && p.dec <= 14 },
+        { key: 'mercury', label: 'Mercury', criteria: 'Crown Planet in Leo', desc: 'Among Leo\'s stars', check: p => p.ra >= 164 && p.ra <= 174 && p.dec >= 2 && p.dec <= 12 },
+      ]
+
+      let matchCount = 0
+      const results = []
+
+      for (const body of bodies) {
+        const pos = data[body.key]
         if (!pos || !pos['Sep 23, 2017']) continue
         const p = pos['Sep 23, 2017']
+        const matches = body.check(p)
+        if (matches) matchCount++
+        results.push({ ...body, pos: p, matches })
+      }
+
+      // Summary
+      const summary = document.createElement('div')
+      summary.className = 'jpl-summary'
+      const allMatch = matchCount === 6
+      summary.innerHTML = allMatch
+        ? `<div class="jpl-summary-icon">✓</div><div class="jpl-summary-text"><strong>All 6 bodies match</strong> the Rev 12 criteria on September 23, 2017</div>`
+        : `<div class="jpl-summary-icon jpl-summary-partial">${matchCount}/6</div><div class="jpl-summary-text"><strong>${matchCount} of 6 bodies match</strong> the Rev 12 criteria</div>`
+      jplGrid.appendChild(summary)
+
+      // Individual cards
+      for (const r of results) {
         const card = document.createElement('div')
-        card.className = 'jpl-card'
-
-        const desc = { sun:'Clothed with the Sun', moon:'Moon at Her Feet', jupiter:'The Child',
-          venus:'Crown planet', mars:'Crown planet', mercury:'Crown planet' }[name]
-
-        let status = ''
-        if (name === 'sun') status = (p.ra >= 175 && p.ra <= 185 && p.dec >= -5 && p.dec <= 5) ? 'jpl-match' : 'jpl-nomatch'
-        else if (name === 'moon') status = (p.ra >= 208 && p.ra <= 218 && p.dec >= -13 && p.dec <= -3) ? 'jpl-match' : 'jpl-nomatch'
-        else if (name === 'jupiter') status = (p.ra >= 200 && p.ra <= 210 && p.dec >= -14 && p.dec <= -4) ? 'jpl-match' : 'jpl-nomatch'
-        else if (name === 'venus') status = (p.ra >= 151 && p.ra <= 161 && p.dec >= 6 && p.dec <= 17) ? 'jpl-match' : 'jpl-nomatch'
-        else if (name === 'mars') status = (p.ra >= 158 && p.ra <= 168 && p.dec >= 4 && p.dec <= 14) ? 'jpl-match' : 'jpl-nomatch'
-        else if (name === 'mercury') status = (p.ra >= 164 && p.ra <= 174 && p.dec >= 2 && p.dec <= 12) ? 'jpl-match' : 'jpl-nomatch'
-
+        card.className = `jpl-card ${r.matches ? 'jpl-card-match' : 'jpl-card-nomatch'}`
         card.innerHTML = `
-          <div class="jpl-card-title">${name.charAt(0).toUpperCase() + name.slice(1)}</div>
-          <div class="jpl-row"><span class="jpl-label">Description:</span><span class="jpl-value">${desc}</span></div>
-          <div class="jpl-row"><span class="jpl-label">RA:</span><span class="jpl-value">${p.ra.toFixed(4)}°</span></div>
-          <div class="jpl-row"><span class="jpl-label">Dec:</span><span class="jpl-value">${p.dec.toFixed(4)}°</span></div>
-          <div class="jpl-row"><span class="jpl-label">Status:</span><span class="${status}">${status === 'jpl-match' ? '✓ In range' : '✗ Out of range'}</span></div>
+          <div class="jpl-card-header">
+            <span class="jpl-card-icon">${r.matches ? '✓' : '✗'}</span>
+            <span class="jpl-card-title">${r.label}</span>
+          </div>
+          <div class="jpl-card-criteria">${r.criteria}</div>
+          <div class="jpl-card-desc">${r.desc}</div>
+          <div class="jpl-card-status ${r.matches ? 'jpl-match' : 'jpl-nomatch'}">${r.matches ? 'In position' : 'Out of position'}</div>
         `
         jplGrid.appendChild(card)
       }
+
     } catch (e) {
-      jplGrid.innerHTML = `<div class="jpl-loading">Note: JPL API requires server-side access. Analytical engine positions shown above are accurate to ~1 arcminute.</div>`
+      console.warn('JPL verify failed:', e)
+      jplGrid.innerHTML = `<div class="jpl-loading">Could not reach JPL API. The analytical positions shown in the sweep results above are accurate to ~1 arcminute.</div>`
     }
   })
 })
