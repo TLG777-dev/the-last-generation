@@ -881,6 +881,7 @@ function updateBucketFilter() {
 
 function updateBeacon() {
   if (!mapReady) return;
+  if (isLast30Mode) return;
   if (selectedYear !== new Date().getFullYear()) return;
 
   const types = [...enabledTypes];
