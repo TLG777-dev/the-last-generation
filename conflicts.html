@@ -9,7 +9,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,300&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
-  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
   <link rel="stylesheet" href="/src/nav.css" />
   <link rel="stylesheet" href="/src/conflicts.css" />
   <script type="speculationrules">
@@ -18,7 +17,7 @@
 </head>
 <body>
   <div id="site-headerMount" data-page-title="Conflicts Watch" data-badge="WAR"></div>
-  <script src="/src/nav-component.js" defer></script>
+  <script src="/nav-component.js" defer></script>
   <canvas id="bg-canvas"></canvas>
 
   <!-- Bible verse rotator -->
@@ -121,6 +120,13 @@
   <!-- Data notice -->
   <div class="data-notice">Data compiled from open-source intelligence. Accuracy depends on available reporting.</div>
 
+  <footer class="page-footer">
+    <p class="footer-text">Data from open-source intelligence. Verify independently.</p>
+    <p class="footer-maranatha">Maranatha</p>
+    <p class="footer-nav"><a href="/">The Last Generation</a> &middot; <a href="/timeline.html">Prophetic Timeline</a> &middot; <a href="/calendar.html">Prophecy Calendar</a> &middot; <a href="/rapture.html">The Rapture</a> &middot; <a href="/dashboard.html">Data Hub</a></p>
+  </footer>
+
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
   <script type="module" src="/src/conflicts.js"></script>
 </body>
 </html>
