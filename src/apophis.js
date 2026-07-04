@@ -6,7 +6,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 
 const J2000 = 2451545.0
-const API_URL = 'https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=99942&phys-par=1&ca-data=1'
+const API_URL = '/api/jpl-sbdb?sstr=99942&phys-par=1&ca-data=1'
 const AU_SCALE = 7
 import jplFallback from './jpl-data.json'
 import cometFallback from './data/comet-jpl-fallback.json'
@@ -58,7 +58,7 @@ const APOPHIS_ELS = {
   epoch: 2461000.5, period: 323.5664375491271
 }
 
-const EARTH_API_URL = 'https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=399'
+const EARTH_API_URL = '/api/jpl-sbdb?sstr=399'
 let EARTH_ELS = {
   a: 1.000001, e: 0.0167086, i: 0.00005,
   om: 0, w: 102.93735, M: 357.527,
@@ -1266,7 +1266,7 @@ function refreshApophisPanel() {
 
 async function fetchJPLData() {
   try {
-    const resp = await fetch(API_URL, { mode: 'cors' })
+    const resp = await fetch(API_URL)
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
     const data = await resp.json()
     applyJPLData(data)
@@ -1283,7 +1283,7 @@ async function fetchJPLData() {
 }
 
 // ─── 3I/ATLAS JPL Data Fetch ───
-const COMET_API_URL = 'https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=C/2025%20N1&full-prec=1'
+const COMET_API_URL = '/api/jpl-sbdb?sstr=C/2025%20N1&full-prec=1'
 
 function applyCometJPLData(data) {
   const els = data.orbit?.elements
@@ -1330,7 +1330,7 @@ function applyCometJPLData(data) {
 
 async function fetchCometJPLData() {
   try {
-    const resp = await fetch(COMET_API_URL, { mode: 'cors' })
+    const resp = await fetch(COMET_API_URL)
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
     const data = await resp.json()
     applyCometJPLData(data)
@@ -1385,7 +1385,7 @@ function applyEarthJPLData(data) {
 
 async function fetchEarthJPLData() {
   try {
-    const resp = await fetch(EARTH_API_URL, { mode: 'cors' })
+    const resp = await fetch(EARTH_API_URL)
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
     const data = await resp.json()
     applyEarthJPLData(data)
