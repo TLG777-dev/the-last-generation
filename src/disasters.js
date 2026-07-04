@@ -941,7 +941,7 @@ function updateBeacon() {
     beaconFeatures.push({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [latest.lng, latest.lat] },
-      properties: { type, color },
+      properties: { type, color, magnitude: latest.magnitude, depth: latest.depth, title: latest.title, timestamp: latest.timestamp, id: latest.id },
     });
 
     const screen = map.project([latest.lng, latest.lat]);
@@ -1507,7 +1507,7 @@ function rebuildLast30Beacons() {
       beaconFeatures.push({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: [e.lng, e.lat] },
-        properties: { type, color: TYPE_COLORS[type], isFirst: isFirst ? 1 : 0 },
+        properties: { type, color: TYPE_COLORS[type], isFirst: isFirst ? 1 : 0, magnitude: e.magnitude, depth: e.depth, title: e.title, timestamp: e.timestamp, id: e.id },
       });
     });
   });
@@ -1861,13 +1861,20 @@ function setupBibleVerses() {
 
 /* (showEventPopup replaced by enhanced version in section 6) */
 
-map.on('click', () => {
-  hideEventPopup();
-  const wasOpen = document.getElementById('event-drawer')?.classList.contains('open');
-  document.getElementById('event-drawer')?.classList.remove('open');
-  const bd = document.getElementById('event-backdrop');
-  if (bd) bd.style.display = 'none';
-});
+/* Close popup/drawer on empty-map clicks (registered last so layer handlers fire first) */
+setTimeout(() => {
+  map.on('click', (e) => {
+    const allLayers = ['beacon-layer', 'beacon-glow-layer', 'beacon-dot-layer', 'last30-all'];
+    const features = map.queryRenderedFeatures(e.point, { layers: allLayers });
+    if (!features || features.length === 0) {
+      hideEventPopup();
+      const drawer = document.getElementById('event-drawer');
+      drawer?.classList.remove('open');
+      const bd = document.getElementById('event-backdrop');
+      if (bd) bd.style.display = 'none';
+    }
+  });
+}, 0);
 
 /* ── Map Loading Bar ── */
 function showMapLoading(text) {
@@ -2156,7 +2163,7 @@ async function loadLast30DaysBeacons() {
       beaconFeatures.push({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: [e.lng, e.lat] },
-        properties: { type, color: TYPE_COLORS[type], isFirst: isFirst ? 1 : 0 },
+        properties: { type, color: TYPE_COLORS[type], isFirst: isFirst ? 1 : 0, magnitude: e.magnitude, depth: e.depth, title: e.title, timestamp: e.timestamp, id: e.id },
       });
     });
   });
@@ -2295,6 +2302,12 @@ function showEventPopup(props, lngLat) {
   const magText = type === 'earthquake' ? `M ${parseFloat(props.magnitude).toFixed(1)}` : '';
   const depthText = type === 'earthquake' ? `${parseFloat(props.depth).toFixed(0)} km depth` : '';
   const date = formatDateTime(props.timestamp);
+
+  /* Project lngLat to screen coordinates */
+  const screenPt = map.project([lngLat.lng, lngLat.lat]);
+  const px = screenPt.x, py = screenPt.y;
+  const flip = lngLat.lng < 0;
+
   popup.innerHTML = `
     <div style="padding:0.5rem 0.65rem;min-width:150px;max-width:240px">
       <div style="display:flex;align-items:center;gap:0.3rem;margin-bottom:0.15rem">
@@ -2309,15 +2322,14 @@ function showEventPopup(props, lngLat) {
     </div>
   `;
   popup.style.display = 'block';
-  popup.style.left = `${lngLat.lng < 0 ? Math.min(lngLat.x + 12, window.innerWidth - 260) : Math.max(lngLat.x - 12, 10)}px`;
-  popup.style.top = `${lngLat.y - 10}px`;
-  popup.style.transform = lngLat.lng < 0 ? 'translateX(0)' : 'translateX(-100%)';
+  popup.style.left = `${flip ? Math.min(px + 12, window.innerWidth - 260) : Math.max(px - 12, 10)}px`;
+  popup.style.top = `${py - 10}px`;
+  popup.style.transform = flip ? 'translateX(0)' : 'translateX(-100%)';
   popup.classList.add('visible');
 
   /* Leader line from point to popup card edge */
   const cardRect = popup.getBoundingClientRect();
-  const px = lngLat.x, py = lngLat.y;
-  const cx = lngLat.lng < 0 ? cardRect.left : cardRect.right;
+  const cx = flip ? cardRect.left : cardRect.right;
   const cy = cardRect.top + cardRect.height / 2;
   showLeaderLine(px, py, cx, cy);
 
