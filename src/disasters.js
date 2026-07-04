@@ -236,7 +236,7 @@ async function switchYear(year, isRefresh) {
   updateDataSourceLabel(year);
 
   if (isCurrent) startPulse();
-  setTimeout(drawGraph, 100);
+  setTimeout(refreshAllGraphs, 100);
 }
 
 /* ── Periodic Refresh ── */
@@ -922,7 +922,7 @@ function updateBeacon() {
     beaconFeatures.push({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [latest.lng, latest.lat] },
-      properties: { color },
+      properties: { type, color },
     });
 
     const screen = map.project([latest.lng, latest.lat]);
@@ -1500,6 +1500,19 @@ document.querySelectorAll('.tl-tog').forEach(btn => {
 
 /* ── Category Graphs ── */
 const catGraphStates = { flood: false, cyclone: false, volcano: false, wildfire: false };
+
+function refreshAllGraphs() {
+  if (graphData.length > 0) {
+    drawGraph();
+    drawComposition();
+  }
+  for (const [cat, open] of Object.entries(catGraphStates)) {
+    if (open) {
+      const d = computeCategoryData(cat);
+      drawCategoryGraph('graph-' + cat, d, TYPE_COLORS[cat], 'trend-' + cat, TYPE_LABELS[cat]);
+    }
+  }
+}
 
 function computeCategoryData(type) {
   const hist = (eonetHistoryData[type] || []).map(d => ({ ...d }));
@@ -2194,7 +2207,7 @@ async function loadLast30DaysBeacons() {
       beaconFeatures.push({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: [e.lng, e.lat] },
-        properties: { color: TYPE_COLORS[type], isFirst: isFirst ? 1 : 0 },
+        properties: { type, color: TYPE_COLORS[type], isFirst: isFirst ? 1 : 0 },
       });
     });
   });
@@ -2220,6 +2233,7 @@ async function loadLast30DaysBeacons() {
 
   populateRecentPanel(grouped);
   showRecentPanel();
+  setTimeout(refreshAllGraphs, 100);
   } catch (err) { console.warn('loadLast30DaysBeacons error:', err); }
 }
 
