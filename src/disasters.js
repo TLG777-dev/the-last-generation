@@ -1916,11 +1916,26 @@ const fpYearSelect = document.getElementById('fp-year');
 const recentPanel = document.getElementById('recent-panel');
 const rpBody = document.getElementById('rp-body');
 const rpClose = document.getElementById('rp-close');
+const rpToggle = document.getElementById('rp-toggle');
+const rpCollapseIcon = document.getElementById('rp-collapse-icon');
 
 if (rpClose) rpClose.addEventListener('click', () => { recentPanel.style.display = 'none'; });
+if (rpToggle) rpToggle.addEventListener('click', (e) => {
+  if (e.target === rpClose || rpClose.contains(e.target)) return;
+  const isMobile = window.innerWidth <= 640;
+  if (isMobile && rpBody) {
+    rpBody.classList.toggle('expanded');
+    rpCollapseIcon.classList.toggle('rotated');
+  }
+});
 
 function showRecentPanel() {
   if (recentPanel) recentPanel.style.display = 'flex';
+  const isMobile = window.innerWidth <= 640;
+  if (isMobile && rpBody) {
+    rpBody.classList.remove('expanded');
+    rpCollapseIcon.classList.remove('rotated');
+  }
   const st = document.getElementById('share-toggle'); if (st) st.style.display = 'none';
   const sp = document.getElementById('share-panel'); if (sp) sp.style.display = 'none';
 }

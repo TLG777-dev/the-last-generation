@@ -39,15 +39,6 @@
   </div>
 
   <!-- Region Quick-Filters -->
-  <div id="region-bar" class="region-bar">
-    <button class="region-btn active" data-region="global">Global</button>
-    <button class="region-btn" data-region="americas">Americas</button>
-    <button class="region-btn" data-region="europe">Europe</button>
-    <button class="region-btn" data-region="asia-pacific">Asia-Pacific</button>
-    <button class="region-btn" data-region="middle-east">Middle East</button>
-    <button class="region-btn" data-region="africa">Africa</button>
-  </div>
-
   <!-- Bible verse rotator -->
   <div id="bible-verse">
     <div class="bv-content" id="bv-content"></div>
@@ -116,6 +107,17 @@
         </div>
       </div>
       <div class="fp-section">
+        <span class="fp-label">Region</span>
+        <div class="fp-region-btns" id="region-bar">
+          <button class="region-btn active" data-region="global">Global</button>
+          <button class="region-btn" data-region="americas">Americas</button>
+          <button class="region-btn" data-region="europe">Europe</button>
+          <button class="region-btn" data-region="asia-pacific">Asia-Pacific</button>
+          <button class="region-btn" data-region="middle-east">Middle East</button>
+          <button class="region-btn" data-region="africa">Africa</button>
+        </div>
+      </div>
+      <div class="fp-section">
         <button class="fp-graph-btn open" id="fp-graph-toggle">&#9660; Earthquake Frequency</button>
       </div>
       <div class="fp-section fp-graph-area open" id="fp-graph-area">
@@ -160,7 +162,8 @@
 
   <!-- Recent Events Side Panel (Last 30 Days) -->
   <div id="recent-panel" class="recent-panel" style="display:none">
-    <div class="rp-header">
+    <div class="rp-header" id="rp-toggle">
+      <span class="rp-collapse-icon" id="rp-collapse-icon">&#9650;</span>
       <span class="rp-title">Recent Events</span>
       <span class="rp-subtitle" id="rp-subtitle">Last 30 days</span>
       <button class="rp-close" id="rp-close">&times;</button>
