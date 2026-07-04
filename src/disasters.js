@@ -2127,11 +2127,19 @@ async function loadLast30DaysBeacons() {
     type: 'FeatureCollection', features: beaconFeatures,
   });
 
-  /* Make beacon layers visible */
-  map.setPaintProperty('beacon-layer', 'circle-opacity', 0.45);
-  map.setPaintProperty('beacon-glow-layer', 'circle-opacity', 0.15);
-  map.setPaintProperty('beacon-dot-layer', 'circle-opacity', 1);
-  startPulse();
+  /* Make beacon layers visible — startPulse would clear the data, so do it manually */
+  if (!pulseTimer) {
+    map.setPaintProperty('beacon-layer', 'circle-opacity', 0.7);
+    map.setPaintProperty('beacon-glow-layer', 'circle-opacity', 0.25);
+    map.setPaintProperty('beacon-dot-layer', 'circle-opacity', 1);
+    pulseTimer = setInterval(() => {
+      const t = performance.now() / 1000;
+      const glow = 0.05 + 0.2 * (0.5 + 0.5 * Math.sin(t * 1.8));
+      const opacity = 0.4 + 0.3 * Math.sin(t * 3.5);
+      map.setPaintProperty('beacon-layer', 'circle-opacity', opacity);
+      map.setPaintProperty('beacon-glow-layer', 'circle-opacity', glow);
+    }, 50);
+  }
 
   populateRecentPanel(grouped);
   showRecentPanel();
