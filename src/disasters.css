@@ -264,8 +264,14 @@ body { font-family: var(--font-ui); color: rgba(245,240,230,0.8); -webkit-font-s
 .ap-item-meta { font-family: var(--font-ui); font-weight: 300; font-size: var(--fs-3xs); color: rgba(245,240,230,0.25); margin-top: 0.04rem; }
 
 /* ── Event Popup ── */
-.event-popup { display: none; position: fixed; z-index: 200; pointer-events: none; }
-.event-popup.visible { display: block; }
+.event-popup {
+  display: none; position: fixed; z-index: 200; pointer-events: none;
+  background: rgba(8,6,12,0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212,175,55,0.12); border-radius: 6px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5); animation: popupFadeIn 0.15s ease-out;
+}
+.event-popup.visible { display: block; pointer-events: auto; }
+@keyframes popupFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* ── Beacon Label (Apophis-style, no card) ── */
 .beacon-label {
@@ -453,103 +459,6 @@ body { font-family: var(--font-ui); color: rgba(245,240,230,0.8); -webkit-font-s
 .share-btn svg { flex-shrink: 0; }
 
 /* ── Recent Events Side Panel ── */
-.recent-panel {
-  position: fixed; top: 3.6rem; right: 0.75rem; bottom: 4.5rem; z-index: 50;
-  width: 280px; display: flex; flex-direction: column;
-  background: rgba(8,6,12,0.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(212,175,55,0.1); border-radius: 8px;
-  overflow: hidden; pointer-events: auto;
-  animation: rpSlideIn 0.3s ease-out;
-}
-@keyframes rpSlideIn {
-  from { opacity: 0; transform: translateX(20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-.rp-header {
-  display: flex; align-items: center; gap: 0.4rem;
-  padding: 0.4rem 0.6rem; border-bottom: 1px solid rgba(212,175,55,0.08);
-  flex-shrink: 0;
-}
-.rp-title { font-family: var(--font-ui); font-weight: 500; font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,240,230,0.5); }
-.rp-collapse-icon { display: none; }
-.rp-subtitle { font-family: var(--font-ui); font-weight: 300; font-size: 0.42rem; color: rgba(245,240,230,0.25); margin-left: auto; }
-.rp-close {
-  background: none; border: none; color: rgba(245,240,230,0.3); cursor: pointer;
-  font-size: 0.85rem; line-height: 1; padding: 0 0.1rem; margin-left: 0.3rem;
-}
-.rp-close:hover { color: rgba(245,240,230,0.6); }
-.rp-body {
-  flex: 1; overflow-y: auto; padding: 0.3rem 0;
-  scrollbar-width: thin; scrollbar-color: rgba(212,175,55,0.12) transparent;
-}
-.rp-body::-webkit-scrollbar { width: 3px; }
-.rp-body::-webkit-scrollbar-track { background: transparent; }
-.rp-body::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.12); border-radius: 2px; }
-
-.rp-group { margin-bottom: 0.15rem; }
-.rp-group-header {
-  display: flex; align-items: center; gap: 0.3rem;
-  padding: 0.25rem 0.6rem; cursor: pointer; user-select: none;
-  transition: background 0.15s;
-}
-.rp-group-header:hover { background: rgba(212,175,55,0.03); }
-.rp-group-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.rp-group-name { font-family: var(--font-ui); font-weight: 500; font-size: 0.45rem; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(245,240,230,0.4); flex: 1; }
-.rp-group-count { font-family: var(--font-ui); font-size: 0.42rem; font-variant-numeric: tabular-nums; color: rgba(245,240,230,0.2); }
-.rp-group-arrow { font-size: 0.35rem; color: rgba(245,240,230,0.2); transition: transform 0.2s ease; }
-.rp-group.collapsed .rp-group-arrow { transform: rotate(-90deg); }
-.rp-group-items { max-height: 300px; overflow: hidden; transition: max-height 0.3s ease; }
-.rp-group.collapsed .rp-group-items { max-height: 0; }
-
-.rp-event {
-  display: flex; align-items: flex-start; gap: 0.35rem;
-  padding: 0.25rem 0.6rem 0.25rem 1rem; cursor: pointer;
-  transition: background 0.15s; border-left: 2px solid transparent;
-}
-.rp-event:hover { background: rgba(212,175,55,0.03); }
-.rp-event.highlighted { background: rgba(212,175,55,0.06); border-left-color: rgba(212,175,55,0.4); }
-.rp-event-mag {
-  font-family: var(--font-ui); font-weight: 600; font-size: 0.48rem;
-  min-width: 1.8rem; text-align: right; flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
-}
-.rp-event-body { flex: 1; min-width: 0; }
-.rp-event-title {
-  font-family: var(--font-ui); font-weight: 400; font-size: 0.45rem;
-  color: rgba(245,240,230,0.55); line-height: 1.2;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.rp-event-meta {
-  font-family: var(--font-ui); font-weight: 300; font-size: var(--fs-4xs);
-  color: rgba(245,240,230,0.2); margin-top: 0.04rem;
-  display: flex; gap: 0.3rem;
-}
-
-/* ── Recent Panel Mobile ── */
-@media (max-width: 640px) {
-  .recent-panel {
-    top: auto; right: 0; bottom: 4.4rem; left: 0;
-    width: 100%; border-radius: 8px 8px 0 0;
-    border: 1px solid rgba(212,175,55,0.1); border-bottom: none;
-    z-index: 55; max-height: none;
-    background: rgba(8,6,12,0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  }
-  .recent-panel .rp-body {
-    max-height: 0; overflow-y: auto; transition: max-height 0.3s ease;
-    scrollbar-width: thin; scrollbar-color: rgba(212,175,55,0.12) transparent;
-  }
-  .recent-panel .rp-body.expanded { max-height: 38vh; }
-  .rp-collapse-icon { display: inline; font-size: 0.45rem; transition: transform 0.2s; }
-  .rp-collapse-icon.rotated { transform: rotate(180deg); }
-  .rp-close { display: none; }
-  .rp-header { padding: 0.3rem 0.5rem; cursor: pointer; }
-  .rp-title { font-size: var(--fs-3xs); }
-  .rp-subtitle { font-size: 0.38rem; }
-}
-@media (max-width: 440px) {
-  .recent-panel { bottom: 4rem; }
-}
-
 /* ── Period Buttons Layout ── */
 .fp-period-btns { display: flex; gap: 0.15rem; }
 .fp-period-btns .fp-select { flex: 1; }

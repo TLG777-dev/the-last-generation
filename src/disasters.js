@@ -334,6 +334,24 @@ function initLayers() {
     },
   });
 
+  /* Click + hover on beacon layers */
+  ['beacon-layer', 'beacon-glow-layer', 'beacon-dot-layer'].forEach(id => {
+    map.on('click', id, (e) => {
+      if (e.features?.length > 0) showEventPopup(e.features[0].properties, e.lngLat);
+    });
+    map.on('mouseenter', id, (e) => {
+      map.getCanvas().style.cursor = 'pointer';
+      if (e.features?.length > 0) showHoverTooltip(e, e.features[0].properties);
+    });
+    map.on('mousemove', id, (e) => {
+      if (e.features?.length > 0) {
+        hoverTooltip.style.left = `${e.originalEvent.clientX + 12}px`;
+        hoverTooltip.style.top = `${e.originalEvent.clientY - 8}px`;
+      }
+    });
+    map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; hideHoverTooltip(); });
+  });
+
   /* ── Israel Outline ── */
   map.addSource('israel-outline', { type: 'geojson', data: israelOutline });
   map.addLayer({
@@ -851,12 +869,14 @@ function initBucketLayers() {
 
 function attachBucketEvents() {
   const onClick = e => { if (e.features?.length > 0) showEventPopup(e.features[0].properties, e.lngLat); };
-  const onEnter = () => { map.getCanvas().style.cursor = 'pointer'; };
-  const onLeave = () => { map.getCanvas().style.cursor = ''; };
+  const onEnter = e => { map.getCanvas().style.cursor = 'pointer'; if (e.features?.length > 0) showHoverTooltip(e, e.features[0].properties); };
+  const onMove = e => { if (e.features?.length > 0) { hoverTooltip.style.left = `${e.originalEvent.clientX + 12}px`; hoverTooltip.style.top = `${e.originalEvent.clientY - 8}px`; } };
+  const onLeave = () => { map.getCanvas().style.cursor = ''; hideHoverTooltip(); };
   for (let i = 0; i < NUM_PLAY_STEPS; i++) {
     const id = BUCKET_LAYER + i;
     map.on('click', id, onClick);
     map.on('mouseenter', id, onEnter);
+    map.on('mousemove', id, onMove);
     map.on('mouseleave', id, onLeave);
   }
 }
@@ -897,7 +917,6 @@ function updateBucketFilter() {
   if (map.getLayer('beacon-dot-layer')) {
     map.setFilter('beacon-dot-layer', ['in', ['get', 'type'], ['literal', types]]);
   }
-  updateRecentPanelVisibility();
 }
 
 function updateBeacon() {
@@ -1511,14 +1530,6 @@ function rebuildLast30Beacons() {
   }
 }
 
-function updateRecentPanelVisibility() {
-  if (!rpBody) return;
-  rpBody.querySelectorAll('.rp-group').forEach(group => {
-    const type = group.dataset.type;
-    if (type) group.style.display = enabledTypes.has(type) ? '' : 'none';
-  });
-}
-
 function toggleType(btn, type) {
   const nowActive = !enabledTypes.has(type);
   if (nowActive) {
@@ -1848,43 +1859,14 @@ function setupBibleVerses() {
 
 /* ── Loading States ── */
 
-function showEventPopup(props, lngLat) {
-  const popup = document.getElementById('event-popup');
-  const type = props.type || 'earthquake';
-  const magText = type === 'earthquake' ? `M ${parseFloat(props.magnitude).toFixed(1)}` : '';
-  const depthText = type === 'earthquake' ? `${parseFloat(props.depth).toFixed(0)} km depth` : '';
-  popup.innerHTML = `
-    <div style="padding:0.6rem 0.75rem;min-width:160px;max-width:260px">
-      <div style="display:flex;align-items:center;gap:0.3rem;margin-bottom:0.2rem">
-        <span style="width:6px;height:6px;border-radius:50%;background:${props.color};display:inline-block"></span>
-        <span style="font-weight:500;font-size:0.6rem;color:rgba(245,240,230,0.85)">${TYPE_LABELS[type]} ${magText}</span>
-      </div>
-      <div style="font-weight:300;font-size:0.52rem;color:rgba(245,240,230,0.5);line-height:1.3">${props.title}</div>
-      <div style="display:flex;gap:0.4rem;margin-top:0.2rem;font-size:0.42rem;color:rgba(245,240,230,0.25)">
-        <span>${depthText || TYPE_LABELS[type]}</span>
-        <span>${formatDateTime(props.timestamp)}</span>
-      </div>
-      <div style="margin-top:0.3rem;font-size:0.42rem;color:rgba(80,180,230,0.5);cursor:pointer">Click for full details &rarr;</div>
-    </div>
-  `;
-  popup.style.display = 'block';
-  popup.style.left = `${lngLat.lng < 0 ? Math.min(lngLat.x + 10, window.innerWidth - 280) : Math.max(lngLat.x - 10, 10)}px`;
-  popup.style.top = `${lngLat.y - 10}px`;
-  popup.style.transform = lngLat.lng < 0 ? 'translateX(0)' : 'translateX(-100%)';
-  popup.classList.add('visible');
-
-  /* Also open the detail drawer */
-  openEventDrawer({ ...props, lat: lngLat.lat, lng: lngLat.lng });
-}
+/* (showEventPopup replaced by enhanced version in section 6) */
 
 map.on('click', () => {
-  document.getElementById('event-popup').classList.remove('visible');
-  document.getElementById('event-popup').style.display = 'none';
+  hideEventPopup();
   const wasOpen = document.getElementById('event-drawer')?.classList.contains('open');
   document.getElementById('event-drawer')?.classList.remove('open');
   const bd = document.getElementById('event-backdrop');
   if (bd) bd.style.display = 'none';
-  if (wasOpen && isLast30Mode) showRecentPanel();
 });
 
 /* ── Map Loading Bar ── */
@@ -1992,111 +1974,6 @@ document.querySelectorAll('.region-btn').forEach(btn => {
 let isLast30Mode = false;
 const fpLast30 = document.getElementById('fp-last30');
 const fpYearSelect = document.getElementById('fp-year');
-const recentPanel = document.getElementById('recent-panel');
-const rpBody = document.getElementById('rp-body');
-const rpClose = document.getElementById('rp-close');
-const rpToggle = document.getElementById('rp-toggle');
-const rpCollapseIcon = document.getElementById('rp-collapse-icon');
-
-if (rpClose) rpClose.addEventListener('click', () => { recentPanel.style.display = 'none'; });
-if (rpToggle) rpToggle.addEventListener('click', (e) => {
-  if (e.target === rpClose || rpClose.contains(e.target)) return;
-  const isMobile = window.innerWidth <= 640;
-  if (isMobile && rpBody) {
-    rpBody.classList.toggle('expanded');
-    rpCollapseIcon.classList.toggle('rotated');
-    mobileExpanded = rpBody.classList.contains('expanded');
-  }
-});
-
-let mobileExpanded = false;
-function showRecentPanel() {
-  if (!recentPanel) return;
-  recentPanel.style.display = 'flex';
-  const isMobile = window.innerWidth <= 640;
-  if (isMobile && rpBody) {
-    if (mobileExpanded) {
-      rpBody.classList.add('expanded');
-      rpCollapseIcon.classList.add('rotated');
-    } else {
-      rpBody.classList.remove('expanded');
-      rpCollapseIcon.classList.remove('rotated');
-    }
-  } else if (!isMobile && rpBody) {
-    rpBody.classList.remove('expanded');
-  }
-  const st = document.getElementById('share-toggle'); if (st) st.style.display = 'none';
-  const sp = document.getElementById('share-panel'); if (sp) sp.style.display = 'none';
-}
-function hideRecentPanel() {
-  if (!recentPanel) return;
-  const isMobile = window.innerWidth <= 640;
-  if (isMobile) {
-    /* On mobile, just collapse — keep header visible */
-    if (rpBody) rpBody.classList.remove('expanded');
-    if (rpCollapseIcon) rpCollapseIcon.classList.remove('rotated');
-    mobileExpanded = false;
-  } else {
-    recentPanel.style.display = 'none';
-  }
-  const st = document.getElementById('share-toggle'); if (st) st.style.display = '';
-}
-
-function populateRecentPanel(groupedEvents) {
-  if (!rpBody) return;
-  rpBody.innerHTML = '';
-  const TYPE_ICONS_PANEL = { earthquake: '●', flood: '●', cyclone: '●', volcano: '●', wildfire: '●', fireball: '●' };
-  const TYPE_ORDER = ['earthquake', 'flood', 'cyclone', 'volcano', 'wildfire', 'fireball'];
-
-  TYPE_ORDER.forEach(type => {
-    const items = groupedEvents[type];
-    if (!items || items.length === 0) return;
-    const group = document.createElement('div');
-    group.className = 'rp-group';
-    group.dataset.type = type;
-    group.innerHTML = `
-      <div class="rp-group-header">
-        <span class="rp-group-dot" style="background:${TYPE_COLORS[type]}"></span>
-        <span class="rp-group-name">${TYPE_LABELS[type]}s</span>
-        <span class="rp-group-count">${items.length}</span>
-        <span class="rp-group-arrow">&#9660;</span>
-      </div>
-      <div class="rp-group-items"></div>
-    `;
-    const hdr = group.querySelector('.rp-group-header');
-    hdr.addEventListener('click', () => group.classList.toggle('collapsed'));
-
-    const container = group.querySelector('.rp-group-items');
-    items.forEach(ev => {
-      const row = document.createElement('div');
-      row.className = 'rp-event';
-      row.dataset.id = ev.id;
-      row.dataset.lng = ev.lng;
-      row.dataset.lat = ev.lat;
-      const magStr = ev.type === 'earthquake' ? `M ${ev.magnitude.toFixed(1)}` : (ev.magnitude > 0 ? ev.magnitude.toFixed(1) : '—');
-      const depthStr = ev.type === 'earthquake' && ev.depth ? `${ev.depth.toFixed(0)} km` : '';
-      const ago = timeAgo(ev.timestamp);
-      row.innerHTML = `
-        <span class="rp-event-mag" style="color:${TYPE_COLORS[type]}">${magStr}</span>
-        <div class="rp-event-body">
-          <div class="rp-event-title">${ev.title}</div>
-          <div class="rp-event-meta"><span>${ago}</span>${depthStr ? `<span>${depthStr}</span>` : ''}</div>
-        </div>
-      `;
-      row.addEventListener('click', () => {
-        map.flyTo({ center: [ev.lng, ev.lat], zoom: 7, duration: 1200 });
-        rpBody.querySelectorAll('.rp-event.highlighted').forEach(el => el.classList.remove('highlighted'));
-        row.classList.add('highlighted');
-        setTimeout(() => {
-          const p = { type: ev.type, magnitude: ev.magnitude, depth: ev.depth, title: ev.title, timestamp: ev.timestamp, url: ev.url, color: ev.color, id: ev.id, lat: ev.lat, lng: ev.lng };
-          openEventDrawer(p);
-        }, 1300);
-      });
-      container.appendChild(row);
-    });
-    rpBody.appendChild(group);
-  });
-}
 
 if (fpLast30) {
   fpLast30.addEventListener('click', () => {
@@ -2106,8 +1983,6 @@ if (fpLast30) {
     if (isLast30Mode) {
       loadLast30DaysBeacons();
     } else {
-      mobileExpanded = false;
-      hideRecentPanel();
       /* Clean up Last 30 dots layer */
       if (map.getLayer('last30-all')) map.removeLayer('last30-all');
       if (map.getSource('last30-all')) map.removeSource('last30-all');
@@ -2243,15 +2118,24 @@ async function loadLast30DaysBeacons() {
     },
   });
 
-  /* Click handler for small dots */
+  /* Click + hover handlers for dots */
   map.on('click', allSourceId, (e) => {
     if (e.features?.length > 0) {
       const p = e.features[0].properties;
       showEventPopup(p, e.lngLat);
     }
   });
-  map.on('mouseenter', allSourceId, () => { map.getCanvas().style.cursor = 'pointer'; });
-  map.on('mouseleave', allSourceId, () => { map.getCanvas().style.cursor = ''; });
+  map.on('mouseenter', allSourceId, (e) => {
+    map.getCanvas().style.cursor = 'pointer';
+    if (e.features?.length > 0) showHoverTooltip(e, e.features[0].properties);
+  });
+  map.on('mousemove', allSourceId, (e) => {
+    if (e.features?.length > 0) {
+      hoverTooltip.style.left = `${e.originalEvent.clientX + 12}px`;
+      hoverTooltip.style.top = `${e.originalEvent.clientY - 8}px`;
+    }
+  });
+  map.on('mouseleave', allSourceId, () => { map.getCanvas().style.cursor = ''; hideHoverTooltip(); });
 
   /* Populate side panel AND place beacon glow dots (no text labels) */
   Object.values(beaconMarkers).forEach(m => { try { m.remove(); } catch(_) {} });
@@ -2296,8 +2180,6 @@ async function loadLast30DaysBeacons() {
     }, 50);
   }
 
-  populateRecentPanel(grouped);
-  showRecentPanel();
   setTimeout(refreshAllGraphs, 100);
   } catch (err) { console.warn('loadLast30DaysBeacons error:', err); }
 }
@@ -2313,7 +2195,6 @@ if (drawerClose) {
     drawer.classList.remove('open');
     const bd = document.getElementById('event-backdrop');
     if (bd) bd.style.display = 'none';
-    if (isLast30Mode) showRecentPanel();
   });
 }
 
@@ -2322,13 +2203,11 @@ if (eventBackdrop) {
   eventBackdrop.addEventListener('click', () => {
     drawer.classList.remove('open');
     eventBackdrop.style.display = 'none';
-    if (isLast30Mode) showRecentPanel();
   });
 }
 
 function openEventDrawer(props) {
   if (!drawer || !drawerBody) return;
-  if (isLast30Mode) hideRecentPanel();
   drawerTitle.textContent = `${TYPE_LABELS[props.type] || 'Event'} Details`;
   const mag = props.magnitude ? parseFloat(props.magnitude).toFixed(1) : 'N/A';
   const depth = props.depth ? `${parseFloat(props.depth).toFixed(0)} km` : 'N/A';
@@ -2373,7 +2252,96 @@ function openEventDrawer(props) {
   if (bd) bd.style.display = 'block';
 }
 
-/* ── 6. Enhanced click handler — drawer opens from showEventPopup ── */
+/* ── Hover Date Tooltip ── */
+const hoverTooltip = document.createElement('div');
+hoverTooltip.id = 'hover-tooltip';
+hoverTooltip.style.cssText = 'display:none;position:fixed;z-index:200;pointer-events:none;font-family:var(--font-ui);font-size:0.42rem;font-weight:400;color:rgba(245,240,230,0.7);background:rgba(8,6,12,0.9);border:1px solid rgba(212,175,55,0.15);border-radius:4px;padding:0.15rem 0.35rem;white-space:nowrap;backdrop-filter:blur(6px);';
+document.body.appendChild(hoverTooltip);
+
+function showHoverTooltip(e, props) {
+  const date = props.timestamp ? formatDateTime(props.timestamp) : '';
+  const type = props.type || 'earthquake';
+  const mag = props.magnitude ? parseFloat(props.magnitude).toFixed(1) : '';
+  hoverTooltip.innerHTML = `<span style="color:${props.color || '#aaa'};margin-right:0.2rem">&#9679;</span>${TYPE_LABELS[type]} ${mag ? 'M' + mag : ''} <span style="opacity:0.5;margin-left:0.2rem">${date}</span>`;
+  hoverTooltip.style.display = 'block';
+  hoverTooltip.style.left = `${e.originalEvent.clientX + 12}px`;
+  hoverTooltip.style.top = `${e.originalEvent.clientY - 8}px`;
+}
+function hideHoverTooltip() { hoverTooltip.style.display = 'none'; }
+
+/* ── Leader Line SVG ── */
+let leaderLine = null;
+function ensureLeaderLine() {
+  if (leaderLine) return;
+  leaderLine = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  leaderLine.id = 'leader-line';
+  leaderLine.style.cssText = 'position:fixed;inset:0;z-index:99;pointer-events:none;overflow:visible;';
+  leaderLine.innerHTML = '<line x1="0" y1="0" x2="0" y2="0" stroke="rgba(212,175,55,0.3)" stroke-width="1" stroke-dasharray="3,3"/>';
+  document.body.appendChild(leaderLine);
+}
+function showLeaderLine(x1, y1, x2, y2) {
+  ensureLeaderLine();
+  const line = leaderLine.querySelector('line');
+  line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+  line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+  leaderLine.style.display = 'block';
+}
+function hideLeaderLine() { if (leaderLine) leaderLine.style.display = 'none'; }
+
+/* ── 6. Enhanced Popup — compact card + leader line ── */
+function showEventPopup(props, lngLat) {
+  const popup = document.getElementById('event-popup');
+  const type = props.type || 'earthquake';
+  const magText = type === 'earthquake' ? `M ${parseFloat(props.magnitude).toFixed(1)}` : '';
+  const depthText = type === 'earthquake' ? `${parseFloat(props.depth).toFixed(0)} km depth` : '';
+  const date = formatDateTime(props.timestamp);
+  popup.innerHTML = `
+    <div style="padding:0.5rem 0.65rem;min-width:150px;max-width:240px">
+      <div style="display:flex;align-items:center;gap:0.3rem;margin-bottom:0.15rem">
+        <span style="width:5px;height:5px;border-radius:50%;background:${props.color};display:inline-block;flex-shrink:0"></span>
+        <span style="font-weight:600;font-size:0.55rem;color:rgba(245,240,230,0.85)">${TYPE_LABELS[type]} ${magText}</span>
+        <span id="popup-close-btn" style="margin-left:auto;cursor:pointer;font-size:0.65rem;color:rgba(245,240,230,0.3);line-height:1">&times;</span>
+      </div>
+      <div style="font-weight:300;font-size:0.48rem;color:rgba(245,240,230,0.5);line-height:1.3;margin-bottom:0.2rem">${props.title}</div>
+      <div style="font-weight:500;font-size:0.42rem;color:rgba(212,175,55,0.6);margin-bottom:0.15rem">${date}</div>
+      <div style="font-size:0.38rem;color:rgba(245,240,230,0.2)">${depthText || TYPE_LABELS[type]}</div>
+      <div id="popup-details-btn" style="margin-top:0.25rem;font-size:0.4rem;color:rgba(80,180,230,0.5);cursor:pointer">Full details &rarr;</div>
+    </div>
+  `;
+  popup.style.display = 'block';
+  popup.style.left = `${lngLat.lng < 0 ? Math.min(lngLat.x + 12, window.innerWidth - 260) : Math.max(lngLat.x - 12, 10)}px`;
+  popup.style.top = `${lngLat.y - 10}px`;
+  popup.style.transform = lngLat.lng < 0 ? 'translateX(0)' : 'translateX(-100%)';
+  popup.classList.add('visible');
+
+  /* Leader line from point to popup card edge */
+  const cardRect = popup.getBoundingClientRect();
+  const px = lngLat.x, py = lngLat.y;
+  const cx = lngLat.lng < 0 ? cardRect.left : cardRect.right;
+  const cy = cardRect.top + cardRect.height / 2;
+  showLeaderLine(px, py, cx, cy);
+
+  /* Close button */
+  const closeBtn = document.getElementById('popup-close-btn');
+  if (closeBtn) closeBtn.addEventListener('click', (ev) => { ev.stopPropagation(); hideEventPopup(); });
+
+  /* Full details button — opens drawer */
+  const detailsBtn = document.getElementById('popup-details-btn');
+  if (detailsBtn) detailsBtn.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    hideEventPopup();
+    openEventDrawer({ ...props, lat: lngLat.lat, lng: lngLat.lng });
+  });
+}
+
+function hideEventPopup() {
+  const popup = document.getElementById('event-popup');
+  if (popup) { popup.classList.remove('visible'); popup.style.display = 'none'; }
+  hideLeaderLine();
+}
+
+/* Update leader line on map move */
+map.on('move', () => { if (leaderLine && leaderLine.style.display !== 'none') hideLeaderLine(); });
 
 /* ── 7. Mini-Map ── */
 let miniMap = null;
