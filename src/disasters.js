@@ -36,6 +36,8 @@ let initialLoad = true;
 let pulseTimer = null;
 let beaconMarkers = {};
 let pendingAutoStop = false;
+let refreshTimer = null;
+const REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes
 const NUM_PLAY_STEPS = 200;
 const DEDUP_TIME_MS = 12 * 3600 * 1000;
 const DEDUP_DISTANCE_KM = 50;
@@ -118,6 +120,10 @@ const map = new maplibregl.Map({
 map.on('load', () => {
   mapReady = true;
   initLayers();
+  if (events.length > 0) {
+    computeStepBuckets();
+    initBucketLayers();
+  }
   renderAll();
 });
 
@@ -149,21 +155,37 @@ document.getElementById('fp-year').addEventListener('change', function() {
   switchYear(year);
 });
 
+/* ── Feed Status Tracking ── */
+const feedStatus = { USGS: 'pending', EONET: 'pending', GDACS: 'pending', Fireball: 'pending', KVERT: 'pending' };
+
+function updateDataSourceLabel(year) {
+  const active = Object.entries(feedStatus).filter(([_, s]) => s === 'ok').map(([n]) => n);
+  const down = Object.entries(feedStatus).filter(([_, s]) => s === 'fail').map(([n]) => n);
+  const label = document.getElementById('data-source');
+  let text = `${active.join(' + ') || 'No data'} ${year} — ${events.length.toLocaleString()} events`;
+  if (down.length > 0) text += ` \u00b7 ${down.join(', ')} unavailable`;
+  label.textContent = text;
+}
+
 /* ── Year Switching ── */
-async function switchYear(year) {
+async function switchYear(year, isRefresh) {
   stopPlay();
   stopPulse();
   const cy = new Date().getFullYear();
   const id = ++requestId;
-  document.getElementById('tl-label-start').textContent = '—';
-  document.getElementById('tl-label-end').textContent = '—';
-  document.getElementById('tl-label-current').textContent = '—';
-  showMapLoading(`Loading ${year}...`);
+
+  if (!isRefresh) {
+    document.getElementById('tl-label-start').textContent = '—';
+    document.getElementById('tl-label-end').textContent = '—';
+    document.getElementById('tl-label-current').textContent = '—';
+    showMapLoading(`Loading ${year}...`);
+  }
 
   const workingEvents = [];
   const isCurrent = year === cy;
 
-  // Render incrementally as each feed arrives (so user sees data sooner)
+  Object.keys(feedStatus).forEach(k => { feedStatus[k] = 'pending'; });
+
   const feedTasks = [
     ['USGS', loadHistoricalEarthquakeYear(year, workingEvents)],
     ['EONET', loadEONET(workingEvents, year)],
@@ -173,31 +195,52 @@ async function switchYear(year) {
   if (isCurrent) feedTasks.push(['KVERT', loadKVERT(workingEvents)]);
 
   for (const [name, task] of feedTasks) {
-    try { await task; } catch (_) { /* feed may fail */ }
+    try { await task; feedStatus[name] = 'ok'; } catch (_) { feedStatus[name] = 'fail'; }
     if (id !== requestId) return;
-    if (workingEvents.length === 0) continue;
-    const deduped = dedupEvents(workingEvents);
-    events = deduped;
-    computeStepBuckets();
-    initBucketLayers();
-    if (initialLoad) initialLoad = false;
-    renderAll();
-    drawComposition();
+    if (!isRefresh && workingEvents.length > 0) {
+      const deduped = dedupEvents(workingEvents);
+      events = deduped;
+      computeStepBuckets();
+      initBucketLayers();
+      if (initialLoad) initialLoad = false;
+      renderAll();
+      drawComposition();
+    }
   }
 
   if (id !== requestId) return;
+
+  const deduped = dedupEvents(workingEvents);
+  events = deduped;
+  computeStepBuckets();
+
+  if (isRefresh) {
+    initBucketLayers();
+    renderAll();
+    const savedStep = currentStep;
+    applyFilters(true);
+    showBucketsUpTo(savedStep);
+    lastVisibleStep = savedStep;
+  }
+
   if (workingEvents.length === 0) { hideMapLoading(); return; }
   hideMapLoading();
-  const srcMap = [];
-  if (events.some(e => e.type === 'earthquake')) srcMap.push('USGS');
-  if (events.some(e => e.type === 'flood' || e.type === 'cyclone' || e.type === 'wildfire')) srcMap.push('EONET');
-  if (events.some(e => e.id.startsWith('gdacs-'))) srcMap.push('GDACS');
-  if (events.some(e => e.type === 'volcano')) srcMap.push('KVERT');
-  if (events.some(e => e.id.startsWith('fb-'))) srcMap.push('Fireball');
-  document.getElementById('data-source').textContent = `${srcMap.join(' + ')} ${year} — ${events.length.toLocaleString()} events`;
+  updateDataSourceLabel(year);
 
   if (isCurrent) startPulse();
   setTimeout(drawGraph, 100);
+}
+
+/* ── Periodic Refresh ── */
+function startRefresh() {
+  stopRefresh();
+  refreshTimer = setInterval(() => {
+    const cy = new Date().getFullYear();
+    if (selectedYear === cy) switchYear(cy, true);
+  }, REFRESH_INTERVAL);
+}
+function stopRefresh() {
+  if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
 }
 
 /* ── Initial Load ── */
@@ -206,6 +249,7 @@ async function loadYearData() {
   selectedYear = cy;
   await switchYear(cy);
   initialLoad = false;
+  startRefresh();
 }
 
 function renderAll() {
