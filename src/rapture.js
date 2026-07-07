@@ -18,20 +18,50 @@ document.addEventListener('DOMContentLoaded', () => {
   const scrollEl = document.querySelector('.r-tl-viewport');
   if (scrollEl) {
     let isDown = false, startX, scrollLeft;
-    scrollEl.addEventListener('mousedown', (e) => {
+
+    const onStart = (x) => {
       isDown = true;
-      startX = e.pageX - scrollEl.offsetLeft;
+      startX = x - scrollEl.offsetLeft;
       scrollLeft = scrollEl.scrollLeft;
-    });
-    scrollEl.addEventListener('mouseleave', () => { isDown = false; });
-    scrollEl.addEventListener('mouseup', () => { isDown = false; });
-    scrollEl.addEventListener('mousemove', (e) => {
+      scrollEl.style.userSelect = 'none';
+      scrollEl.style.cursor = 'grabbing';
+    };
+
+    const onMove = (x) => {
       if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - scrollEl.offsetLeft;
-      const walk = (x - startX) * 2;
+      const curX = x - scrollEl.offsetLeft;
+      const walk = (curX - startX) * 1.5;
       scrollEl.scrollLeft = scrollLeft - walk;
+    };
+
+    const onEnd = () => {
+      if (!isDown) return;
+      isDown = false;
+      scrollEl.style.userSelect = '';
+      scrollEl.style.cursor = '';
+    };
+
+    /* Mouse */
+    scrollEl.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      onStart(e.pageX);
     });
+    document.addEventListener('mousemove', (e) => {
+      if (isDown) e.preventDefault();
+      onMove(e.pageX);
+    });
+    document.addEventListener('mouseup', onEnd);
+
+    /* Touch */
+    scrollEl.addEventListener('touchstart', (e) => {
+      onStart(e.touches[0].pageX);
+    }, { passive: true });
+    scrollEl.addEventListener('touchmove', (e) => {
+      onMove(e.touches[0].pageX);
+    }, { passive: true });
+    scrollEl.addEventListener('touchend', onEnd);
+    scrollEl.addEventListener('touchcancel', onEnd);
   }
 
   /* ── Timeline scroll fades ── */
