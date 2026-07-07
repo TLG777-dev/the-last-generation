@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pages: write
 
     steps:
       - uses: actions/checkout@v4
@@ -40,15 +39,4 @@ jobs:
           git commit -m "auto: update conflict data from Wikipedia"
           git push
 
-      - name: Build and deploy
-        if: steps.git-check.outputs.changed == 'true'
-        run: npm run build
 
-      - name: Deploy to Vercel
-        if: steps.git-check.outputs.changed == 'true'
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
