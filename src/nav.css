@@ -47,6 +47,7 @@
   flex: 1; min-width: 0;
   overflow: visible;
   white-space: nowrap; padding: 0 0.2rem;
+  justify-content: center;
 }
 
 /* ── Dropdown Category ── */
