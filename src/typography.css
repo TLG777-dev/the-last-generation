@@ -20,9 +20,9 @@ html {
   --fs-base:    1rem;    /* Body text — 16px */
   --fs-sm:      0.88rem; /* UI labels, secondary text — 14px */
   --fs-xs:      0.75rem; /* Metadata, captions — 12px */
-  --fs-2xs:     0.62rem; /* Tiny labels, badges — 9.9px */
-  --fs-3xs:     0.56rem; /* Dense secondary labels — 8.96px */
-  --fs-4xs:     0.5rem;  /* Decorative-only — never interactive — 8px */
+  --fs-2xs:     0.68rem; /* Tiny labels, badges — 10.9px */
+  --fs-3xs:     0.7rem;  /* Dense secondary labels — 11.2px */
+  --fs-4xs:     0.62rem; /* Decorative-only — never interactive — 9.9px */
 }
 
 /* ── Tablet (≤900px) ── */
@@ -33,10 +33,10 @@ html {
     --fs-title:   0.95rem; /* 15.2px */
     --fs-base:    0.92rem; /* 14.7px */
     --fs-sm:      0.8rem;  /* 12.8px */
-    --fs-xs:      0.7rem;  /* 11.2px */
-    --fs-2xs:     0.58rem; /* 9.3px */
-    --fs-3xs:     0.53rem; /* 8.5px */
-    --fs-4xs:     0.48rem; /* 7.7px */
+    --fs-xs:      0.72rem; /* 11.5px */
+    --fs-2xs:     0.65rem; /* 10.4px */
+    --fs-3xs:     0.68rem; /* 10.9px */
+    --fs-4xs:     0.6rem;  /* 9.6px */
   }
 }
 
@@ -47,10 +47,10 @@ html {
     --fs-heading: 1rem;    /* 16px */
     --fs-title:   0.88rem; /* 14px */
     --fs-base:    0.88rem; /* 14px */
-    --fs-sm:      0.75rem; /* 12px */
-    --fs-xs:      0.65rem; /* 10.4px */
-    --fs-2xs:     0.53rem; /* 8.5px */
-    --fs-3xs:     0.5rem;  /* 8px */
-    --fs-4xs:     0.45rem; /* 7.2px */
+    --fs-sm:      0.78rem; /* 12.5px */
+    --fs-xs:      0.7rem;  /* 11.2px */
+    --fs-2xs:     0.62rem; /* 9.9px */
+    --fs-3xs:     0.65rem; /* 10.4px */
+    --fs-4xs:     0.58rem; /* 9.3px */
   }
 }
