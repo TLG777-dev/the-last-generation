@@ -43,7 +43,7 @@ export default defineConfig({
         apophis: resolve(__dirname, 'apophis.html'),
         disasters: resolve(__dirname, 'disasters.html'),
         conflicts: resolve(__dirname, 'conflicts.html'),
-        'sign-of-jonah': resolve(__dirname, 'sign-of-jonah.html'),
+        'revelation-12-sign': resolve(__dirname, 'revelation-12-sign.html'),
         calendar: resolve(__dirname, 'calendar.html'),
         'aleph-tav': resolve(__dirname, 'aleph-tav.html'),
         dashboard: resolve(__dirname, 'dashboard.html'),

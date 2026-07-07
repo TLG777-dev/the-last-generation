@@ -170,6 +170,25 @@ body {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(4px); }
 }
+.r12-kf-cta {
+  margin-top: 1rem;
+}
+.r12-kf-cta-link {
+  font-family: var(--font-ui);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--gold);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  padding: 0.4rem 1.2rem;
+  border: 1px solid rgba(212,175,55,0.3);
+  border-radius: 20px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.r12-kf-cta-link:hover {
+  background: rgba(212,175,55,0.08);
+  border-color: rgba(212,175,55,0.5);
+}
 
 /* ══════════════════════════════════════════════
    MAIN CONTENT

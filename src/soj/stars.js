@@ -1,4 +1,4 @@
-// Sign of Jonah — Star Rendering Module
+// Revelation 12 Sign — Star Rendering Module
 // Inward-facing celestial sphere, magnitude-scaled stars, constellation lines
 
 import * as THREE from 'three'

@@ -57,7 +57,7 @@
     + '<div class="nav-dropdown" data-dropdown>'
     + '<button class="nav-cat-trigger" aria-expanded="false">Interactive <svg class="nav-cat-chevron" viewBox="0 0 10 10"><polyline points="2,3.5 5,6.5 8,3.5"/></svg></button>'
     + '<div class="nav-cat-panel">'
-    + '<a href="/sign-of-jonah.html" class="nav-cat-item">Sign of Jonah</a>'
+    + '<a href="/revelation-12-sign.html" class="nav-cat-item">Revelation 12 Sign</a>'
     + '<a href="/rev12-calculator.html" class="nav-cat-item">Rev 12 Calculator</a>'
     + '</div></div>'
 

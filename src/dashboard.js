@@ -460,7 +460,7 @@ function renderSignOfJonahCard() {
   return `
     <div class="sj-ref">Revelation 12:1–2 &middot; Matthew 12:39–40 (KJV)</div>
     <div class="sj-text">The woman clothed with the sun, the moon under her feet, and a crown of twelve stars — this precise astronomical configuration occurred September 23, 2017. Virgo was "clothed" with the sun (the sun in Virgo), the moon at her feet (near Spica), and nine stars of Leo formed the crown overhead.</div>
-    <div class="sj-fulfill">&#10003; Fulfilled September 23, 2017 &mdash; a celestial sign marking the "birth" of a prophetic generation (Revelation 12:1-5). The Sign of Jonah (3 days = prophetic "days") points to the timing pattern of death, burial, and resurrection — and by extension, the near fulfillment of remaining end-times events.</div>
+    <div class="sj-fulfill">&#10003; Fulfilled September 23, 2017 &mdash; a celestial sign marking the "birth" of a prophetic generation (Revelation 12:1-5). The Revelation 12 Sign points to the timing pattern of death, burial, and resurrection — and by extension, the near fulfillment of remaining end-times events.</div>
   `
 }
 
@@ -625,7 +625,7 @@ const ZONES = [
     header: 'CURRENT STATE',
     cards: [
       { id: 'card-conflict', title: 'Latest Major Conflict', render: renderConflictCard },
-      { id: 'card-sign-of-jonah', title: 'Sign of Jonah', render: renderSignOfJonahCard },
+      { id: 'card-revelation-12', title: 'Revelation 12 Sign', render: renderSignOfJonahCard },
     ]
   },
   {

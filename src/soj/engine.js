@@ -1,4 +1,4 @@
-// Sign of Jonah — Astronomical Engine (Reusable)
+// Revelation 12 Sign — Astronomical Engine (Reusable)
 // Keplerian orbital mechanics with JPL DE441 elements + ELP2000 Moon
 // Star catalog, Julian Date math
 
