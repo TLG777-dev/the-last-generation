@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "lastUpdated": "2026-07-06T17:18:36.669Z",
+    "lastUpdated": "2026-07-13T13:40:49.358Z",
     "source": "Wikipedia (List of ongoing armed conflicts)",
     "minFatalities": 1000,
     "entries": 23,
@@ -196,6 +196,21 @@
       "source": "https://en.wikipedia.org/wiki/Red_Sea_crisis"
     },
     {
+      "id": "sudanese-civil-wars",
+      "name": "Sudanese civil wars",
+      "start": "1955-01-01",
+      "region": "Africa",
+      "lat": 15.5,
+      "lng": 30,
+      "parties": [],
+      "fatalities": "7.2K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Sudanese_Civil_War",
+      "_auto": true
+    },
+    {
       "id": "myanmar-civil-war",
       "name": "Myanmar Civil War",
       "start": "2021-02-01",
@@ -207,12 +222,27 @@
         "PDF",
         "EAOs"
       ],
-      "fatalities": "6.2K+",
+      "fatalities": "6.3K+",
       "displaced": "1,500,000+",
       "status": "ongoing",
       "type": "intrastate",
       "source": "https://en.wikipedia.org/wiki/Myanmar_civil_war_(2021–present)",
       "_wikiTitle": "Myanmar conflict"
+    },
+    {
+      "id": "somali-civil-war",
+      "name": "Somali Civil War",
+      "start": "1981-01-01",
+      "region": "Africa",
+      "lat": 5.15,
+      "lng": 46.2,
+      "parties": [],
+      "fatalities": "4.1K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Somali_Civil_War",
+      "_auto": true
     },
     {
       "id": "ukraine-russia",
@@ -240,7 +270,7 @@
       "lat": 33.94,
       "lng": 67.71,
       "parties": [],
-      "fatalities": "2.8K+",
+      "fatalities": "2.9K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
@@ -255,26 +285,11 @@
       "lat": 9.08,
       "lng": 8.68,
       "parties": [],
-      "fatalities": "2.3K+",
+      "fatalities": "2.5K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
       "source": "https://en.wikipedia.org/wiki/Communal_conflicts_in_Nigeria",
-      "_auto": true
-    },
-    {
-      "id": "insurgency-in-ecuador",
-      "name": "Insurgency in Ecuador",
-      "start": "1993-01-01",
-      "region": "Americas",
-      "lat": -1.83,
-      "lng": -78.18,
-      "parties": [],
-      "fatalities": "1.9K+",
-      "displaced": null,
-      "status": "ongoing",
-      "type": "intrastate",
-      "source": "https://en.wikipedia.org/wiki/Insurgency_in_Ecuador",
       "_auto": true
     },
     {
@@ -300,7 +315,7 @@
       "lat": 28,
       "lng": 3,
       "parties": [],
-      "fatalities": "12K+",
+      "fatalities": "13K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
@@ -315,7 +330,7 @@
       "lat": 34.8,
       "lng": 39,
       "parties": [],
-      "fatalities": "1.2K+",
+      "fatalities": "1.3K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
@@ -338,21 +353,6 @@
       "_auto": true
     },
     {
-      "id": "sudanese-civil-wars",
-      "name": "Sudanese civil wars",
-      "start": "1955-01-01",
-      "region": "Africa",
-      "lat": 15.5,
-      "lng": 30,
-      "parties": [],
-      "fatalities": "7K+",
-      "displaced": null,
-      "status": "ongoing",
-      "type": "intrastate",
-      "source": "https://en.wikipedia.org/wiki/Sudanese_Civil_War",
-      "_auto": true
-    },
-    {
       "id": "insurgencies-in-iran",
       "name": "Insurgencies in Iran",
       "start": "1918-01-01",
@@ -368,18 +368,18 @@
       "_auto": true
     },
     {
-      "id": "somali-civil-war",
-      "name": "Somali Civil War",
-      "start": "1981-01-01",
-      "region": "Africa",
-      "lat": 5.15,
-      "lng": 46.2,
+      "id": "ecuadorian-security-crisis",
+      "name": "Ecuadorian security crisis",
+      "start": "1993-01-01",
+      "region": "Americas",
+      "lat": -1.83,
+      "lng": -78.18,
       "parties": [],
-      "fatalities": "4K+",
+      "fatalities": "2K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
-      "source": "https://en.wikipedia.org/wiki/Somali_Civil_War",
+      "source": "https://en.wikipedia.org/wiki/Ecuadorian_security_crisis",
       "_auto": true
     }
   ]
