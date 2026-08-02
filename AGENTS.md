@@ -73,6 +73,58 @@ Is the task about...
 4. **Do NOT load web-artifacts-builder** — TLG uses vanilla HTML/CSS/JS, not React/shadcn
 5. **Do NOT load web-design-guidelines** — TLG skills already encode the design system and consistency rules
 
+### Subagent Dispatch (Parallel Page Builds)
+
+**When building 2+ independent pages, dispatch subagents to work in parallel.**
+
+Each skill has a `SUBAGENT.md` file with dispatch prompt templates. Use the Task tool to spawn subagents:
+
+```
+Task("Build hebrew-feasts.html — 7 Feasts of the Lord page")
+Task("Build betrothal.html — Ancient Jewish Wedding page")
+Task("Build timeline.html — Prophetic Timeline page")
+// All three run concurrently
+```
+
+**Subagent Rules:**
+1. Each subagent gets ONE page — focused scope, no shared state
+2. The subagent reads the skill's SKILL.md for design system and templates
+3. The subagent reads the skill's SUBAGENT.md for dispatch prompt template
+4. Subagents return: files created, files modified, quality checklist status
+5. After all agents return: review summaries, check for conflicts, verify integration
+
+**When to Dispatch Parallel:**
+- Building 3+ new pages simultaneously
+- Research compilation from vault (isolated extraction)
+- Audit/validation across multiple pages
+
+**When NOT to Dispatch:**
+- Pages share state (editing same files)
+- Need to understand full system context
+- Exploratory work (don't know what's broken yet)
+
+**Subagent Prompt Structure:**
+```
+Build [PAGE_NAME] for The Last Generation website.
+
+PAGE SPEC:
+- Title: [TITLE]
+- Badge: [BADGE]
+- Description: [DESC]
+- Sections: [LIST]
+
+Read the skill at /home/promeus/.opencode/skills/tlg-[TYPE]-builder/SKILL.md
+Read the subagent template at /home/promeus/.opencode/skills/tlg-[TYPE]-builder/SUBAGENT.md
+
+CONSTRAINTS:
+[FROM SUBAGENT.md TEMPLATE]
+
+RETURN:
+- Files created
+- Files modified
+- Quality checklist status
+```
+
 ## Multi-Page Strategy
 * Build the website **one page at a time** for best quality and consistency.
 * First build shared components (Header, Footer, Navigation, Mobile Menu, etc.).
