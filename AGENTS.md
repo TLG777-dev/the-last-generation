@@ -37,6 +37,42 @@ Every piece of content on this site must meet these standards:
 * Use **web-artifacts-builder** for modern component architecture (shadcn/ui style).
 * Use **theme-factory** for quick theme explorations or design system changes.
 
+## TLG Page Builder Skills — Routing Logic
+
+**You don't need to remember specific phrases.** Just describe what you want — the skills auto-trigger based on your request. Here's what each skill handles:
+
+| Skill | What You Say | Pages |
+|-------|--------------|-------|
+| **tlg-content-builder** | "build a page about...", "add a section", "new teaching page", "hero section", "cards layout" | timeline, rapture, hebrew-feasts, betrothal, revelation-walkthrough, glossary, library, bible-downloads, digest, convergence |
+| **tlg-threejs-builder** | "3D scene", "add particles", "asteroid visualization", "starfield background", "WebGL" | index, dashboard, apophis, revelation-12-sign |
+| **tlg-map-builder** | "map page", "add markers", "real-time data on map", "disaster tracker", "conflict map" | disasters, conflicts, aleph-tav |
+| **tlg-tool-builder** | "calculator", "calendar tool", "orbital mechanics", "Hebrew calendar", "data visualization" | rev12-calculator, calendar |
+
+### Quick Decision Tree
+
+```
+Is the task about...
+├── Text content, cards, scroll animations? → tlg-content-builder
+├── Three.js, WebGL, 3D scenes, shaders? → tlg-threejs-builder
+├── Maps, MapLibre, Leaflet, markers? → tlg-map-builder
+├── Calculations, calendars, data processing? → tlg-tool-builder
+└── Shared components (nav, footer, colors)? → No skill needed, edit directly
+```
+
+### Rules
+1. **Read the skill SKILL.md** before starting work — it contains the design system, templates, and quality checklists
+2. **Never mix skill patterns** — a map page should not use Three.js canvas patterns, a content page should not use map filters
+3. **Each skill has its own CSS prefix** — use the conventions in the skill file (e.g., `tl-` for timeline, `ph-` for generic content)
+4. **Cross-page changes** (nav, footer, colors, typography) do NOT require a skill — edit directly
+
+### Skill Hierarchy
+
+1. **Load the appropriate TLG skill FIRST** (content, threejs, map, or tool) — this is your primary reference for page work
+2. **For UX/accessibility audits**, additionally load **ui-ux-pro-max** — it covers interaction patterns, accessibility guidelines, and UX best practices
+3. **For creative design exploration**, additionally load **frontend-design** — it helps avoid generic aesthetics and push creative direction
+4. **Do NOT load web-artifacts-builder** — TLG uses vanilla HTML/CSS/JS, not React/shadcn
+5. **Do NOT load web-design-guidelines** — TLG skills already encode the design system and consistency rules
+
 ## Multi-Page Strategy
 * Build the website **one page at a time** for best quality and consistency.
 * First build shared components (Header, Footer, Navigation, Mobile Menu, etc.).
