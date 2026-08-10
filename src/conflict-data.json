@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "lastUpdated": "2026-08-03T15:59:24.330Z",
+    "lastUpdated": "2026-08-10T07:49:37.492Z",
     "source": "Wikipedia (List of ongoing armed conflicts)",
     "minFatalities": 1000,
     "entries": 24,
@@ -203,31 +203,12 @@
       "lat": 15.5,
       "lng": 30,
       "parties": [],
-      "fatalities": "7.8K+",
+      "fatalities": "8.1K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
       "source": "https://en.wikipedia.org/wiki/Sudanese_Civil_War",
       "_auto": true
-    },
-    {
-      "id": "myanmar-civil-war",
-      "name": "Myanmar Civil War",
-      "start": "2021-02-01",
-      "region": "Asia",
-      "lat": 22,
-      "lng": 96,
-      "parties": [
-        "SAC",
-        "PDF",
-        "EAOs"
-      ],
-      "fatalities": "6.9K+",
-      "displaced": "1,500,000+",
-      "status": "ongoing",
-      "type": "intrastate",
-      "source": "https://en.wikipedia.org/wiki/Myanmar_civil_war_(2021–present)",
-      "_wikiTitle": "Myanmar conflict"
     },
     {
       "id": "somali-civil-war",
@@ -237,11 +218,26 @@
       "lat": 5.15,
       "lng": 46.2,
       "parties": [],
-      "fatalities": "4.6K+",
+      "fatalities": "4.7K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
       "source": "https://en.wikipedia.org/wiki/Somali_Civil_War",
+      "_auto": true
+    },
+    {
+      "id": "afghanistan-conflicts",
+      "name": "Afghanistan conflicts",
+      "start": "1978-01-01",
+      "region": "Asia",
+      "lat": 33.94,
+      "lng": 67.71,
+      "parties": [],
+      "fatalities": "3.7K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Afghan_conflict",
       "_auto": true
     },
     {
@@ -255,27 +251,12 @@
         "Ukraine",
         "Russia"
       ],
-      "fatalities": "34K+",
+      "fatalities": "35K+",
       "displaced": "6,500,000+",
       "status": "ongoing",
       "type": "interstate",
       "source": "https://en.wikipedia.org/wiki/Russo-Ukrainian_War",
       "_wikiTitle": "Russo-Ukrainian war"
-    },
-    {
-      "id": "afghanistan-conflicts",
-      "name": "Afghanistan conflicts",
-      "start": "1978-01-01",
-      "region": "Asia",
-      "lat": 33.94,
-      "lng": 67.71,
-      "parties": [],
-      "fatalities": "3.4K+",
-      "displaced": null,
-      "status": "ongoing",
-      "type": "intrastate",
-      "source": "https://en.wikipedia.org/wiki/Afghan_conflict",
-      "_auto": true
     },
     {
       "id": "civil-conflicts-in-nigeria",
@@ -285,7 +266,7 @@
       "lat": 9.08,
       "lng": 8.68,
       "parties": [],
-      "fatalities": "2.9K+",
+      "fatalities": "3.1K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
@@ -300,7 +281,7 @@
       "lat": -1.83,
       "lng": -78.18,
       "parties": [],
-      "fatalities": "2.2K+",
+      "fatalities": "2.3K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
@@ -338,6 +319,21 @@
       "_auto": true
     },
     {
+      "id": "colombian-conflict",
+      "name": "Colombian conflict",
+      "start": "1964-01-01",
+      "region": "Americas",
+      "lat": 4.57,
+      "lng": -74.3,
+      "parties": [],
+      "fatalities": "1.4K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Colombian_conflict",
+      "_auto": true
+    },
+    {
       "id": "aftermath",
       "name": "Aftermath",
       "start": "2011-01-01",
@@ -353,21 +349,6 @@
       "_auto": true
     },
     {
-      "id": "colombian-conflict",
-      "name": "Colombian conflict",
-      "start": "1964-01-01",
-      "region": "Americas",
-      "lat": 4.57,
-      "lng": -74.3,
-      "parties": [],
-      "fatalities": "1.3K+",
-      "displaced": null,
-      "status": "ongoing",
-      "type": "intrastate",
-      "source": "https://en.wikipedia.org/wiki/Colombian_conflict",
-      "_auto": true
-    },
-    {
       "id": "yemeni-civil-war",
       "name": "Yemeni civil war",
       "start": "2011-01-01",
@@ -375,12 +356,31 @@
       "lat": 15.55,
       "lng": 48.52,
       "parties": [],
-      "fatalities": "1.1K+",
+      "fatalities": "1.2K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
       "source": "https://en.wikipedia.org/wiki/Yemeni_civil_war_(2014%E2%80%93present)",
       "_auto": true
+    },
+    {
+      "id": "myanmar-civil-war",
+      "name": "Myanmar Civil War",
+      "start": "2021-02-01",
+      "region": "Asia",
+      "lat": 22,
+      "lng": 96,
+      "parties": [
+        "SAC",
+        "PDF",
+        "EAOs"
+      ],
+      "fatalities": "7K+",
+      "displaced": "1,500,000+",
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Myanmar_civil_war_(2021–present)",
+      "_wikiTitle": "Myanmar conflict"
     },
     {
       "id": "insurgencies-in-iran",
