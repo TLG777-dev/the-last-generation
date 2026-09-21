@@ -1,11 +1,11 @@
 {
   "_meta": {
-    "lastUpdated": "2026-09-14T12:18:53.776Z",
+    "lastUpdated": "2026-09-21T12:26:22.341Z",
     "source": "Wikipedia (List of ongoing armed conflicts)",
     "minFatalities": 1000,
-    "entries": 24,
+    "entries": 25,
     "curatedCount": 13,
-    "autoCount": 11
+    "autoCount": 12
   },
   "conflicts": [
     {
@@ -203,31 +203,12 @@
       "lat": 15.5,
       "lng": 30,
       "parties": [],
-      "fatalities": "9.6K+",
+      "fatalities": "9.9K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
       "source": "https://en.wikipedia.org/wiki/Sudanese_Civil_War",
       "_auto": true
-    },
-    {
-      "id": "myanmar-civil-war",
-      "name": "Myanmar Civil War",
-      "start": "2021-02-01",
-      "region": "Asia",
-      "lat": 22,
-      "lng": 96,
-      "parties": [
-        "SAC",
-        "PDF",
-        "EAOs"
-      ],
-      "fatalities": "7.9K+",
-      "displaced": "1,500,000+",
-      "status": "ongoing",
-      "type": "intrastate",
-      "source": "https://en.wikipedia.org/wiki/Myanmar_civil_war_(2021–present)",
-      "_wikiTitle": "Myanmar conflict"
     },
     {
       "id": "somali-civil-war",
@@ -237,7 +218,7 @@
       "lat": 5.15,
       "lng": 46.2,
       "parties": [],
-      "fatalities": "5.4K+",
+      "fatalities": "5.5K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
@@ -252,7 +233,7 @@
       "lat": 33.94,
       "lng": 67.71,
       "parties": [],
-      "fatalities": "4.7K+",
+      "fatalities": "4.9K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
@@ -270,7 +251,7 @@
         "Ukraine",
         "Russia"
       ],
-      "fatalities": "40K+",
+      "fatalities": "41K+",
       "displaced": "6,500,000+",
       "status": "ongoing",
       "type": "interstate",
@@ -300,26 +281,11 @@
       "lat": -1.83,
       "lng": -78.18,
       "parties": [],
-      "fatalities": "2.7K+",
+      "fatalities": "2.8K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
       "source": "https://en.wikipedia.org/wiki/Terrorism_in_Ecuador",
-      "_auto": true
-    },
-    {
-      "id": "haitian-conflict",
-      "name": "Haitian conflict",
-      "start": "2018-01-01",
-      "region": "Americas",
-      "lat": 18.97,
-      "lng": -72.29,
-      "parties": [],
-      "fatalities": "2.2K+",
-      "displaced": null,
-      "status": "ongoing",
-      "type": "intrastate",
-      "source": "https://en.wikipedia.org/wiki/Haitian_crisis_(2018%E2%80%93present)",
       "_auto": true
     },
     {
@@ -330,11 +296,26 @@
       "lat": 15.55,
       "lng": 48.52,
       "parties": [],
-      "fatalities": "1.9K+",
+      "fatalities": "2.3K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
       "source": "https://en.wikipedia.org/wiki/Yemeni_civil_war_(2014%E2%80%93present)",
+      "_auto": true
+    },
+    {
+      "id": "haitian-conflict",
+      "name": "Haitian conflict",
+      "start": "2018-01-01",
+      "region": "Americas",
+      "lat": 18.97,
+      "lng": -72.29,
+      "parties": [],
+      "fatalities": "2.3K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Haitian_crisis_(2018%E2%80%93present)",
       "_auto": true
     },
     {
@@ -345,7 +326,7 @@
       "lat": 28,
       "lng": 3,
       "parties": [],
-      "fatalities": "17K+",
+      "fatalities": "18K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
@@ -381,6 +362,40 @@
       "type": "intrastate",
       "source": "https://en.wikipedia.org/wiki/Colombian_conflict",
       "_auto": true
+    },
+    {
+      "id": "insurgencies-in-pakistan",
+      "name": "Insurgencies in Pakistan",
+      "start": "1948-01-01",
+      "region": "Asia",
+      "lat": null,
+      "lng": null,
+      "parties": [],
+      "fatalities": "1.1K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Terrorism_in_Pakistan",
+      "_auto": true
+    },
+    {
+      "id": "myanmar-civil-war",
+      "name": "Myanmar Civil War",
+      "start": "2021-02-01",
+      "region": "Asia",
+      "lat": 22,
+      "lng": 96,
+      "parties": [
+        "SAC",
+        "PDF",
+        "EAOs"
+      ],
+      "fatalities": "8K+",
+      "displaced": "1,500,000+",
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Myanmar_civil_war_(2021–present)",
+      "_wikiTitle": "Myanmar conflict"
     },
     {
       "id": "insurgencies-in-iran",
