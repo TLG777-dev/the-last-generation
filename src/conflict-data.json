@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "lastUpdated": "2026-09-28T13:24:07.522Z",
+    "lastUpdated": "2026-10-05T14:07:14.048Z",
     "source": "Wikipedia (List of ongoing armed conflicts)",
     "minFatalities": 1000,
     "entries": 25,
@@ -207,12 +207,27 @@
         "PDF",
         "EAOs"
       ],
-      "fatalities": "8.3K+",
+      "fatalities": "8.4K+",
       "displaced": "1,500,000+",
       "status": "ongoing",
       "type": "intrastate",
       "source": "https://en.wikipedia.org/wiki/Myanmar_civil_war_(2021–present)",
       "_wikiTitle": "Myanmar conflict"
+    },
+    {
+      "id": "insurgencies-in-iran",
+      "name": "Insurgencies in Iran",
+      "start": "1918-01-01",
+      "region": "Asia",
+      "lat": 32.43,
+      "lng": 53.69,
+      "parties": [],
+      "fatalities": "7.1K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Terrorism_in_Iran",
+      "_auto": true
     },
     {
       "id": "somali-civil-war",
@@ -222,7 +237,7 @@
       "lat": 5.15,
       "lng": 46.2,
       "parties": [],
-      "fatalities": "5.6K+",
+      "fatalities": "5.7K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
@@ -237,11 +252,26 @@
       "lat": 33.94,
       "lng": 67.71,
       "parties": [],
-      "fatalities": "5.1K+",
+      "fatalities": "5.3K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
       "source": "https://en.wikipedia.org/wiki/Afghan_conflict",
+      "_auto": true
+    },
+    {
+      "id": "yemeni-civil-war",
+      "name": "Yemeni civil war",
+      "start": "2011-01-01",
+      "region": "Asia",
+      "lat": 15.55,
+      "lng": 48.52,
+      "parties": [],
+      "fatalities": "4.7K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Yemeni_civil_war_(2014%E2%80%93present)",
       "_auto": true
     },
     {
@@ -261,21 +291,6 @@
       "type": "interstate",
       "source": "https://en.wikipedia.org/wiki/Russo-Ukrainian_War",
       "_wikiTitle": "Russo-Ukrainian war"
-    },
-    {
-      "id": "yemeni-civil-war",
-      "name": "Yemeni civil war",
-      "start": "2011-01-01",
-      "region": "Asia",
-      "lat": 15.55,
-      "lng": 48.52,
-      "parties": [],
-      "fatalities": "4.1K+",
-      "displaced": null,
-      "status": "ongoing",
-      "type": "intrastate",
-      "source": "https://en.wikipedia.org/wiki/Yemeni_civil_war_(2014%E2%80%93present)",
-      "_auto": true
     },
     {
       "id": "civil-conflicts-in-nigeria",
@@ -375,7 +390,7 @@
       "lat": null,
       "lng": null,
       "parties": [],
-      "fatalities": "1.1K+",
+      "fatalities": "1.2K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
@@ -395,21 +410,6 @@
       "status": "ongoing",
       "type": "intrastate",
       "source": "https://en.wikipedia.org/wiki/Sudanese_Civil_War",
-      "_auto": true
-    },
-    {
-      "id": "insurgencies-in-iran",
-      "name": "Insurgencies in Iran",
-      "start": "1918-01-01",
-      "region": "Asia",
-      "lat": 32.43,
-      "lng": 53.69,
-      "parties": [],
-      "fatalities": "7K+",
-      "displaced": null,
-      "status": "ongoing",
-      "type": "intrastate",
-      "source": "https://en.wikipedia.org/wiki/Terrorism_in_Iran",
       "_auto": true
     }
   ]
