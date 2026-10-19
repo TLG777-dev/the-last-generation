@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "lastUpdated": "2026-10-12T14:55:45.968Z",
+    "lastUpdated": "2026-10-19T12:40:06.544Z",
     "source": "Wikipedia (List of ongoing armed conflicts)",
     "minFatalities": 1000,
     "entries": 25,
@@ -207,12 +207,27 @@
         "PDF",
         "EAOs"
       ],
-      "fatalities": "8.6K+",
+      "fatalities": "8.9K+",
       "displaced": "1,500,000+",
       "status": "ongoing",
       "type": "intrastate",
       "source": "https://en.wikipedia.org/wiki/Myanmar_civil_war_(2021–present)",
       "_wikiTitle": "Myanmar conflict"
+    },
+    {
+      "id": "yemeni-civil-war",
+      "name": "Yemeni civil war",
+      "start": "2011-01-01",
+      "region": "Asia",
+      "lat": 15.55,
+      "lng": 48.52,
+      "parties": [],
+      "fatalities": "8.7K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Yemeni_civil_war_(2014%E2%80%93present)",
+      "_auto": true
     },
     {
       "id": "insurgencies-in-iran",
@@ -270,7 +285,7 @@
         "Ukraine",
         "Russia"
       ],
-      "fatalities": "43K+",
+      "fatalities": "45K+",
       "displaced": "6,500,000+",
       "status": "ongoing",
       "type": "interstate",
@@ -290,6 +305,21 @@
       "status": "ongoing",
       "type": "intrastate",
       "source": "https://en.wikipedia.org/wiki/Communal_conflicts_in_Nigeria",
+      "_auto": true
+    },
+    {
+      "id": "ecuadorian-conflict",
+      "name": "Ecuadorian conflict",
+      "start": "1993-01-01",
+      "region": "Americas",
+      "lat": -1.83,
+      "lng": -78.18,
+      "parties": [],
+      "fatalities": "3.1K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Terrorism_in_Ecuador",
       "_auto": true
     },
     {
@@ -323,6 +353,21 @@
       "_auto": true
     },
     {
+      "id": "aftermath",
+      "name": "Aftermath",
+      "start": "2011-01-01",
+      "region": "Asia",
+      "lat": null,
+      "lng": null,
+      "parties": [],
+      "fatalities": "1.7K+",
+      "displaced": null,
+      "status": "ongoing",
+      "type": "intrastate",
+      "source": "https://en.wikipedia.org/wiki/Aftermath_of_the_Syrian_civil_war",
+      "_auto": true
+    },
+    {
       "id": "colombian-conflict",
       "name": "Colombian conflict",
       "start": "1964-01-01",
@@ -335,21 +380,6 @@
       "status": "ongoing",
       "type": "intrastate",
       "source": "https://en.wikipedia.org/wiki/Colombian_conflict",
-      "_auto": true
-    },
-    {
-      "id": "aftermath",
-      "name": "Aftermath",
-      "start": "2011-01-01",
-      "region": "Asia",
-      "lat": null,
-      "lng": null,
-      "parties": [],
-      "fatalities": "1.6K+",
-      "displaced": null,
-      "status": "ongoing",
-      "type": "intrastate",
-      "source": "https://en.wikipedia.org/wiki/Aftermath_of_the_Syrian_civil_war",
       "_auto": true
     },
     {
@@ -380,36 +410,6 @@
       "status": "ongoing",
       "type": "intrastate",
       "source": "https://en.wikipedia.org/wiki/Sudanese_Civil_War",
-      "_auto": true
-    },
-    {
-      "id": "yemeni-civil-war",
-      "name": "Yemeni civil war",
-      "start": "2011-01-01",
-      "region": "Asia",
-      "lat": 15.55,
-      "lng": 48.52,
-      "parties": [],
-      "fatalities": "7K+",
-      "displaced": null,
-      "status": "ongoing",
-      "type": "intrastate",
-      "source": "https://en.wikipedia.org/wiki/Yemeni_civil_war_(2014%E2%80%93present)",
-      "_auto": true
-    },
-    {
-      "id": "ecuadorian-conflict",
-      "name": "Ecuadorian conflict",
-      "start": "1993-01-01",
-      "region": "Americas",
-      "lat": -1.83,
-      "lng": -78.18,
-      "parties": [],
-      "fatalities": "3K+",
-      "displaced": null,
-      "status": "ongoing",
-      "type": "intrastate",
-      "source": "https://en.wikipedia.org/wiki/Terrorism_in_Ecuador",
       "_auto": true
     }
   ]
