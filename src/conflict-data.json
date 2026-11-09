@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "lastUpdated": "2026-11-02T15:13:55.899Z",
+    "lastUpdated": "2026-11-09T15:43:11.286Z",
     "source": "Wikipedia (List of ongoing armed conflicts)",
     "minFatalities": 1000,
     "entries": 25,
@@ -207,7 +207,7 @@
         "PDF",
         "EAOs"
       ],
-      "fatalities": "9.3K+",
+      "fatalities": "9.5K+",
       "displaced": "1,500,000+",
       "status": "ongoing",
       "type": "intrastate",
@@ -222,7 +222,7 @@
       "lat": 15.55,
       "lng": 48.52,
       "parties": [],
-      "fatalities": "8.8K+",
+      "fatalities": "9.5K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
@@ -245,18 +245,18 @@
       "_auto": true
     },
     {
-      "id": "afghanistan-conflicts",
-      "name": "Afghanistan conflicts",
+      "id": "somali-civil-war",
+      "name": "Somali Civil War",
       "start": "1978-01-01",
-      "region": "Asia",
-      "lat": 33.94,
-      "lng": 67.71,
+      "region": "Africa",
+      "lat": 5.15,
+      "lng": 46.2,
       "parties": [],
-      "fatalities": "5.8K+",
+      "fatalities": "6.5K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
-      "source": "https://en.wikipedia.org/wiki/Afghan_conflict",
+      "source": "https://en.wikipedia.org/wiki/Somali_Civil_War",
       "_auto": true
     },
     {
@@ -270,7 +270,7 @@
         "Ukraine",
         "Russia"
       ],
-      "fatalities": "47K+",
+      "fatalities": "48K+",
       "displaced": "6,500,000+",
       "status": "ongoing",
       "type": "interstate",
@@ -315,7 +315,7 @@
       "lat": 18.97,
       "lng": -72.29,
       "parties": [],
-      "fatalities": "2.6K+",
+      "fatalities": "2.8K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
@@ -330,7 +330,7 @@
       "lat": 28,
       "lng": 3,
       "parties": [],
-      "fatalities": "20K+",
+      "fatalities": "21K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
@@ -345,7 +345,7 @@
       "lat": 4.57,
       "lng": -74.3,
       "parties": [],
-      "fatalities": "1.7K+",
+      "fatalities": "1.8K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
@@ -398,18 +398,18 @@
       "_auto": true
     },
     {
-      "id": "somali-civil-war",
-      "name": "Somali Civil War",
+      "id": "afghanistan-conflicts",
+      "name": "Afghanistan conflicts",
       "start": "1978-01-01",
-      "region": "Africa",
-      "lat": 5.15,
-      "lng": 46.2,
+      "region": "Asia",
+      "lat": 33.94,
+      "lng": 67.71,
       "parties": [],
       "fatalities": "6K+",
       "displaced": null,
       "status": "ongoing",
       "type": "intrastate",
-      "source": "https://en.wikipedia.org/wiki/Somali_Civil_War",
+      "source": "https://en.wikipedia.org/wiki/Afghan_conflict",
       "_auto": true
     }
   ]
